@@ -12,17 +12,37 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Threading;
 
 namespace LocalDatabase_Server
 {
     /// <summary>
     /// Logika interakcji dla klasy MainWindow.xaml
-    /// </summary>
+    /// </summary>ty
     public partial class MainWindow : Window
     {
         public MainWindow()
         {
             InitializeComponent();
+            Thread t = new Thread(new ThreadStart(newThread));
+            t.Start();
+        } 
+
+        private void newThread()
+        {
+            ServerStarter ss = new ServerStarter(text, "127.0.0.1", 25000);
+            //while (true)
+            //{
+            //    Dispatcher.Invoke(new Action(() => { text.Text = txtBox.Text; }));
+            //    Thread.Sleep(200);
+            //}
         }
+
+        private void buttonAction(object sender, RoutedEventArgs e)
+        {
+            button = sender as Button;
+            MessageBox.Show(txtBox.Text);
+        }
+
     }
 }
