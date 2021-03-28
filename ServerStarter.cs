@@ -36,8 +36,8 @@ namespace LocalDatabase_Server
                     //Console.WriteLine("Connected!");
                     Application.Current.Dispatcher.Invoke(new Action(() => { text.Text = "Connected!"; }));
                     connectedDevices++;
-                    Task t = new Task(() => HandleDeivce(client));
-                    t.Start();
+                    Task t1 = new Task(() => HandleDeivce(client));
+                    t1.Start();
                 }
             }
             catch (SocketException e)
@@ -49,8 +49,22 @@ namespace LocalDatabase_Server
         }
         public void HandleDeivce(Object obj)
         {
+            DirectoryManager dm = new DirectoryManager(@"C:\Directory_test");
             TcpClient client = (TcpClient)obj;
-            sendMessage(Com.SendDirectoryOrder(),client);
+            //funkcja sprawdza czy klient jest polaczony
+            while (true) 
+            {
+                if (((client.Client.Poll(1000, SelectMode.SelectRead) && (client.Client.Available == 0)) || !client.Client.Connected))
+                    break;
+            }
+            Console.WriteLine("DZIALA");
+            /*
+             * Wait for login
+             */
+
+            //foreach (var mess in Com.SendDirectory(dm.directoryElements))
+            //    sendMessage(mess,client);
+            sendFile(client);
         }
         private void downloadMessage(TcpClient client)
         {
@@ -71,7 +85,6 @@ namespace LocalDatabase_Server
         }
         private void downloadFile(TcpClient client)
         {
-            //int port = 25000;
             try
             {
                 while (true)
@@ -126,7 +139,7 @@ namespace LocalDatabase_Server
                 fileNameLen.CopyTo(clientData, 0);
                 fileNameByte.CopyTo(clientData, 4);
                 fileData.CopyTo(clientData, 4 + fileNameByte.Length);
-                NetworkStream networkStream = client.GetStream();
+                NetworkStream networkStream = new NetworkStream(client.Client);
                 networkStream.Write(clientData, 0, clientData.GetLength(0));
                 networkStream.Close();
             }

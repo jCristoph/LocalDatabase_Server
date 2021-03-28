@@ -63,7 +63,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Com.cs" />
+    <Compile Include="ServerCom.cs" />
     <Compile Include="DirectoryElement.cs" />
     <Compile Include="DirectoryManager.cs" />
     <Compile Include="ServerStarter.cs" />

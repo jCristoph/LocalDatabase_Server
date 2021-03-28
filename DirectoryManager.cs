@@ -6,31 +6,16 @@ namespace LocalDatabase_Server
 {
     class DirectoryManager
     {
-        private List<DirectoryElement> directoryElements;
-        private List<DirectoryElement> directoryElementsResponse;
+        public List<DirectoryElement> directoryElements { get; set; }
 
         public DirectoryManager(string targetDirectory)
         {
             directoryElements = new List<DirectoryElement>();
-            directoryElementsResponse = new List<DirectoryElement>();
             DirectoryElement de = new DirectoryElement("\\Main_Folder", 0, "None", true);
             directoryElements.Add(de);
             ProcessDirectory(targetDirectory);
-            //foreach (var de in directoryElements)
-            //    Console.WriteLine(de.ToString());
-            foreach (var dirEl in directoryElements)
-                PrintFolderContent(dirEl);
-            //Console.WriteLine("__________________________________________________________");
-            var coms = Com.SendDirectory(directoryElements);
-            //foreach (var c in coms)
-            //    Console.WriteLine(c);
-            foreach (var c in coms)
-                ProcessPath(c);
-            //Console.WriteLine("__________________________________________________________");
-            //foreach (var de in directoryElementsResponse)
-            //    Console.WriteLine(de.ToString());
-            foreach (var dirEl in directoryElementsResponse)
-                PrintFolderContent(dirEl);
+            //foreach (var dirEl in directoryElements)
+            //    PrintFolderContent(dirEl);
         }
         public DirectoryManager(List<DirectoryElement> directoryElements)
         {
@@ -80,7 +65,7 @@ namespace LocalDatabase_Server
                 string lwr = s.Substring(lwrIndexHome, lwrIndexEnd - lwrIndexHome);
 
                 DirectoryElement de = new DirectoryElement(path, name, long.Parse(size), lwr, isFolder);
-                directoryElementsResponse.Add(de);
+                directoryElements.Add(de);
             }
             catch (Exception e)
             {

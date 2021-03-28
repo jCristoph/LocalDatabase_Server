@@ -24,7 +24,7 @@ namespace LocalDatabase_Server
         public MainWindow()
         {
             InitializeComponent();
-            Thread t = new Thread(new ThreadStart(newThread));
+            Task t = new Task(() => newThread());
             t.Start();
         } 
 
