@@ -54,27 +54,66 @@ namespace LocalDatabase_Server
             //funkcja sprawdza czy klient jest polaczony
             while (true) 
             {
+                readMessage(client);
+                //sprawdza czy połączenie jest aktywne
                 if (((client.Client.Poll(1000, SelectMode.SelectRead) && (client.Client.Available == 0)) || !client.Client.Connected))
                     break;
             }
-            Console.WriteLine("DZIALA");
-            /*
-             * Wait for login
-             */
-
-            //foreach (var mess in Com.SendDirectory(dm.directoryElements))
-            //    sendMessage(mess,client);
-            sendFile(client);
+            connectedDevices--;
+            client.Close();
         }
-        private void downloadMessage(TcpClient client)
+
+        public void recognizeMessage(string data, TcpClient client)
         {
-            var stream = client.GetStream();
-            Byte[] bytes = new Byte[1024];
-            int i;
-            while ((i = stream.Read(bytes, 0, bytes.Length)) != 0)
+            int taskIndexHome = data.IndexOf("<Task=") + "<Task=".Length;
+            int taskIndexEnd = data.IndexOf(">");
+            string task = data.Substring(taskIndexHome, taskIndexEnd - taskIndexHome);
+            DirectoryManager dm = new DirectoryManager(@"C:\Directory_test");
+            Application.Current.Dispatcher.Invoke(new Action(() => { text.Text = task; }));
+            switch (task)
             {
-                string hex = BitConverter.ToString(bytes);
-                string data = Encoding.UTF8.GetString(bytes, 0, i);
+                case "Login":
+                    sendMessage(ServerCom.CheckLoginMessage(ServerCom.LoginRecognizer(data)), client);
+                    break;
+                case "ReadOrder": //kiedy wysylane jest zadanie pobrania pliku
+                    sendMessage(ServerCom.responseMessage(false, "OK"), client);
+                    Thread.Sleep(1000);
+                    downloadFile(client);
+                    break;
+                case "Send": ////kiedy wysylane jest zadanie wyslania pliku
+                    sendFile(client, ServerCom.SendRecognizer(data));
+                    break;
+                case "SendDir": //kiedy wysylane jest zadanie wyslania biblioteki
+                    foreach(var mess in ServerCom.SendDirectoryMessage(dm.directoryElements))
+                        sendMessage(mess, client);
+                    break;
+                case "Delete":
+                    break;
+                case "Response":
+                    MessageBox.Show(ServerCom.responseRecognizer(data));
+                    break;
+            }
+        }
+        private void readMessage(TcpClient client)
+        {
+            try
+            {
+                var stream = client.GetStream();
+                Byte[] bytes = new Byte[1024];
+                int i;
+                string data = "";
+                do
+                {
+                    i = stream.Read(bytes, 0, bytes.Length);
+                    data += Encoding.UTF8.GetString(bytes, 0, i);
+                    if (!stream.DataAvailable)
+                        Thread.Sleep(1);
+                } while (stream.DataAvailable);
+                recognizeMessage(data, client);
+            }
+            catch(Exception e)
+            {
+                MessageBox.Show(e.ToString());
             }
         }
         private void sendMessage(string str, TcpClient client)
@@ -85,51 +124,48 @@ namespace LocalDatabase_Server
         }
         private void downloadFile(TcpClient client)
         {
-            try
-            {
-                while (true)
+            //try
+            //{
+                client.GetStream().Flush();
+                Socket handlerSocket = client.Client;
+                if (handlerSocket.Connected)
                 {
-                    Socket handlerSocket = client.Client;
-                    if (handlerSocket.Connected)
+                    string fileName = string.Empty;
+                    NetworkStream networkStream = new NetworkStream(handlerSocket);
+                    int thisRead = 0;
+                    int blockSize = 1024;
+                    Byte[] dataByte = new Byte[blockSize];
+                    lock (this)
                     {
-                        string fileName = string.Empty;
-                        NetworkStream networkStream = new NetworkStream(handlerSocket);
-                        int thisRead = 0;
-                        int blockSize = 1024;
-                        Byte[] dataByte = new Byte[blockSize];
-                        lock (this)
+                        Application.Current.Dispatcher.Invoke(new Action(() => { text.Text = "Downloading!!!"; }));
+                        string folderPath = @"c:\Directory_test\";
+                        handlerSocket.Receive(dataByte);
+                        int fileNameLen = BitConverter.ToInt32(dataByte, 0);
+                        fileName = Encoding.ASCII.GetString(dataByte, 4, fileNameLen);
+                        Stream fileStream = File.OpenWrite(folderPath + fileName);
+                        fileStream.Write(dataByte, 4 + fileNameLen, (1024 - (4 + fileNameLen)));
+                        do
                         {
-                            Application.Current.Dispatcher.Invoke(new Action(() => { text.Text = "Downloading!!!"; }));
-                            string folderPath = @"e:\";
-                            handlerSocket.Receive(dataByte);
-                            int fileNameLen = BitConverter.ToInt32(dataByte, 0);
-                            fileName = Encoding.ASCII.GetString(dataByte, 4, fileNameLen);
-                            Stream fileStream = File.OpenWrite(folderPath + fileName);
-                            fileStream.Write(dataByte, 4 + fileNameLen, (1024 - (4 + fileNameLen)));
-                            while (true)
-                            {
-                                thisRead = networkStream.Read(dataByte, 0, blockSize);
-                                fileStream.Write(dataByte, 0, thisRead);
-                                if (thisRead == 0)
-                                    break;
-                            }
-                            fileStream.Close();
-                        }
-                        Application.Current.Dispatcher.Invoke(new Action(() => { text.Text = "Downloaded!!!"; }));
-                        handlerSocket = null;
+                            thisRead = networkStream.Read(dataByte, 0, blockSize);
+                            fileStream.Write(dataByte, 0, thisRead);
+                            if (!networkStream.DataAvailable)
+                                Thread.Sleep(10);
+                        } while (networkStream.DataAvailable);
+                        fileStream.Close();
                     }
+                    Application.Current.Dispatcher.Invoke(new Action(() => { text.Text = "Downloaded!!!"; }));
+                    handlerSocket = null;
                 }
-
-            }
-            catch
-            {
-
-            }
+            //}
+            //catch
+            //{
+//
+            //}
         }
-        private void sendFile(TcpClient client)
+        private void sendFile(TcpClient client, string path)
         {
-            string shortFileName = "music.mp3";
-            string longFileName = shortFileName;
+            string shortFileName = "plik1.txt";
+            string longFileName = @"C:\Directory_test\plik1.txt";
             try
             {
                 byte[] fileNameByte = Encoding.ASCII.GetBytes(shortFileName);

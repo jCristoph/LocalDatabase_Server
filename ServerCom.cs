@@ -10,7 +10,7 @@ namespace LocalDatabase_Server
         /// </summary>
         /// <param name="isLogged"></param>
         /// <returns></returns>
-        public static string CheckLogin(bool isLogged)
+        public static string CheckLoginMessage(bool isLogged)
         {
             if (isLogged)
                 return "<Task=CheckLogin><isLogged>Yes</isLogged><Login>";
@@ -23,7 +23,7 @@ namespace LocalDatabase_Server
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public static string Download()
+        public static string DownloadMessage()
         {
             return "<Task=Download></Task><#>";
         }
@@ -33,7 +33,7 @@ namespace LocalDatabase_Server
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public static string Send(string path)
+        public static string SendMessge(string path)
         {
             return "<Task=Send><Path>" + path + "</Path></Task><#>";
         }
@@ -43,7 +43,7 @@ namespace LocalDatabase_Server
         /// </summary>
         /// <param name="directory"></param>
         /// <returns></returns>
-        public static string[] SendDirectory(List<DirectoryElement> directory)
+        public static string[] SendDirectoryMessage(List<DirectoryElement> directory)
         {
             string[] dirMessage = new string[directory.Count];
             int i = 0;
@@ -70,7 +70,7 @@ namespace LocalDatabase_Server
         /// For Server usage. Is order for client to download directory one more time because of changes.
         /// </summary>
         /// <returns></returns>
-        public static string UpdateDirectoryOrder()
+        public static string UpdateDirectoryOrderMessage()
         {
             return "<Task=DownloadDir></Task><#>";
         }
@@ -82,7 +82,7 @@ namespace LocalDatabase_Server
         /// <param name="goesWrong"></param>
         /// <param name="content"></param>
         /// <returns></returns>
-        public static string response(bool goesWrong, string content)
+        public static string responseMessage(bool goesWrong, string content)
         {
             return "<Task=Response><Content>" + content + "</Content></Task><#>";
         }
@@ -104,7 +104,7 @@ namespace LocalDatabase_Server
             IndexEnd = s.LastIndexOf("</Pass>");
             string passowrd = s.Substring(IndexHome, IndexEnd - IndexHome);
             //tutaj funkcja sprawdzajaca haslo
-            if (login.Equals("login") && passowrd.Equals("passowrd"))
+            if (login.Equals("login") && passowrd.Equals("password"))
                 return true;
             else
                 return false;
@@ -116,7 +116,7 @@ namespace LocalDatabase_Server
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>
-        public static string Download(string s)
+        public static string DownloadRecognizer(string s)
         {
             return "";
         }
@@ -128,7 +128,7 @@ namespace LocalDatabase_Server
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>
-        public static string Send(string s)
+        public static string SendRecognizer(string s)
         {
             int IndexHome = s.IndexOf("<Path>") + "<Path>".Length;
             int IndexEnd = s.LastIndexOf("</Path>");
@@ -140,7 +140,7 @@ namespace LocalDatabase_Server
         /// For Server usage. Client sent send order and right there we have to launch Com.SendDirectory(directory)
         /// </summary>
         /// <returns></returns>
-        public static string SendDirectoryOrder()
+        public static string SendDirectoryOrderRecognizer()
         {
             return "<Task=SendDir></Task><#>";
         }
@@ -149,7 +149,7 @@ namespace LocalDatabase_Server
         /// For Server usage. Client sends this message and Server now has to recognize path and delete file.
         /// </summary>
         /// <param name="path"></param>
-        public static void Delete(string path)
+        public static void DeleteRecognizer(string path)
         {
 
         }
@@ -162,8 +162,8 @@ namespace LocalDatabase_Server
         /// <returns></returns>
         public static string responseRecognizer(string s)
         {
-            int IndexHome = s.IndexOf("<Path>") + "<Path>".Length;
-            int IndexEnd = s.LastIndexOf("</Path>");
+            int IndexHome = s.IndexOf("<Content>") + "<Content>".Length;
+            int IndexEnd = s.LastIndexOf("</Content>");
             return s.Substring(IndexHome, IndexEnd - IndexHome); ;
         }
         #endregion

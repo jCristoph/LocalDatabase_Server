@@ -5,8 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LocalDatabase_Server"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        Title="Serwer" Height="450" Width="800">
+    <Grid x:Name="___Brak_nazwy_">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
 
         <Button Content="Enter" HorizontalAlignment="Left" Margin="596,255,0,0" VerticalAlignment="Top" Width="75" Name="button" Click="buttonAction"/>
         <TextBox HorizontalAlignment="Left" Height="23" Margin="322,176,0,0" TextWrapping="Wrap" Text="Tutaj wpisz tekst" VerticalAlignment="Top" Width="120" Name ="txtBox"/>
