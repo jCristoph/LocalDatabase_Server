@@ -73,6 +73,28 @@ namespace LocalDatabase_Server
             }
 
         }
+        public string DeleteElement(string path)
+        {
+            int IndexHome = path.LastIndexOf("\\") + "\\".Length;
+            int IndexEnd = path.Length;
+            string name = path.Substring(IndexHome, IndexEnd - IndexHome);
+            path = path.Replace("Main_Folder", @"C:\Directory_test");
+            directoryElements.Remove(directoryElements.Find(x => x.path == path && x.name == name));
+            if (System.IO.File.Exists(path))
+            {
+                try
+                {
+                    System.IO.File.Delete(path);
+                }
+                catch (System.IO.IOException e)
+                {
+                    return e.Message;
+                }
+                return "GOOD";
+            }
+            else
+                return "BAD";
+        }
         private void PrintFolderContent(DirectoryElement dirEl)
         {
             if (dirEl.isFolder)

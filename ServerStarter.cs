@@ -49,7 +49,6 @@ namespace LocalDatabase_Server
         }
         public void HandleDeivce(Object obj)
         {
-            DirectoryManager dm = new DirectoryManager(@"C:\Directory_test");
             TcpClient client = (TcpClient)obj;
             //funkcja sprawdza czy klient jest polaczony
             while (true) 
@@ -76,7 +75,7 @@ namespace LocalDatabase_Server
                     sendMessage(ServerCom.CheckLoginMessage(ServerCom.LoginRecognizer(data)), client);
                     break;
                 case "ReadOrder": //kiedy wysylane jest zadanie pobrania pliku
-                    sendMessage(ServerCom.responseMessage(false, "OK"), client);
+                    sendMessage(ServerCom.responseMessage("OK"), client);
                     Thread.Sleep(1000);
                     downloadFile(client);
                     break;
@@ -88,6 +87,8 @@ namespace LocalDatabase_Server
                         sendMessage(mess, client);
                     break;
                 case "Delete":
+                    string path = ServerCom.DeleteRecognizer(data);
+                    sendMessage(ServerCom.responseMessage(dm.DeleteElement(path)), client);
                     break;
                 case "Response":
                     MessageBox.Show(ServerCom.responseRecognizer(data));
@@ -124,8 +125,8 @@ namespace LocalDatabase_Server
         }
         private void downloadFile(TcpClient client)
         {
-            //try
-            //{
+            try
+            {
                 client.GetStream().Flush();
                 Socket handlerSocket = client.Client;
                 if (handlerSocket.Connected)
@@ -156,16 +157,19 @@ namespace LocalDatabase_Server
                     Application.Current.Dispatcher.Invoke(new Action(() => { text.Text = "Downloaded!!!"; }));
                     handlerSocket = null;
                 }
-            //}
-            //catch
-            //{
-//
-            //}
+            }
+            catch
+            {
+
+            }
         }
         private void sendFile(TcpClient client, string path)
         {
-            string shortFileName = "plik1.txt";
-            string longFileName = @"C:\Directory_test\plik1.txt";
+            int IndexHome = path.LastIndexOf("\\") + "\\".Length;
+            int IndexEnd = path.Length;
+            string shortFileName = path.Substring(IndexHome, IndexEnd - IndexHome);
+            path = path.Replace("Main_Folder", @"C:\Directory_test");
+            string longFileName = path;// @"C:\Directory_test\plik1.txt";
             try
             {
                 byte[] fileNameByte = Encoding.ASCII.GetBytes(shortFileName);

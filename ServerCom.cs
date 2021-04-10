@@ -82,7 +82,7 @@ namespace LocalDatabase_Server
         /// <param name="goesWrong"></param>
         /// <param name="content"></param>
         /// <returns></returns>
-        public static string responseMessage(bool goesWrong, string content)
+        public static string responseMessage(string content)
         {
             return "<Task=Response><Content>" + content + "</Content></Task><#>";
         }
@@ -149,9 +149,11 @@ namespace LocalDatabase_Server
         /// For Server usage. Client sends this message and Server now has to recognize path and delete file.
         /// </summary>
         /// <param name="path"></param>
-        public static void DeleteRecognizer(string path)
+        public static string DeleteRecognizer(string s)
         {
-
+            int IndexHome = s.IndexOf("<Path>") + "<Path>".Length;
+            int IndexEnd = s.LastIndexOf("</Path>");
+            return s.Substring(IndexHome, IndexEnd - IndexHome);
         }
 
         /// <summary>
