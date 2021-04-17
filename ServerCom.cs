@@ -66,14 +66,6 @@ namespace LocalDatabase_Server
             return dirMessage;
         }
 
-        /// <summary>
-        /// For Server usage. Is order for client to download directory one more time because of changes.
-        /// </summary>
-        /// <returns></returns>
-        public static string UpdateDirectoryOrderMessage()
-        {
-            return "<Task=DownloadDir></Task><#>";
-        }
 
         /// <summary>
         /// For client and server usage. If something goes wrong or needs only confirmations then this method

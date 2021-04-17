@@ -119,9 +119,16 @@ namespace LocalDatabase_Server
         }
         private void sendMessage(string str, TcpClient client)
         {
-            var stream = client.GetStream();
-            Byte[] reply = System.Text.Encoding.UTF8.GetBytes(str);
-            stream.Write(reply, 0, reply.Length);
+            try
+            {
+                var stream = client.GetStream();
+                Byte[] reply = System.Text.Encoding.UTF8.GetBytes(str);
+                stream.Write(reply, 0, reply.Length);
+            }
+            catch (Exception e)
+            {
+
+            }
         }
         private void downloadFile(TcpClient client)
         {
