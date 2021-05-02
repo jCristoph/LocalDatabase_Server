@@ -1,19 +1,30 @@
-﻿<Window x:Class="LocalDatabase_Server.MainWindow"
+﻿<Window x:Class="PZ_Panel_Logowania.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:LocalDatabase_Server"
+        xmlns:local="clr-namespace:PZ_Panel_Logowania"
         mc:Ignorable="d"
-        Title="Serwer" Height="450" Width="800">
-    <Grid x:Name="___Brak_nazwy_">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
+        Title="Panel_Logowania" Height="450" Width="800">
+    <Grid>
+        <Viewbox Stretch="Fill">
+            <Grid Height="450" Width="800">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="5"/>
+            </Grid.RowDefinitions>
+            <DockPanel Margin="0,0,0,-644">
+                <Menu Foreground="White" Background="#282828" IsMainMenu="True" Grid.Row="0" DockPanel.Dock="Top">
+                    <MenuItem x:Name="Logowanie" Header="Logowanie" Click="log">
+            </MenuItem>
+            <MenuItem x:Name="Rejestracja" Header="Rejestracja" Click="rej"/>
+            <StackPanel Height="10" Width="10"/>
 
-        <Button Content="Enter" HorizontalAlignment="Left" Margin="596,255,0,0" VerticalAlignment="Top" Width="75" Name="button" Click="buttonAction"/>
-        <TextBox HorizontalAlignment="Left" Height="23" Margin="322,176,0,0" TextWrapping="Wrap" Text="Tutaj wpisz tekst" VerticalAlignment="Top" Width="120" Name ="txtBox"/>
-        <TextBlock HorizontalAlignment="Left" Margin="44,78,0,0" TextWrapping="Wrap" Text="Status:" VerticalAlignment="Top" Height="28" Width="713" FontSize="18" Name="text"/>
 
+        </Menu>
+        <WrapPanel x:Name="MainContainer" Grid.Row="1" Margin="0,0.4,0,194.6" ></WrapPanel>
+            </DockPanel>
+
+        </Grid>
+        </Viewbox>
     </Grid>
 </Window>

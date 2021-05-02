@@ -12,37 +12,80 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using System.Threading;
+using System.Data.SqlClient;
+using System.Data;
 
-namespace LocalDatabase_Server
+
+namespace PZ_Panel_Logowania
 {
     /// <summary>
     /// Logika interakcji dla klasy MainWindow.xaml
-    /// </summary>ty
+    /// </summary>
     public partial class MainWindow : Window
     {
         public MainWindow()
-        {
+        { 
             InitializeComponent();
-            Task t = new Task(() => newThread());
-            t.Start();
-        } 
-
-        private void newThread()
-        {
-            ServerStarter ss = new ServerStarter(text, "127.0.0.1", 25000);
-            //while (true)
-            //{
-            //    Dispatcher.Invoke(new Action(() => { text.Text = txtBox.Text; }));
-            //    Thread.Sleep(200);
-            //}
+            MainContainer.Children.Add(new Logowanie());
         }
 
-        private void buttonAction(object sender, RoutedEventArgs e)
+
+
+        /*private void Des_Click(object sender, RoutedEventArgs e)
         {
-            button = sender as Button;
-            MessageBox.Show(txtBox.Text);
+            MainContainer.Children.Clear();
+            MainContainer.Children.Add(new Rejestracja());
+
+        }
+        */
+        int i = 0;
+
+        private void log(object sender, RoutedEventArgs e)
+        {
+            MainContainer.Children.Clear();
+            MainContainer.Children.Add(new Logowanie());
         }
 
+        private void rej(object sender, RoutedEventArgs e)
+        {
+            MainContainer.Children.Clear();
+            MainContainer.Children.Add(new Rejestracja());
+        }
+
+
+        //
+        /*        private void Txt_nazwa_TextChanged(object sender, EventArgs e)
+                {
+
+                }
+
+        private void btn_zaloguj_Click(object sender, RoutedEventArgs e)
+                {
+                    SqlConnection polaczenie = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\krzem\source\repos\PZ_Panel_Logowania\PZ_Panel_Logowania\Baza_Danych\PZ_BD.mdf;Integrated Security=True;Connect Timeout=30");
+                    SqlCommand zapytanie = new SqlCommand();
+                    zapytanie.Connection = polaczenie;
+                    zapytanie.CommandText = "SELECT * FROM [User] WHERE Login = '" + Txt_nazwa.Text.Trim()+ "' and Password = '" + Txt_haslo.Password.Trim()+"'";
+                    SqlDataAdapter adapter = new SqlDataAdapter(zapytanie);
+                    DataTable tabela = new DataTable();
+
+                    adapter.Fill(tabela);
+                    if (tabela.Rows.Count == 1)
+                    {
+                        MessageBox.Show("zalogowano");
+                    }
+                    else
+                    {
+                        MessageBox.Show("błędny login lub hasło");
+                    }
+                }
+
+                private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+                {
+                }
+
+                private void PasswordBox_TextChanged(object sender, TextChangedEventArgs e)
+                {
+
+                }*/
     }
 }

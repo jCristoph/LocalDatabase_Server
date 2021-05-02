@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace LocalDatabase_Server
+namespace PZ_Panel_Logowania
 {
     /// <summary>
     /// Logika interakcji dla klasy App.xaml

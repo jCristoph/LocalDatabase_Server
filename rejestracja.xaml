@@ -1,0 +1,28 @@
+﻿<UserControl x:Class="PZ_Panel_Logowania.Rejestracja"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PZ_Panel_Logowania"
+        mc:Ignorable="d"
+       Height="450" Width="800" Background="White">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0*"/>
+            <ColumnDefinition Width="295*"/>
+            <ColumnDefinition Width="102*"/>
+        </Grid.ColumnDefinitions>
+        <Label Grid.ColumnSpan="2" Content="Imię" HorizontalAlignment="Left" Margin="200,70,0,0" VerticalAlignment="Top" Width="120" Height="30"/>
+        <Label Grid.ColumnSpan="2" Content="Nazwisko" HorizontalAlignment="Left" Margin="200,125,0,0" VerticalAlignment="Top" Width="120" Height="30"/>
+        <Label Grid.ColumnSpan="2" Content="Login" HorizontalAlignment="Left" Margin="200,175,0,0" VerticalAlignment="Top" Width="120" Height="30"/>
+        <Label Grid.ColumnSpan="2" Content="Hasło" HorizontalAlignment="Left" Margin="200,240,0,0" VerticalAlignment="Top" Width="120" Height="30"/>
+        <Label Grid.ColumnSpan="2" Content="Potwierdź hasło" HorizontalAlignment="Left" Margin="200,290,0,0" VerticalAlignment="Top" Width="120" Height="30"/>
+        <TextBox x:Name="Txt_imie" Grid.ColumnSpan="3" HorizontalAlignment="Left" Height="30" Margin="435,70,0,0" TextWrapping="Wrap" Text="Podaj imię" VerticalAlignment="Top" Width="155" TextChanged="TextBox_TextChanged_1"/>
+        <TextBox x:Name="Txt_nazwisko" Grid.ColumnSpan="3" HorizontalAlignment="Left" Height="30" Margin="435,120,0,0" TextWrapping="Wrap" Text="Podaj nazwisko" VerticalAlignment="Top" Width="155" TextChanged="Txt_nazwisko_TextChanged"/>
+        <TextBox x:Name="Txt_login" Grid.ColumnSpan="3" HorizontalAlignment="Left" Height="30" Margin="435,180,0,0" TextWrapping="Wrap" Text="Podaj login" VerticalAlignment="Top" Width="155" TextChanged="Txt_login_TextChanged"/>
+        <TextBox x:Name="Txt_haslo" Grid.ColumnSpan="3" HorizontalAlignment="Left" Height="30" Margin="435,240,0,0" TextWrapping="Wrap" Text="Podaj hasło" VerticalAlignment="Top" Width="155" TextChanged="Txt_haslo_TextChanged"/>
+        <TextBox x:Name="Txt_haslo2" Grid.ColumnSpan="3" HorizontalAlignment="Left" Height="30" Margin="435,290,0,0" TextWrapping="Wrap" Text="Powtórz hasło" VerticalAlignment="Top" Width="155" TextChanged="Txt_haslo2_TextChanged"/>
+        <Button Grid.ColumnSpan="2" Content="Zarejestruj" HorizontalAlignment="Left" Margin="270,345,0,0" VerticalAlignment="Top" Width="165" Height="34" Click="Button_Click"/>
+
+    </Grid>
+</UserControl>
