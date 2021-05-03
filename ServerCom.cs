@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 
 namespace LocalDatabase_Server
 {
@@ -96,7 +98,14 @@ namespace LocalDatabase_Server
             IndexEnd = s.LastIndexOf("</Pass>");
             string passowrd = s.Substring(IndexHome, IndexEnd - IndexHome);
             //tutaj funkcja sprawdzajaca haslo
-            if (login.Equals("login") && passowrd.Equals("password"))
+            SqlConnection polaczenie = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\PC\source\repos\LocalDatabase_Server\PZ_BD.mdf;Integrated Security=True;Connect Timeout=30");
+            SqlCommand zapytanie = new SqlCommand();
+            zapytanie.Connection = polaczenie;
+            zapytanie.CommandText = "SELECT * FROM [User] WHERE Login = '" + login + "' and Password = '" + passowrd + "'";
+            SqlDataAdapter adapter = new SqlDataAdapter(zapytanie);
+            DataTable tabela = new DataTable();
+            adapter.Fill(tabela);
+            if (tabela.Rows.Count == 1)
                 return true;
             else
                 return false;

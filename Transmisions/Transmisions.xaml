@@ -1,0 +1,38 @@
+﻿<Window x:Class="LocalDatabase_Server.Transmisions.Transmisions"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:LocalDatabase_Server.Transmisions"
+        mc:Ignorable="d"
+        Title="Transmisions" Height="450" Width="800">
+    <Grid>
+        <ListView HorizontalAlignment="Left" Height="180" Margin="29,41,0,0" VerticalAlignment="Top" Width="350">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <WrapPanel>
+                        <TextBlock x:Name="loginText" Text=""/>
+                        <TextBlock x:Name="actionText" Text=""/>
+                        <TextBlock x:Name="goalText" Text=""/>
+                    </WrapPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        <ListView HorizontalAlignment="Left" Height="180" Margin="416,41,0,0" VerticalAlignment="Top" Width="350">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <WrapPanel>
+                        <TextBlock x:Name="usersLoginText" Text=""/>
+                        <TextBlock x:Name="tokenText" Text=""/>
+                        <Button Content="Block Account" Background="Pink"   BorderBrush="Black" BorderThickness="1" Click="OnBlockUser" ClickMode="Hover"/>
+                    </WrapPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        <TextBlock HorizontalAlignment="Left" Margin="29,20,0,0" TextWrapping="Wrap" Text="Latest transactions" VerticalAlignment="Top"/>
+        <TextBlock HorizontalAlignment="Left" Margin="416,20,0,0" TextWrapping="Wrap" VerticalAlignment="Top"><Run Text="Logged Users"/><LineBreak/><Run/></TextBlock>
+        <Button Content="All Users List" HorizontalAlignment="Left" Margin="482,237,0,0" VerticalAlignment="Top" Width="200" Height="40"/>
+        <Button Content="Register User" HorizontalAlignment="Left" Margin="482,296,0,0" VerticalAlignment="Top" Width="200" Height="40"/>
+        <Button Content="Shut Down System" HorizontalAlignment="Left" Margin="482,357,0,0" VerticalAlignment="Top" Width="200" Height="40"/>
+    </Grid>
+</Window>

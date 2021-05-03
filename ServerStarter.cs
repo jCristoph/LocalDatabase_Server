@@ -149,7 +149,7 @@ namespace LocalDatabase_Server
                         string folderPath = @"c:\Directory_test\";
                         handlerSocket.Receive(dataByte);
                         int fileNameLen = BitConverter.ToInt32(dataByte, 0);
-                        fileName = Encoding.ASCII.GetString(dataByte, 4, fileNameLen);
+                        fileName = Encoding.UTF8.GetString(dataByte, 4, fileNameLen);
                         Stream fileStream = File.OpenWrite(folderPath + fileName);
                         fileStream.Write(dataByte, 4 + fileNameLen, (1024 - (4 + fileNameLen)));
                         do
@@ -165,9 +165,9 @@ namespace LocalDatabase_Server
                     handlerSocket = null;
                 }
             }
-            catch
+            catch (Exception e)
             {
-
+                MessageBox.Show(e.ToString());
             }
         }
         private void sendFile(TcpClient client, string path)
@@ -179,7 +179,7 @@ namespace LocalDatabase_Server
             string longFileName = path;// @"C:\Directory_test\plik1.txt";
             try
             {
-                byte[] fileNameByte = Encoding.ASCII.GetBytes(shortFileName);
+                byte[] fileNameByte = Encoding.UTF8.GetBytes(shortFileName);
                 byte[] fileData = File.ReadAllBytes(longFileName);
                 byte[] clientData = new byte[4 + fileNameByte.Length + fileData.Length];
                 byte[] fileNameLen = BitConverter.GetBytes(fileNameByte.Length);
@@ -190,9 +190,9 @@ namespace LocalDatabase_Server
                 networkStream.Write(clientData, 0, clientData.GetLength(0));
                 networkStream.Close();
             }
-            catch
+            catch (Exception e)
             {
-
+                MessageBox.Show(e.ToString());
             }
         }
     }

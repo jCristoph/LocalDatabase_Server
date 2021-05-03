@@ -30,7 +30,7 @@ namespace LocalDatabase_Server
 
         private void newThread()
         {
-            ServerStarter ss = new ServerStarter(text, "127.0.0.1", 25000);
+            ServerStarter ss = new ServerStarter(text, "192.168.1.19", 25000);
             //while (true)
             //{
             //    Dispatcher.Invoke(new Action(() => { text.Text = txtBox.Text; }));
