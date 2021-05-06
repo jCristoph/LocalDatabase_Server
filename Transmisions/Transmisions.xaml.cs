@@ -23,5 +23,6 @@ namespace LocalDatabase_Server.Transmisions
         {
             InitializeComponent();
         }
+
     }
 }

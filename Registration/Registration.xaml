@@ -9,6 +9,6 @@
     <Grid>
         <TextBox  x:Name="SurnameText" HorizontalAlignment="Left" Margin="299,106,0,0" TextWrapping="Wrap" Text="Surname" VerticalAlignment="Top" Height="30" Width="180"/>
         <TextBox  x:Name="NameText" HorizontalAlignment="Left" Margin="299,159,0,0" TextWrapping="Wrap" Text="Name" VerticalAlignment="Top" Height="30" Width="180"/>
-        <Button Content="Create Account" HorizontalAlignment="Left" Margin="312,277,0,0" VerticalAlignment="Top" Width="150" Height="30"/>
+        <Button Content="Create Account" HorizontalAlignment="Left" Margin="312,277,0,0" VerticalAlignment="Top" Width="150" Height="30" Click="Button_Click"/>
     </Grid>
 </Window>

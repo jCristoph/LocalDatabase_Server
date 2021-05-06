@@ -67,8 +67,7 @@ namespace LocalDatabase_Server
             int taskIndexHome = data.IndexOf("<Task=") + "<Task=".Length;
             int taskIndexEnd = data.IndexOf(">");
             string task = data.Substring(taskIndexHome, taskIndexEnd - taskIndexHome);
-            DirectoryManager dm = new DirectoryManager(@"C:\Directory_test");
-            Application.Current.Dispatcher.Invoke(new Action(() => { text.Text = task; }));
+            DirectoryManager dm = null;
             switch (task)
             {
                 case "Login":
@@ -83,7 +82,9 @@ namespace LocalDatabase_Server
                     sendFile(client, ServerCom.SendRecognizer(data));
                     break;
                 case "SendDir": //kiedy wysylane jest zadanie wyslania biblioteki
-                    foreach(var mess in ServerCom.SendDirectoryMessage(dm.directoryElements))
+                    string token = ServerCom.SendDirectoryOrderRecognizer(data);
+                    dm = new DirectoryManager(@"C:\Directory_test\" + token + "\\");
+                    foreach (var mess in ServerCom.SendDirectoryMessage(dm.directoryElements))
                         sendMessage(mess, client);
                     break;
                 case "Delete":

@@ -24,7 +24,7 @@
                     <WrapPanel>
                         <TextBlock x:Name="usersLoginText" Text=""/>
                         <TextBlock x:Name="tokenText" Text=""/>
-                        <Button Content="Block Account" Background="Pink"   BorderBrush="Black" BorderThickness="1" Click="OnBlockUser" ClickMode="Hover"/>
+                        <Button Content="Block Account" Background="Pink"   BorderBrush="Black" BorderThickness="1" ClickMode="Hover"/>
                     </WrapPanel>
                 </DataTemplate>
             </ListView.ItemTemplate>

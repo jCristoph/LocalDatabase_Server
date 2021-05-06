@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Windows;
 
 namespace LocalDatabase_Server
 {
@@ -12,12 +13,12 @@ namespace LocalDatabase_Server
         /// </summary>
         /// <param name="isLogged"></param>
         /// <returns></returns>
-        public static string CheckLoginMessage(bool isLogged)
+        public static string CheckLoginMessage(string isLogged)
         {
-            if (isLogged)
-                return "<Task=CheckLogin><isLogged>Yes</isLogged><Login>";
+            if (!isLogged.Equals("ERROR"))
+                return "<Task=CheckLogin><isLogged>" + isLogged +"</isLogged><Login>";
             else
-                return "<Task=CheckLogin><isLogged>No</isLogged><Login>";
+                return "<Task=CheckLogin><isLogged>ERROR</isLogged><Login>";
         }
 
         /// <summary>
@@ -89,7 +90,7 @@ namespace LocalDatabase_Server
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>
-        public static bool LoginRecognizer(string s)
+        public static string LoginRecognizer(string s)
         {
             int IndexHome = s.IndexOf("<Login>") + "<Login>".Length;
             int IndexEnd = s.LastIndexOf("</Login>");
@@ -106,9 +107,9 @@ namespace LocalDatabase_Server
             DataTable tabela = new DataTable();
             adapter.Fill(tabela);
             if (tabela.Rows.Count == 1)
-                return true;
+                return tabela.Rows[0].ItemArray.GetValue(5).ToString();
             else
-                return false;
+                return "ERROR";
         }
 
         /// <summary>
@@ -141,9 +142,12 @@ namespace LocalDatabase_Server
         /// For Server usage. Client sent send order and right there we have to launch Com.SendDirectory(directory)
         /// </summary>
         /// <returns></returns>
-        public static string SendDirectoryOrderRecognizer()
+        public static string SendDirectoryOrderRecognizer(string s)
         {
-            return "<Task=SendDir></Task><#>";
+            int IndexHome = s.IndexOf("<Token>") + "<Token>".Length;
+            int IndexEnd = s.LastIndexOf("</Token>");
+            string token = s.Substring(IndexHome, IndexEnd - IndexHome);
+            return token;
         }
 
         /// <summary>

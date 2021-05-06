@@ -7,13 +7,15 @@ namespace LocalDatabase_Server
     class DirectoryManager
     {
         public List<DirectoryElement> directoryElements { get; set; }
+        private string tokenDirectory;
 
         public DirectoryManager(string targetDirectory)
         {
+            tokenDirectory = targetDirectory.Remove(targetDirectory.Length - 1);
             directoryElements = new List<DirectoryElement>();
             DirectoryElement de = new DirectoryElement("\\Main_Folder", 0, "None", true);
             directoryElements.Add(de);
-            ProcessDirectory(targetDirectory);
+            ProcessDirectory(tokenDirectory);
             //foreach (var dirEl in directoryElements)
             //    PrintFolderContent(dirEl);
         }
@@ -28,14 +30,14 @@ namespace LocalDatabase_Server
             string[] fileEntries = Directory.GetFiles(targetDirectory);
             foreach (string path in fileEntries)
             {
-                DirectoryElement de = new DirectoryElement(path.Replace(@"C:\Directory_test", "Main_Folder"), new FileInfo(path).Length, File.GetLastWriteTime(path).ToString(), false);
+                DirectoryElement de = new DirectoryElement(path.Replace(tokenDirectory, "Main_Folder"), new FileInfo(path).Length, File.GetLastWriteTime(path).ToString(), false);
                 directoryElements.Add(de);
             }
 
             string[] subdirectoryEntries = Directory.GetDirectories(targetDirectory);
             foreach (string subdirectory in subdirectoryEntries)
             {
-                DirectoryElement de = new DirectoryElement(subdirectory.Replace(@"C:\Directory_test", "Main_Folder"), 0, "None", true);
+                DirectoryElement de = new DirectoryElement(subdirectory.Replace(tokenDirectory, "Main_Folder"), 0, "None", true);
                 directoryElements.Add(de);
                 ProcessDirectory(subdirectory);
             }

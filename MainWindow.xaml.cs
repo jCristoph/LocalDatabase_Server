@@ -31,17 +31,12 @@ namespace LocalDatabase_Server
         private void newThread()
         {
             ServerStarter ss = new ServerStarter(text, "192.168.1.19", 25000);
-            //while (true)
-            //{
-            //    Dispatcher.Invoke(new Action(() => { text.Text = txtBox.Text; }));
-            //    Thread.Sleep(200);
-            //}
         }
 
         private void buttonAction(object sender, RoutedEventArgs e)
         {
-            button = sender as Button;
-            MessageBox.Show(txtBox.Text);
+            Registration.Registration r = new Registration.Registration();
+            r.Show();
         }
 
     }

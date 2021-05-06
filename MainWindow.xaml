@@ -11,8 +11,7 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
 
-        <Button Content="Enter" HorizontalAlignment="Left" Margin="596,255,0,0" VerticalAlignment="Top" Width="75" Name="button" Click="buttonAction"/>
-        <TextBox HorizontalAlignment="Left" Height="23" Margin="322,176,0,0" TextWrapping="Wrap" Text="Tutaj wpisz tekst" VerticalAlignment="Top" Width="120" Name ="txtBox"/>
+        <Button Content="Rejestracja" HorizontalAlignment="Left" Margin="596,255,0,0" VerticalAlignment="Top" Width="75" Name="button" Click="buttonAction"/>
         <TextBlock HorizontalAlignment="Left" Margin="44,78,0,0" TextWrapping="Wrap" Text="Status:" VerticalAlignment="Top" Height="28" Width="713" FontSize="18" Name="text"/>
 
     </Grid>
