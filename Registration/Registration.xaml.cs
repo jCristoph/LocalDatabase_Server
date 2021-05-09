@@ -36,12 +36,13 @@ namespace LocalDatabase_Server.Registration
             DataTable tabela = new DataTable();
             adapter.Fill(tabela);
 
-            zapytanie.CommandText = @"INSERT INTO [User]([Name],[Surname],[Login],[Password],[Token]) VALUES ('" + SurnameText.Text + "', '" + NameText.Text + "', '" + generateLogin() + "', '" + generateRandomString() + "', '" + generateRandomString() + "')";
+            string token = generateRandomString();
+            zapytanie.CommandText = @"INSERT INTO [User]([Name],[Surname],[Login],[Password],[Token]) VALUES ('" + SurnameText.Text + "', '" + NameText.Text + "', '" + generateLogin() + "', '" + token + "', '" + token + "')";
             polaczenie.Open();
             zapytanie.ExecuteNonQuery();
             polaczenie.Close();
 
-            string pathString = System.IO.Path.Combine(@"C:\Directory_test", generateRandomString().ToString());
+            string pathString = System.IO.Path.Combine(@"C:\Directory_test", token);
             System.IO.Directory.CreateDirectory(pathString);
 
             MessageBox.Show("Dodano użytkownika");
@@ -69,35 +70,6 @@ namespace LocalDatabase_Server.Registration
         private string generateLogin()
         {
             return SurnameText.Text + '.' + NameText.Text;
-        }
-        private void TextBox_TextChanged_1(object sender, TextChangedEventArgs e)
-        {
-
-        }
-
-        private void Txt_nazwisko_TextChanged(object sender, TextChangedEventArgs e)
-        {
-
-        }
-
-        private void Txt_login_TextChanged(object sender, TextChangedEventArgs e)
-        {
-
-        }
-
-        private void Txt_haslo_TextChanged(object sender, TextChangedEventArgs e)
-        {
-
-        }
-
-        private void Txt_haslo2_TextChanged(object sender, TextChangedEventArgs e)
-        {
-
-        }
-
-        private void Button_Click_1(object sender, RoutedEventArgs e)
-        {
-
         }
     }
 }

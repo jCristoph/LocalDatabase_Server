@@ -16,9 +16,9 @@ namespace LocalDatabase_Server
         static TextBlock text = null;
         TcpListener server = null;
         int connectedDevices = 0;
-        public ServerStarter(TextBlock txt, string ip, int port)
+        DirectoryManager dm = null;
+        public ServerStarter(string ip, int port)
         {
-            text = txt;
             IPAddress localAddr = IPAddress.Parse(ip);
             server = new TcpListener(localAddr, port);
             server.Start();
@@ -30,11 +30,7 @@ namespace LocalDatabase_Server
             {
                 while (true)
                 {
-                    // Console.WriteLine("Waiting for a connection...");
-                    Application.Current.Dispatcher.Invoke(new Action(() => { text.Text = "Waiting for a connection..., Connected: " + connectedDevices; }));
                     TcpClient client = server.AcceptTcpClient();
-                    //Console.WriteLine("Connected!");
-                    Application.Current.Dispatcher.Invoke(new Action(() => { text.Text = "Connected!"; }));
                     connectedDevices++;
                     Task t1 = new Task(() => HandleDeivce(client));
                     t1.Start();
@@ -42,8 +38,6 @@ namespace LocalDatabase_Server
             }
             catch (SocketException e)
             {
-                //Console.WriteLine("SocketException: {0}", e);
-                Application.Current.Dispatcher.Invoke(new Action(() => { text.Text = "SocketException: " + e; }));
                 server.Stop();
             }
         }
@@ -67,7 +61,6 @@ namespace LocalDatabase_Server
             int taskIndexHome = data.IndexOf("<Task=") + "<Task=".Length;
             int taskIndexEnd = data.IndexOf(">");
             string task = data.Substring(taskIndexHome, taskIndexEnd - taskIndexHome);
-            DirectoryManager dm = null;
             switch (task)
             {
                 case "Login":
@@ -75,8 +68,9 @@ namespace LocalDatabase_Server
                     break;
                 case "ReadOrder": //kiedy wysylane jest zadanie pobrania pliku
                     sendMessage(ServerCom.responseMessage("OK"), client);
+                    string destinationPath = ServerCom.DownloadRecognizer(data);
                     Thread.Sleep(1000);
-                    downloadFile(client);
+                    downloadFile(client, destinationPath);
                     break;
                 case "Send": ////kiedy wysylane jest zadanie wyslania pliku
                     sendFile(client, ServerCom.SendRecognizer(data));
@@ -88,8 +82,9 @@ namespace LocalDatabase_Server
                         sendMessage(mess, client);
                     break;
                 case "Delete":
-                    string path = ServerCom.DeleteRecognizer(data);
-                    sendMessage(ServerCom.responseMessage(dm.DeleteElement(path)), client);
+                    string path = ServerCom.DeleteRecognizer(data)[0];
+                    string isFolder = ServerCom.DeleteRecognizer(data)[1];
+                    sendMessage(ServerCom.responseMessage(dm.DeleteElement(path, isFolder)), client);
                     break;
                 case "Response":
                     MessageBox.Show(ServerCom.responseRecognizer(data));
@@ -131,7 +126,7 @@ namespace LocalDatabase_Server
 
             }
         }
-        private void downloadFile(TcpClient client)
+        private void downloadFile(TcpClient client, string destinationPath)
         {
             try
             {
@@ -146,23 +141,21 @@ namespace LocalDatabase_Server
                     Byte[] dataByte = new Byte[blockSize];
                     lock (this)
                     {
-                        Application.Current.Dispatcher.Invoke(new Action(() => { text.Text = "Downloading!!!"; }));
-                        string folderPath = @"c:\Directory_test\";
+                        string folderPath = destinationPath.Replace("Main_Folder", @"C:\Directory_test") + @"\";
                         handlerSocket.Receive(dataByte);
                         int fileNameLen = BitConverter.ToInt32(dataByte, 0);
                         fileName = Encoding.UTF8.GetString(dataByte, 4, fileNameLen);
                         Stream fileStream = File.OpenWrite(folderPath + fileName);
                         fileStream.Write(dataByte, 4 + fileNameLen, (1024 - (4 + fileNameLen)));
-                        do
+                        while (networkStream.DataAvailable)
                         {
                             thisRead = networkStream.Read(dataByte, 0, blockSize);
                             fileStream.Write(dataByte, 0, thisRead);
                             if (!networkStream.DataAvailable)
                                 Thread.Sleep(10);
-                        } while (networkStream.DataAvailable);
+                        } 
                         fileStream.Close();
                     }
-                    Application.Current.Dispatcher.Invoke(new Action(() => { text.Text = "Downloaded!!!"; }));
                     handlerSocket = null;
                 }
             }
@@ -177,7 +170,7 @@ namespace LocalDatabase_Server
             int IndexEnd = path.Length;
             string shortFileName = path.Substring(IndexHome, IndexEnd - IndexHome);
             path = path.Replace("Main_Folder", @"C:\Directory_test");
-            string longFileName = path;// @"C:\Directory_test\plik1.txt";
+            string longFileName = path;
             try
             {
                 byte[] fileNameByte = Encoding.UTF8.GetBytes(shortFileName);

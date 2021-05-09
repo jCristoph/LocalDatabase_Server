@@ -30,14 +30,22 @@ namespace LocalDatabase_Server
 
         private void newThread()
         {
-            ServerStarter ss = new ServerStarter(text, "192.168.1.19", 25000);
+            ServerStarter ss = new ServerStarter("192.168.1.204", 25000);
         }
 
-        private void buttonAction(object sender, RoutedEventArgs e)
+        private void registrationButton_Click(object sender, RoutedEventArgs e)
         {
             Registration.Registration r = new Registration.Registration();
             r.Show();
         }
 
+        private void allUsersButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+        private void exitButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

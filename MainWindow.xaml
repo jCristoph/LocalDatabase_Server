@@ -9,10 +9,42 @@
     <Grid x:Name="___Brak_nazwy_">
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
+            <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-
-        <Button Content="Rejestracja" HorizontalAlignment="Left" Margin="596,255,0,0" VerticalAlignment="Top" Width="75" Name="button" Click="buttonAction"/>
-        <TextBlock HorizontalAlignment="Left" Margin="44,78,0,0" TextWrapping="Wrap" Text="Status:" VerticalAlignment="Top" Height="28" Width="713" FontSize="18" Name="text"/>
-
+        <Grid.RowDefinitions>
+            <RowDefinition Height="5*"/>
+            <RowDefinition Height="40*"/>
+            <RowDefinition Height="40*"/>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="2" Grid.Column="1">
+            <Button Content="Rejestracja" HorizontalAlignment="Center" VerticalAlignment="Center" Width="180" Name="registrationButton" Click="registrationButton_Click" Margin="10"/>
+            <Button Content="Lista wszystkich użytkowników" HorizontalAlignment="Center"  VerticalAlignment="Center" Width="180" Name="allUsersButton" Click="allUsersButton_Click" Margin="10"/>
+            <Button Content="Wyłącz system" HorizontalAlignment="Center" VerticalAlignment="Center" Width="180" Name="exitButton" Click="exitButton_Click" Margin="10"/>
+        </StackPanel>
+        <ListView Margin="10" Name="transactionList" Grid.Column="0" Grid.Row="1">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Login" DisplayMemberBinding="{Binding Name}" />
+                    <GridViewColumn Header="Typ" DisplayMemberBinding="{Binding Age}" />
+                    <GridViewColumn Header="Cel" >
+                    </GridViewColumn>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <ListView Margin="10" Name="activeUsersList" Grid.Column="1" Grid.Row="1">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Login" DisplayMemberBinding="{Binding Name}" />
+                    <GridViewColumn Header="Token" DisplayMemberBinding="{Binding Age}" />
+                    <GridViewColumn Header="Akcja">
+                    </GridViewColumn>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <Canvas
+            Grid.Column="0"
+            Grid.Row="3"
+            x:Name="canv"
+            Margin="10"/>
     </Grid>
 </Window>

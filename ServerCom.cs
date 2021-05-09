@@ -120,7 +120,10 @@ namespace LocalDatabase_Server
         /// <returns></returns>
         public static string DownloadRecognizer(string s)
         {
-            return "";
+            int IndexHome = s.IndexOf("<Path>") + "<Path>".Length;
+            int IndexEnd = s.LastIndexOf("</Path>");
+            string path = s.Substring(IndexHome, IndexEnd - IndexHome);
+            return path;
         }
 
         /// <summary>
@@ -154,11 +157,16 @@ namespace LocalDatabase_Server
         /// For Server usage. Client sends this message and Server now has to recognize path and delete file.
         /// </summary>
         /// <param name="path"></param>
-        public static string DeleteRecognizer(string s)
+        public static string[] DeleteRecognizer(string s)
         {
-            int IndexHome = s.IndexOf("<Path>") + "<Path>".Length;
-            int IndexEnd = s.LastIndexOf("</Path>");
-            return s.Substring(IndexHome, IndexEnd - IndexHome);
+            string[] data = new string[2];
+            int IndexHomePath = s.IndexOf("<Path>") + "<Path>".Length;
+            int IndexEndPath = s.LastIndexOf("</Path>");
+            int IndexHomeFolder = s.IndexOf("<isFolder>") + "<isFolder>".Length;
+            int IndexEndFolder = s.LastIndexOf("</isFolder>");
+            data[0] = s.Substring(IndexHomePath, IndexEndPath - IndexHomePath);
+            data[1] = s.Substring(IndexHomeFolder, IndexEndFolder - IndexHomeFolder);
+            return data;
         }
 
         /// <summary>
