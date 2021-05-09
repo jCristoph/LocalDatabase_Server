@@ -41,10 +41,51 @@
                 </GridView>
             </ListView.View>
         </ListView>
-        <Canvas
+        <StackPanel
             Grid.Column="0"
             Grid.Row="3"
-            x:Name="canv"
-            Margin="10"/>
+            x:Name="PieChart"
+                Orientation="Horizontal"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Center">
+            <Canvas x:Name="canv"
+                Margin="20,0"/>
+
+            <ScrollViewer Margin="20,0"
+                      Padding="10"
+                      VerticalAlignment="Center"
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Hidden">
+                <ItemsControl x:Name="detailsItemsControl">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="{x:Type local:Category}">
+                            <StackPanel Orientation="Horizontal"
+                                    Margin="10">
+                                <Rectangle Width="20"
+                                       Height="20"
+                                       Fill="{Binding ColorBrush}"
+                                       Margin="0,0,5,0"
+                                       VerticalAlignment="Center"/>
+
+                                <TextBlock Text="{Binding Title}"
+                                       FontSize="20"
+                                       VerticalAlignment="Center"/>
+
+                                <TextBlock Text="{Binding Percentage}"
+                                       Foreground="{Binding ColorBrush}"
+                                       FontSize="20"
+                                       Margin="20,0,0,0"
+                                       VerticalAlignment="Center"/>
+
+                                <TextBlock Text="%"
+                                       Foreground="{Binding ColorBrush}"
+                                       FontSize="20"
+                                       VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </StackPanel>
     </Grid>
 </Window>
