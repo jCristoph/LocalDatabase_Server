@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Threading;
 using System.Diagnostics;
+using System.IO;
 
 namespace LocalDatabase_Server
 {
@@ -33,7 +34,7 @@ namespace LocalDatabase_Server
 
         private void newThread()
         {
-            ServerStarter ss = new ServerStarter("192.168.1.204", 25000);
+            ServerStarter ss = new ServerStarter("127.0.0.1", 25000);
         }
 
         private void registrationButton_Click(object sender, RoutedEventArgs e)
@@ -50,6 +51,22 @@ namespace LocalDatabase_Server
         {
 
         }
+
+        public static long GetFileSizeSumFromDirectory(string searchDirectory)
+        {
+            var files = Directory.EnumerateFiles(searchDirectory);
+
+            // get the sizeof all files in the current directory
+            var currentSize = (from file in files let fileInfo = new FileInfo(file) select fileInfo.Length).Sum();
+
+            var directories = Directory.EnumerateDirectories(searchDirectory);
+
+            // get the size of all files in all subdirectories
+            var subDirSize = (from directory in directories select GetFileSizeSumFromDirectory(directory)).Sum();
+
+            return currentSize + subDirSize;
+        }
+
         private void pieChart()
         {
             float pieWidth = 100;
@@ -59,18 +76,23 @@ namespace LocalDatabase_Server
             float radius = pieWidth / 2;
             canv.Width = pieWidth;
             canv.Height = pieHeight;
+            DriveInfo dDrive = new DriveInfo("C");
+            var folderSize = (double)GetFileSizeSumFromDirectory(@"C:\Directory_test\");
+            var availableSpace = dDrive.AvailableFreeSpace;
+            double p1 = Math.Round((folderSize / availableSpace),2) * 100.0f;
+            double p2 = Math.Round(((float)(dDrive.AvailableFreeSpace - GetFileSizeSumFromDirectory(@"C:\Directory_test\")) / dDrive.AvailableFreeSpace),2) * 100.0f;
+
             Categories = new List<Category>() {
                 new Category
                 {
                     Title = "Zajęte",
-                    Percentage = 10,
+                    Percentage = p1,
                     ColorBrush = Brushes.Red,
                 },
-
                 new Category
                 {
                     Title = "Wolne",
-                    Percentage = 90,
+                    Percentage = p2,
                     ColorBrush = Brushes.Aqua,
                 },
             };
@@ -78,7 +100,7 @@ namespace LocalDatabase_Server
             detailsItemsControl.ItemsSource = Categories;
 
             // draw pie
-            float angle = 0, prevAngle = 0;
+            double angle = 0, prevAngle = 0;
             foreach (var category in Categories)
             {
                 double line1X = (radius * Math.Cos(angle * Math.PI / 180)) + centerX;
@@ -114,7 +136,7 @@ namespace LocalDatabase_Server
 
                 var pathFigures = new List<PathFigure>() { pathFigure, };
                 var pathGeometry = new PathGeometry(pathFigures);
-                var path = new Path()
+                var path = new System.Windows.Shapes.Path()
                 {
                     Fill = category.ColorBrush,
                     Data = pathGeometry,
@@ -131,7 +153,7 @@ namespace LocalDatabase_Server
                     Y1 = centerY,
                     X2 = line1Segment.Point.X,
                     Y2 = line1Segment.Point.Y,
-                    Stroke = Brushes.White,
+                    Stroke = Brushes.Transparent,
                     StrokeThickness = 5,
                 };
                 var outline2 = new Line()
@@ -140,7 +162,7 @@ namespace LocalDatabase_Server
                     Y1 = centerY,
                     X2 = arcSegment.Point.X,
                     Y2 = arcSegment.Point.Y,
-                    Stroke = Brushes.White,
+                    Stroke = Brushes.Transparent,
                     StrokeThickness = 5,
                 };
 
@@ -151,7 +173,7 @@ namespace LocalDatabase_Server
     }
     public class Category
     {
-        public float Percentage { get; set; }
+        public double Percentage { get; set; }
         public string Title { get; set; }
         public Brush ColorBrush { get; set; }
     }

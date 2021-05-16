@@ -28,7 +28,7 @@ namespace LocalDatabase_Server.Registration
         }
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            SqlConnection polaczenie = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\PC\source\repos\LocalDatabase_Server\PZ_BD.mdf;Integrated Security=True;Connect Timeout=30");
+            SqlConnection polaczenie = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\thekr\source\repos\LocalDatabase_Server\PZ_BD.mdf;Integrated Security=True;Connect Timeout=30");
             SqlCommand zapytanie = new SqlCommand();
             zapytanie.CommandText = "SELECT * FROM [dbo].[User]";
             zapytanie.Connection = polaczenie;

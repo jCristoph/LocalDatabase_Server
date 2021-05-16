@@ -4,6 +4,14 @@
              xmlns:local="clr-namespace:LocalDatabase_Server"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Themes/MenuButtonTheme.xaml"/>
+                <ResourceDictionary Source="Themes/TextBoxTheme.xaml"/>
+                <ResourceDictionary Source="Themes/PasswordBoxTheme.xaml"/>
+                <ResourceDictionary Source="Themes/ListViewHeaderTheme.xaml"/>
+                <ResourceDictionary Source="Themes/ListViewTheme.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>
