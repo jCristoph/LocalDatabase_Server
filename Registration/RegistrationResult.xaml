@@ -17,6 +17,6 @@
         <TextBlock HorizontalAlignment="Left" Margin="228,154,0,0" TextWrapping="Wrap" Text="Login" VerticalAlignment="Top"/>
         <TextBlock HorizontalAlignment="Left" Margin="228,198,0,0" TextWrapping="Wrap" Text="Password" VerticalAlignment="Top"/>
         <TextBlock HorizontalAlignment="Left" Margin="231,239,0,0" TextWrapping="Wrap" Text="Token" VerticalAlignment="Top"/>
-        <Button Content="OK" HorizontalAlignment="Left" Margin="350,307,0,0" VerticalAlignment="Top" Width="120" Height="30"/>
+        <Button Content="OK" HorizontalAlignment="Left" Margin="350,307,0,0" VerticalAlignment="Top" Width="120" Height="30" Click="Button_Click"/>
     </Grid>
 </Window>

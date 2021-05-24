@@ -99,7 +99,7 @@ namespace LocalDatabase_Server
             IndexEnd = s.LastIndexOf("</Pass>");
             string passowrd = s.Substring(IndexHome, IndexEnd - IndexHome);
             //tutaj funkcja sprawdzajaca haslo
-            SqlConnection polaczenie = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\thekr\source\repos\LocalDatabase_Server\PZ_BD.mdf;Integrated Security=True;Connect Timeout=30");
+            SqlConnection polaczenie = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\krzem\source\repos\PZ_Panel_Logowania\PZ_Panel_Logowania\Baza_Danych\PZ_BD.mdf;Integrated Security=True;Connect Timeout=30");
             SqlCommand zapytanie = new SqlCommand();
             zapytanie.Connection = polaczenie;
             zapytanie.CommandText = "SELECT * FROM [User] WHERE Login = '" + login + "' and Password = '" + passowrd + "'";
