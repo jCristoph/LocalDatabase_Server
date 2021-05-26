@@ -13,7 +13,6 @@ namespace LocalDatabase_Server
 {
     class ServerStarter
     {
-        static TextBlock text = null;
         TcpListener server = null;
         int connectedDevices = 0;
         DirectoryManager dm = null;
@@ -61,14 +60,15 @@ namespace LocalDatabase_Server
             int taskIndexHome = data.IndexOf("<Task=") + "<Task=".Length;
             int taskIndexEnd = data.IndexOf(">");
             string task = data.Substring(taskIndexHome, taskIndexEnd - taskIndexHome);
+            string destinationPath = "";
             switch (task)
             {
                 case "Login":
                     sendMessage(ServerCom.CheckLoginMessage(ServerCom.LoginRecognizer(data)), client);
                     break;
                 case "ReadOrder": //kiedy wysylane jest zadanie pobrania pliku
-                    sendMessage(ServerCom.responseMessage("OK"), client);
-                    string destinationPath = ServerCom.DownloadRecognizer(data);
+                    sendMessage(ServerCom.responseMessage("Pobieram..."), client);
+                    destinationPath = ServerCom.DownloadRecognizer(data);
                     Thread.Sleep(1000);
                     downloadFile(client, destinationPath);
                     break;
@@ -81,13 +81,19 @@ namespace LocalDatabase_Server
                     foreach (var mess in ServerCom.SendDirectoryMessage(dm.directoryElements))
                         sendMessage(mess, client);
                     break;
+                case "CreateFolder":
+                    sendMessage(ServerCom.responseMessage("Stworzono nowy folder"), client);
+                    destinationPath = ServerCom.DownloadRecognizer(data);
+                    dm.CreateFolder(destinationPath);
+                    break;
                 case "Delete":
                     string path = ServerCom.DeleteRecognizer(data)[0];
                     string isFolder = ServerCom.DeleteRecognizer(data)[1];
                     sendMessage(ServerCom.responseMessage(dm.DeleteElement(path, isFolder)), client);
                     break;
                 case "Response":
-                    MessageBox.Show(ServerCom.responseRecognizer(data));
+                    MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel(ServerCom.responseRecognizer(data), false);
+                    mp.ShowDialog();
                     break;
             }
         }
@@ -110,7 +116,7 @@ namespace LocalDatabase_Server
             }
             catch(Exception e)
             {
-                MessageBox.Show(e.ToString());
+
             }
         }
         private void sendMessage(string str, TcpClient client)
@@ -161,7 +167,7 @@ namespace LocalDatabase_Server
             }
             catch (Exception e)
             {
-                MessageBox.Show(e.ToString());
+
             }
         }
         private void sendFile(TcpClient client, string path)
@@ -186,7 +192,7 @@ namespace LocalDatabase_Server
             }
             catch (Exception e)
             {
-                MessageBox.Show(e.ToString());
+
             }
         }
     }

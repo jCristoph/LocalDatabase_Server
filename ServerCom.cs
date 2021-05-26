@@ -69,6 +69,20 @@ namespace LocalDatabase_Server
             return dirMessage;
         }
 
+        public static string[] SendUsersMessage(List<DirectoryElement> directory)
+        {
+            string[] dirMessage = new string[directory.Count];
+            int i = 0;
+            foreach (var de in directory)
+            {
+                if (i < directory.Count - 1)
+                    dirMessage[i] = "<Task=SendingDir><ID>" + de.isFolder + "</ID>" +
+                                "<Surname>" + de.path + " </Surname>" +
+                                "<Name>" + de.name + "</Name></Task>";
+                i++;
+            }
+            return dirMessage;
+        }
 
         /// <summary>
         /// For client and server usage. If something goes wrong or needs only confirmations then this method
@@ -99,17 +113,8 @@ namespace LocalDatabase_Server
             IndexEnd = s.LastIndexOf("</Pass>");
             string passowrd = s.Substring(IndexHome, IndexEnd - IndexHome);
             //tutaj funkcja sprawdzajaca haslo
-            SqlConnection polaczenie = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\thekr\source\repos\LocalDatabase_Server\PZ_BD.mdf;Integrated Security=True;Connect Timeout=30");
-            SqlCommand zapytanie = new SqlCommand();
-            zapytanie.Connection = polaczenie;
-            zapytanie.CommandText = "SELECT * FROM [User] WHERE Login = '" + login + "' and Password = '" + passowrd + "'";
-            SqlDataAdapter adapter = new SqlDataAdapter(zapytanie);
-            DataTable tabela = new DataTable();
-            adapter.Fill(tabela);
-            if (tabela.Rows.Count == 1)
-                return tabela.Rows[0].ItemArray.GetValue(5).ToString();
-            else
-                return "ERROR";
+            Database.DatabaseManager dm = new Database.DatabaseManager();
+            return dm.CheckLogin(login, passowrd);
         }
 
         /// <summary>
@@ -169,6 +174,17 @@ namespace LocalDatabase_Server
             return data;
         }
 
+        public static string[] CreateFolderRecognizer(string s)
+        {
+            string[] data = new string[2];
+            int IndexHomePath = s.IndexOf("<Path>") + "<Path>".Length;
+            int IndexEndPath = s.LastIndexOf("</Path>");
+            int IndexHomeFolder = s.IndexOf("<isFolder>") + "<isFolder>".Length;
+            int IndexEndFolder = s.LastIndexOf("</isFolder>");
+            data[0] = s.Substring(IndexHomePath, IndexEndPath - IndexHomePath);
+            data[1] = s.Substring(IndexHomeFolder, IndexEndFolder - IndexHomeFolder);
+            return data;
+        }
         /// <summary>
         /// For client and server usage. If something goes wrong or needs only confirmations then this method 
         /// read what to show in MessageBox.

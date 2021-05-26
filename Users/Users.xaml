@@ -5,20 +5,34 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LocalDatabase_Server.Users"
         mc:Ignorable="d"
-        Title="Users" Height="450" Width="800">
-    <Grid>
-        <ListView HorizontalAlignment="Left" Height="350" Margin="24,21,0,0" VerticalAlignment="Top" Width="750">
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <WrapPanel>
-                        <TextBlock x:Name="idText" Text=""/>
-                        <TextBlock x:Name="surname" Text=""/>
-                        <TextBlock x:Name="name" Text=""/>
-                        <TextBlock x:Name="login" Text=""/>
-                        <TextBlock x:Name="token" Text=""/>
-                    </WrapPanel>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
-    </Grid>
+        Title="Users"
+        Height="600"
+        Width="1000"
+        WindowStyle="None"
+        Background="Transparent"
+        AllowsTransparency="True">
+    <Border Background="#272537"
+            CornerRadius="10">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="8*"/>
+                <RowDefinition Height="1*"/>
+            </Grid.RowDefinitions>
+            <TextBlock Margin="10" Text="Filebase.local" HorizontalAlignment="Left" Foreground="White" FontSize="32"/>
+            <ListView Margin="10,0,10,0" Grid.Row="1" Name="listView" Background="Aquamarine" Style="{StaticResource ListViewTheme}">
+                <ListView.View>
+                    <GridView ColumnHeaderContainerStyle="{StaticResource ListViewHeaderTheme}">
+                        <GridViewColumn DisplayMemberBinding="{Binding Path=id}" Header="ID"/>
+                        <GridViewColumn DisplayMemberBinding="{Binding Path=surname}" Header="Imię"/>
+                        <GridViewColumn DisplayMemberBinding="{Binding Path=name}" Header="Nazwisko"/>
+                        <GridViewColumn DisplayMemberBinding="{Binding Path=login}" Header="Login"/>
+                        <GridViewColumn DisplayMemberBinding="{Binding Path=password}" Header="Hasło"/>
+                        <GridViewColumn DisplayMemberBinding="{Binding Path=token}" Header="Token"/>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+            <Button Margin="10" HorizontalAlignment="Right" x:Name="backButton" Content="Cofnij" Width="170" Grid.Row="2" Style="{StaticResource MenuButtonTheme}" Click="backButton_Click"/>
+        </Grid>
+    </Border>
 </Window>

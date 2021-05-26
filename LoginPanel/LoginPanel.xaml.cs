@@ -21,7 +21,18 @@ namespace LocalDatabase_Server.LoginPanel
     {
         public LoginPanl()
         {
+            WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;
             InitializeComponent();
+        }
+
+        private void exitButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void loginButton_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

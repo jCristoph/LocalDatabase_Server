@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,9 +20,20 @@ namespace LocalDatabase_Server.Users
     /// </summary>
     public partial class Users : Window
     {
+        private ObservableCollection<Database.User> users;
         public Users()
         {
+            Database.DatabaseManager dm = new Database.DatabaseManager();
+            users = dm.LoadUsers();
+            WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;
             InitializeComponent();
+            listView.ItemsSource = users;
+        }
+
+        private void backButton_Click(object sender, RoutedEventArgs e)
+        {
+            Owner.Show();
+            this.Close();
         }
     }
 }

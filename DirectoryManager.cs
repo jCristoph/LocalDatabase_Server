@@ -94,38 +94,26 @@ namespace LocalDatabase_Server
                     {
                         return e.Message;
                     }
-                    return "GOOD";
+                    return "Usunięto element";
                 }
                 else
-                    return "BAD";
+                    return "Nie udało się usunąć elementu";
             }
             else
             {
                 if (Directory.Exists(path))
                 {
                     Directory.Delete(path);
-                    return "GOOD";
+                    return "Usunięto element";
                 }
-                return "BAD";
+                return "Nie udało się usunąć elementu";
             }
         }
-        private void PrintFolderContent(DirectoryElement dirEl)
+
+        public void CreateFolder(string path)
         {
-            if (dirEl.isFolder)
-            {
-                Console.WriteLine("Inside {0} are:", dirEl.name);
-                foreach (var de in directoryElements)
-                {
-                    if (de.pathArray.Count > 1)
-                    {
-                        if (de.pathArray[de.pathArray.Count - 1].Equals(dirEl.name) && de.pathArray[de.pathArray.Count - 2].Equals(dirEl.pathArray[dirEl.pathArray.Count - 1]))
-                            Console.WriteLine("\t" + de.name + " path of subfolder: " + dirEl.pathArray[dirEl.pathArray.Count - 1]);
-                    }
-                    else
-                        if (de.pathArray[de.pathArray.Count - 1].Equals(dirEl.name))
-                        Console.WriteLine("\t" + de.name);
-                }
-            }
+            path = path.Replace("Main_Folder", @"C:\Directory_test");
+            System.IO.Directory.CreateDirectory(path);
         }
     }
 }

@@ -26,6 +26,7 @@ namespace LocalDatabase_Server
         private List<Category> Categories { get; set; }
         public MainWindow()
         {
+            WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;
             InitializeComponent();
             pieChart();
             Task t = new Task(() => newThread());
@@ -45,11 +46,14 @@ namespace LocalDatabase_Server
 
         private void allUsersButton_Click(object sender, RoutedEventArgs e)
         {
-
+            Users.Users usersPanel = new Users.Users();
+            usersPanel.Owner = this;
+            usersPanel.Show();
+            this.Hide();
         }
         private void exitButton_Click(object sender, RoutedEventArgs e)
         {
-
+            this.Close();
         }
 
         public static long GetFileSizeSumFromDirectory(string searchDirectory)
