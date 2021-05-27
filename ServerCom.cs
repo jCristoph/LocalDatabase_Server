@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using LocalDatabase_Server.Database;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Windows;
@@ -69,16 +71,31 @@ namespace LocalDatabase_Server
             return dirMessage;
         }
 
-        public static string[] SendUsersMessage(List<DirectoryElement> directory)
+        public static string[] SendUsersSharingMessage(ObservableCollection<User> usersSharing)
         {
-            string[] dirMessage = new string[directory.Count];
+            string[] dirMessage = new string[usersSharing.Count];
             int i = 0;
-            foreach (var de in directory)
+            foreach (var u in usersSharing)
             {
-                if (i < directory.Count - 1)
-                    dirMessage[i] = "<Task=SendingDir><ID>" + de.isFolder + "</ID>" +
-                                "<Surname>" + de.path + " </Surname>" +
-                                "<Name>" + de.name + "</Name></Task>";
+                    dirMessage[i] = "<Task=SharingUsers><Surname>" + u.surname + " </Surname>" +
+                                "<Name>" + u.name + "</Name></Task>";
+                i++;
+            }
+            return dirMessage;
+        }
+
+        public static string[] SendUsersMessage(string token)
+        {
+            Database.DatabaseManager dm = new Database.DatabaseManager();
+            var users = dm.LoadUsers();
+            string[] dirMessage = new string[users.Count];
+            int i = 0;
+            foreach (var u in users)
+            {
+                if (!token.Equals(u.token))
+                    dirMessage[i] = "<Task=SendingUsers><Token>" + u.token + "</Token>" +
+                                "<Surname>" + u.surname + " </Surname>" +
+                                "<Name>" + u.name + "</Name></Task>";
                 i++;
             }
             return dirMessage;
@@ -151,6 +168,36 @@ namespace LocalDatabase_Server
         /// </summary>
         /// <returns></returns>
         public static string SendDirectoryOrderRecognizer(string s)
+        {
+            int IndexHome = s.IndexOf("<Token>") + "<Token>".Length;
+            int IndexEnd = s.LastIndexOf("</Token>");
+            string token = s.Substring(IndexHome, IndexEnd - IndexHome);
+            return token;
+        }
+        public static string[] ShareRecognizer(string s)
+        {
+            int fromIndexHome = s.IndexOf("<From>") + "<From>".Length;
+            int fromIndexEnd = s.LastIndexOf("</From>");
+            string from = s.Substring(fromIndexHome, fromIndexEnd - fromIndexHome);
+            int toIndexHome = s.IndexOf("<To>") + "<To>".Length;
+            int toIndexEnd = s.LastIndexOf("</To>");
+            string to = s.Substring(toIndexHome, toIndexEnd - toIndexHome);
+            int pathIndexHome = s.IndexOf("<Path>") + "<Path>".Length;
+            int pathIndexEnd = s.LastIndexOf("</Path>");
+            string path = s.Substring(pathIndexHome, pathIndexEnd - pathIndexHome);
+            int permissionsIndexHome = s.IndexOf("<Permissions>") + "<Permissions>".Length;
+            int permissionsIndexEnd = s.LastIndexOf("</Permissions>");
+            string permissions = s.Substring(permissionsIndexHome, permissionsIndexEnd - permissionsIndexHome);
+            return new string[] { from, to, path, permissions };
+        }
+
+        public static string UsersSharingRecognizer(string s)
+        {
+            int IndexHome = s.IndexOf("<Path>") + "<Path>".Length;
+            int IndexEnd = s.LastIndexOf("</Path>");
+            return s.Substring(IndexHome, IndexEnd - IndexHome);
+        }
+        public static string SendUsersOrderRecognizer(string s)
         {
             int IndexHome = s.IndexOf("<Token>") + "<Token>".Length;
             int IndexEnd = s.LastIndexOf("</Token>");

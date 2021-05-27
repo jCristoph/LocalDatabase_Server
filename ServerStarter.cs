@@ -47,11 +47,7 @@ namespace LocalDatabase_Server
             while (true) 
             {
                 readMessage(client);
-                //sprawdza czy połączenie jest aktywne
-                if (((client.Client.Poll(1000, SelectMode.SelectRead) && (client.Client.Available == 0)) || !client.Client.Connected))
-                    break;
             }
-            connectedDevices--;
             client.Close();
         }
 
@@ -61,6 +57,9 @@ namespace LocalDatabase_Server
             int taskIndexEnd = data.IndexOf(">");
             string task = data.Substring(taskIndexHome, taskIndexEnd - taskIndexHome);
             string destinationPath = "";
+            Database.DatabaseManager databaseManager = new Database.DatabaseManager();
+            string token = "";
+            string path = "";
             switch (task)
             {
                 case "Login":
@@ -75,8 +74,28 @@ namespace LocalDatabase_Server
                 case "Send": ////kiedy wysylane jest zadanie wyslania pliku
                     sendFile(client, ServerCom.SendRecognizer(data));
                     break;
+                case "Share":
+                    string[] values = ServerCom.ShareRecognizer(data);
+                    databaseManager.AddToSharedFile(values[0], values[1], values[2], values[3]);
+                    break;
+                case "SendUsers":
+                    token = ServerCom.SendUsersOrderRecognizer(data);
+                    foreach (var mess in ServerCom.SendUsersMessage(token))
+                        sendMessage(mess, client);
+                    break;
+                case "UsersSharing":
+                    path = ServerCom.UsersSharingRecognizer(data);
+                    var usersSharing = ServerCom.SendUsersSharingMessage(databaseManager.FindUserByToken(databaseManager.FindInSharedFile(path)));
+                    if(usersSharing.Length > 0)
+                    {
+                        foreach (var mess in usersSharing)
+                            sendMessage(mess, client);
+                    }
+                    else
+                        sendMessage(ServerCom.responseMessage("EMPTY"), client);
+                    break;
                 case "SendDir": //kiedy wysylane jest zadanie wyslania biblioteki
-                    string token = ServerCom.SendDirectoryOrderRecognizer(data);
+                    token = ServerCom.SendDirectoryOrderRecognizer(data);
                     dm = new DirectoryManager(@"C:\Directory_test\" + token + "\\");
                     foreach (var mess in ServerCom.SendDirectoryMessage(dm.directoryElements))
                         sendMessage(mess, client);
@@ -87,7 +106,7 @@ namespace LocalDatabase_Server
                     dm.CreateFolder(destinationPath);
                     break;
                 case "Delete":
-                    string path = ServerCom.DeleteRecognizer(data)[0];
+                    path = ServerCom.DeleteRecognizer(data)[0];
                     string isFolder = ServerCom.DeleteRecognizer(data)[1];
                     sendMessage(ServerCom.responseMessage(dm.DeleteElement(path, isFolder)), client);
                     break;

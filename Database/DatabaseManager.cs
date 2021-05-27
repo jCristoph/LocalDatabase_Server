@@ -60,6 +60,64 @@ namespace LocalDatabase_Server.Database
             return users;
         }
 
+        public void AddToSharedFile(string senderToken, string recipientToken, string path, string permissions)
+        {
+            SqlCommand zapytanie = new SqlCommand();
+            zapytanie.Connection = polaczenie;
+
+            zapytanie.CommandText = @"INSERT INTO [SharedFile]([path],[recipientToken],[senderToken],[permissions]) VALUES ('" + path + "', '" + recipientToken + "', '" + senderToken + "', '" + Convert.ToInt32(permissions) + "')";
+            polaczenie.Open();
+            zapytanie.ExecuteNonQuery();
+            polaczenie.Close();
+        }
+        
+        public ObservableCollection<string> FindInSharedFile(string path)
+        {
+            SqlCommand zapytanie = new SqlCommand();
+            zapytanie.Connection = polaczenie;
+            zapytanie.CommandText = "SELECT * FROM [SharedFile] WHERE Path = '" + path + "'";
+            SqlDataAdapter adapter = new SqlDataAdapter(zapytanie);
+            DataTable tabela = new DataTable();
+            adapter.Fill(tabela);
+            ObservableCollection<string> userTokens = new ObservableCollection<string>();
+            for(int i = 0; i < tabela.Rows.Count; i++)
+            {
+                userTokens.Add(tabela.Rows[i].ItemArray.GetValue(2).ToString());
+            }
+            return userTokens;
+        }
+
+        public ObservableCollection<User> FindUserByToken(ObservableCollection<string> tokens)
+        {
+            ObservableCollection<User> matchingUsers = new ObservableCollection<User>();
+            LoadUsers();
+            for(int i = 0; i < tokens.Count; i++)
+            {
+                for(int j = 0; j < users.Count; j++)
+                {
+                    if (tokens[i].Equals(users[j].token))
+                    {
+                        matchingUsers.Add(users[j]);
+                    }
+                }
+            }
+            return matchingUsers;
+        }
+
+        public void AddToTransmission(string userToken, string TransmissionDate, float fileSize, int transmissionType)
+        {
+
+            SqlConnection polaczenie = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\krzem\source\repos\PZ_Panel_Logowania\PZ_Panel_Logowania\Baza_Danych\PZ_BD.mdf;Integrated Security=True;Connect Timeout=30");
+            SqlCommand zapytanie = new SqlCommand();
+            zapytanie.Connection = polaczenie;
+
+            zapytanie.CommandText = @"INSERT INTO [Transaction]([transactionDate],[fileSize],[userToken],[transactionType]) VALUES ('" + TransmissionDate + "', '" + fileSize + "', '" + userToken + "', '" + transmissionType + "')";
+            polaczenie.Open();
+            zapytanie.ExecuteNonQuery();
+            polaczenie.Close();
+
+        }
+
         private string generateRandomString()
         {
             //unsafe
