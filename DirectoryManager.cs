@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 
 namespace LocalDatabase_Server
@@ -108,6 +109,20 @@ namespace LocalDatabase_Server
                 }
                 return "Nie udało się usunąć elementu";
             }
+        }
+
+        public List<DirectoryElement> SharedFilesList(string token)
+        {
+            List<DirectoryElement> directoryElements = new List<DirectoryElement>();
+            Database.DatabaseManager databaseManager = new Database.DatabaseManager();
+            ObservableCollection<string> paths = databaseManager.FindInSharedFile(token);
+            foreach( var a in paths)
+            {
+                string path = a.Replace("Main_Folder", @"C:\Directory_test");
+                DirectoryElement de = new DirectoryElement(path, new FileInfo(path).Length, File.GetLastWriteTime(path).ToString(), false);
+                directoryElements.Add(de);
+            }
+            return directoryElements;
         }
 
         public void CreateFolder(string path)

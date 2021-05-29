@@ -71,20 +71,38 @@ namespace LocalDatabase_Server.Database
             polaczenie.Close();
         }
         
-        public ObservableCollection<string> FindInSharedFile(string path)
+        public ObservableCollection<string> FindInSharedFile(string data)
         {
             SqlCommand zapytanie = new SqlCommand();
             zapytanie.Connection = polaczenie;
-            zapytanie.CommandText = "SELECT * FROM [SharedFile] WHERE Path = '" + path + "'";
-            SqlDataAdapter adapter = new SqlDataAdapter(zapytanie);
-            DataTable tabela = new DataTable();
-            adapter.Fill(tabela);
-            ObservableCollection<string> userTokens = new ObservableCollection<string>();
-            for(int i = 0; i < tabela.Rows.Count; i++)
+            //if an input string is a path
+            if(data.Length > 10)
             {
-                userTokens.Add(tabela.Rows[i].ItemArray.GetValue(2).ToString());
+                zapytanie.CommandText = "SELECT * FROM [SharedFile] WHERE Path = '" + data + "'";
+                SqlDataAdapter adapter = new SqlDataAdapter(zapytanie);
+                DataTable tabela = new DataTable();
+                adapter.Fill(tabela);
+                ObservableCollection<string> userTokens = new ObservableCollection<string>();
+                for (int i = 0; i < tabela.Rows.Count; i++)
+                {
+                    userTokens.Add(tabela.Rows[i].ItemArray.GetValue(2).ToString());
+                }
+                return userTokens;
             }
-            return userTokens;
+            //if an input string is a path
+            else
+            {
+                zapytanie.CommandText = "SELECT * FROM [SharedFile] WHERE recipientToken = '" + data + "'";
+                SqlDataAdapter adapter = new SqlDataAdapter(zapytanie);
+                DataTable tabela = new DataTable();
+                adapter.Fill(tabela);
+                ObservableCollection<string> paths = new ObservableCollection<string>();
+                for (int i = 0; i < tabela.Rows.Count; i++)
+                {
+                    paths.Add(tabela.Rows[i].ItemArray.GetValue(1).ToString());
+                }
+                return paths;
+            }
         }
 
         public ObservableCollection<User> FindUserByToken(ObservableCollection<string> tokens)

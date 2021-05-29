@@ -40,7 +40,7 @@ namespace LocalDatabase_Server
         /// <returns></returns>
         public static string SendMessge(string path)
         {
-            return "<Task=Send><Path>" + path + "</Path></Task><#>";
+            return "<Task=Send><Path>" + path + "</Path></Task>";
         }
 
         /// <summary>
@@ -65,7 +65,7 @@ namespace LocalDatabase_Server
                                 "<Path>" + de.path + " </Path>" +
                                 "<Name>" + de.name + "</Name>" +
                                 "<Size>" + de.size + "</Size>" +
-                                "<Last Write>" + de.lwr + "</Last Write></Task><#>";
+                                "<Last Write>" + de.lwr + "</Last Write></Task>";
                 i++;
             }
             return dirMessage;

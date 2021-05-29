@@ -76,6 +76,7 @@ namespace LocalDatabase_Server
                     break;
                 case "Share":
                     string[] values = ServerCom.ShareRecognizer(data);
+                    values[3] = values[3].Replace("Main_Folder", @"C:\Directory_test");
                     databaseManager.AddToSharedFile(values[0], values[1], values[2], values[3]);
                     break;
                 case "SendUsers":
@@ -98,6 +99,8 @@ namespace LocalDatabase_Server
                     token = ServerCom.SendDirectoryOrderRecognizer(data);
                     dm = new DirectoryManager(@"C:\Directory_test\" + token + "\\");
                     foreach (var mess in ServerCom.SendDirectoryMessage(dm.directoryElements))
+                        sendMessage(mess, client);
+                    foreach (var mess in ServerCom.SendDirectoryMessage(dm.SharedFilesList(token)))
                         sendMessage(mess, client);
                     break;
                 case "CreateFolder":
