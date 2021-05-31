@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 using System.Threading;
 using System.Diagnostics;
 using System.IO;
+using System.Collections.ObjectModel;
 
 namespace LocalDatabase_Server
 {
@@ -23,19 +24,26 @@ namespace LocalDatabase_Server
     /// </summary>ty
     public partial class MainWindow : Window
     {
+        ObservableCollection<Database.User> activeUsers;
+        ObservableCollection<Database.Transmission> transmissions;
+
         private List<Category> Categories { get; set; }
         public MainWindow()
         {
             WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;
             InitializeComponent();
             pieChart();
+            activeUsers = new ObservableCollection<Database.User>();
+            transmissions = new ObservableCollection<Database.Transmission>();
+            transmissionsList.ItemsSource = transmissions;
+            activeUsersList.ItemsSource = activeUsers;
             Task t = new Task(() => newThread());
             t.Start();
         }
 
         private void newThread()
         {
-            ServerStarter ss = new ServerStarter("127.0.0.1", 25000);
+            ServerStarter ss = new ServerStarter("127.0.0.1", 25000, activeUsers, transmissions);
         }
 
         private void registrationButton_Click(object sender, RoutedEventArgs e)

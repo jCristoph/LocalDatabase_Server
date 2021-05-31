@@ -11,6 +11,7 @@
         WindowStyle="None"
         Background="Transparent"
         AllowsTransparency="True">
+    
     <Border Background="#272537"
             CornerRadius="10">
         <Grid x:Name="___Brak_nazwy_">
@@ -28,21 +29,21 @@
                 <Button Content="Lista wszystkich użytkowników" HorizontalAlignment="Center"  VerticalAlignment="Center" Width="240" Height="30" Name="allUsersButton" Click="allUsersButton_Click" Margin="0,40,0,0" Style="{StaticResource MenuButtonTheme}"/>
                 <Button Content="Wyłącz system" HorizontalAlignment="Center" VerticalAlignment="Center" Width="240" Height="30" Name="exitButton" Click="exitButton_Click" Margin="0,40,0,0" Style="{StaticResource MenuButtonTheme}"/>
             </StackPanel>
-            <ListView Margin="10" Name="transactionList" Grid.Column="0" Grid.Row="1" Background="Aquamarine" Style="{StaticResource ListViewTheme}">
+            <ListView Margin="10" Name="transmissionsList" Grid.Column="0" Grid.Row="1" Background="Aquamarine" Style="{StaticResource ListViewTheme}" ItemContainerStyle="{StaticResource ContainerStyle}">
                 <ListView.View>
                     <GridView  ColumnHeaderContainerStyle="{StaticResource ListViewHeaderTheme}">
-                        <GridViewColumn Header="Login" DisplayMemberBinding="{Binding Name}" />
-                        <GridViewColumn Header="Typ" DisplayMemberBinding="{Binding Age}" />
-                        <GridViewColumn Header="Cel" >
+                        <GridViewColumn Header="Login" DisplayMemberBinding="{Binding login}" />
+                        <GridViewColumn Header="Typ" DisplayMemberBinding="{Binding type}" />
+                        <GridViewColumn Header="Cel" DisplayMemberBinding="{Binding destination}">
                         </GridViewColumn>
                     </GridView>
                 </ListView.View>
             </ListView>
-            <ListView Margin="10" Name="activeUsersList" Grid.Column="1" Grid.Row="1" Background="Aquamarine" Style="{StaticResource ListViewTheme}">
+            <ListView Margin="10" Name="activeUsersList" Grid.Column="1" Grid.Row="1" Background="Aquamarine" Style="{StaticResource ListViewTheme}" ItemContainerStyle="{StaticResource ContainerStyle}">
                 <ListView.View>
                     <GridView  ColumnHeaderContainerStyle="{StaticResource ListViewHeaderTheme}">
-                        <GridViewColumn Header="Login" DisplayMemberBinding="{Binding Name}" />
-                        <GridViewColumn Header="Token" DisplayMemberBinding="{Binding Age}" />
+                        <GridViewColumn Header="Login" DisplayMemberBinding="{Binding login}" />
+                        <GridViewColumn Header="Token" DisplayMemberBinding="{Binding token}" />
                         <GridViewColumn Header="Akcja">
                         </GridViewColumn>
                     </GridView>

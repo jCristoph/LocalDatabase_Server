@@ -44,6 +44,18 @@ namespace LocalDatabase_Server.Database
             string pathString = System.IO.Path.Combine(@"C:\Directory_test", token);
             System.IO.Directory.CreateDirectory(pathString);
         }
+
+        public void ChangePassword(string newPassword, string token)
+        {
+            SqlCommand zapytanie = new SqlCommand();
+            zapytanie.CommandText = @"UPDATE [User]
+                                      SET password = '" + newPassword + "'" +
+                                      "WHERE token = '" + token + "'";
+            zapytanie.Connection = polaczenie;
+            polaczenie.Open();
+            zapytanie.ExecuteNonQuery();
+            polaczenie.Close();
+        }
         public ObservableCollection<User> LoadUsers()
         {
             SqlCommand zapytanie = new SqlCommand();
@@ -120,6 +132,19 @@ namespace LocalDatabase_Server.Database
                 }
             }
             return matchingUsers;
+        }
+
+        public User FindUserByToken(string token)
+        {
+            LoadUsers();
+            for (int j = 0; j < users.Count; j++)
+            {
+                if (token.Equals(users[j].token))
+                {
+                    return users[j];
+                }
+            }
+            return null;
         }
 
         public void AddToTransmission(string userToken, string TransmissionDate, float fileSize, int transmissionType)

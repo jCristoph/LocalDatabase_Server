@@ -20,7 +20,7 @@
                 <RowDefinition Height="1*"/>
             </Grid.RowDefinitions>
             <TextBlock Margin="10" Text="Filebase.local" HorizontalAlignment="Left" Foreground="White" FontSize="32"/>
-            <ListView Margin="10,0,10,0" Grid.Row="1" Name="listView" Background="Aquamarine" Style="{StaticResource ListViewTheme}">
+            <ListView Margin="10,0,10,0" Grid.Row="1" Name="listView" Background="Aquamarine" Style="{StaticResource ListViewTheme}" ItemContainerStyle="{StaticResource ContainerStyle}">
                 <ListView.View>
                     <GridView ColumnHeaderContainerStyle="{StaticResource ListViewHeaderTheme}">
                         <GridViewColumn DisplayMemberBinding="{Binding Path=id}" Header="ID"/>

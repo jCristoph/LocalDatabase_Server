@@ -11,6 +11,7 @@
                 <ResourceDictionary Source="Themes/PasswordBoxTheme.xaml"/>
                 <ResourceDictionary Source="Themes/ListViewHeaderTheme.xaml"/>
                 <ResourceDictionary Source="Themes/ListViewTheme.xaml"/>
+                <ResourceDictionary Source="Themes/ListViewItemTheme.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

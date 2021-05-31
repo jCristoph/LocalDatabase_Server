@@ -74,7 +74,6 @@ namespace LocalDatabase_Server
             {
 
             }
-
         }
         public string DeleteElement(string path, string isFolder)
         {

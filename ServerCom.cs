@@ -134,6 +134,28 @@ namespace LocalDatabase_Server
             return dm.CheckLogin(login, passowrd);
         }
 
+        public static string ChangePasswordRecognizer(string s)
+        {
+            try
+            {
+                int IndexHome = s.IndexOf("<NewPass>") + "<NewPass>".Length;
+                int IndexEnd = s.LastIndexOf("</NewPass>");
+                string newPassword = s.Substring(IndexHome, IndexEnd - IndexHome);
+                IndexHome = s.IndexOf("<Token>") + "<Token>".Length;
+                IndexEnd = s.LastIndexOf("</Token>");
+                string token = s.Substring(IndexHome, IndexEnd - IndexHome);
+                Database.DatabaseManager dm = new Database.DatabaseManager();
+                dm.ChangePassword(newPassword, token);
+                return "OK";
+            }
+            catch
+            {
+                return "ERROR";
+            }
+
+        }
+
+
         /// <summary>
         /// For Client and Server usage. This message tells client/server to launch file downloader method.
         /// param s is message sent from other like "<Task=Download></Task><#>"

@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
@@ -16,8 +19,15 @@ namespace LocalDatabase_Server
         TcpListener server = null;
         int connectedDevices = 0;
         DirectoryManager dm = null;
-        public ServerStarter(string ip, int port)
+        ObservableCollection<Database.User> activeUsers;
+        List<string> activeUserTokens;
+        ObservableCollection<Database.Transmission> transmissions;
+
+        public ServerStarter(string ip, int port, ObservableCollection<Database.User> activeUsers, ObservableCollection<Database.Transmission> transmissions)
         {
+            this.activeUsers = activeUsers;
+            this.transmissions = transmissions;
+            activeUserTokens = new List<string>();
             IPAddress localAddr = IPAddress.Parse(ip);
             server = new TcpListener(localAddr, port);
             server.Start();
@@ -43,12 +53,18 @@ namespace LocalDatabase_Server
         public void HandleDeivce(Object obj)
         {
             TcpClient client = (TcpClient)obj;
-            //funkcja sprawdza czy klient jest polaczony
+            Stopwatch stopWatch = new Stopwatch();
+            stopWatch.Start();
             while (true) 
             {
                 readMessage(client);
+                if(stopWatch.ElapsedMilliseconds > 21 * 1000)
+                {
+                    stopWatch.Restart();
+                    activeUserTokens.Clear();
+                    Application.Current.Dispatcher.Invoke(new Action(() => { activeUsers.Clear(); }));
+                }
             }
-            client.Close();
         }
 
         public void recognizeMessage(string data, TcpClient client)
@@ -64,6 +80,9 @@ namespace LocalDatabase_Server
             {
                 case "Login":
                     sendMessage(ServerCom.CheckLoginMessage(ServerCom.LoginRecognizer(data)), client);
+                    break;
+                case "ChngPass":
+                    sendMessage(ServerCom.responseMessage(ServerCom.ChangePasswordRecognizer(data)), client);
                     break;
                 case "ReadOrder": //kiedy wysylane jest zadanie pobrania pliku
                     sendMessage(ServerCom.responseMessage("Pobieram..."), client);
@@ -98,6 +117,11 @@ namespace LocalDatabase_Server
                 case "SendDir": //kiedy wysylane jest zadanie wyslania biblioteki
                     token = ServerCom.SendDirectoryOrderRecognizer(data);
                     dm = new DirectoryManager(@"C:\Directory_test\" + token + "\\");
+                    if (!activeUserTokens.Contains(token))
+                    {
+                        activeUserTokens.Add(token);
+                        Application.Current.Dispatcher.Invoke(new Action(() => { activeUsers.Add(databaseManager.FindUserByToken(token)); })); 
+                    }
                     foreach (var mess in ServerCom.SendDirectoryMessage(dm.directoryElements))
                         sendMessage(mess, client);
                     foreach (var mess in ServerCom.SendDirectoryMessage(dm.SharedFilesList(token)))

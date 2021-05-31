@@ -56,6 +56,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Database\DatabaseManager.cs" />
+    <Compile Include="Database\Transmission.cs" />
     <Compile Include="Database\User.cs" />
     <Compile Include="LoginPanel\LoginPanel.xaml.cs">
       <DependentUpon>LoginPanel.xaml</DependentUpon>
@@ -107,6 +108,10 @@
     <Page Include="Themes\ListViewHeaderTheme.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\ListViewItemTheme.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Themes\ListViewTheme.xaml">
       <Generator>MSBuild:Compile</Generator>
