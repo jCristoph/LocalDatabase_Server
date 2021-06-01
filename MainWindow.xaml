@@ -32,9 +32,11 @@
             <ListView Margin="10" Name="transmissionsList" Grid.Column="0" Grid.Row="1" Background="Aquamarine" Style="{StaticResource ListViewTheme}" ItemContainerStyle="{StaticResource ContainerStyle}">
                 <ListView.View>
                     <GridView  ColumnHeaderContainerStyle="{StaticResource ListViewHeaderTheme}">
-                        <GridViewColumn Header="Login" DisplayMemberBinding="{Binding login}" />
-                        <GridViewColumn Header="Typ" DisplayMemberBinding="{Binding type}" />
-                        <GridViewColumn Header="Cel" DisplayMemberBinding="{Binding destination}">
+                        <GridViewColumn Header="ID" DisplayMemberBinding="{Binding Path=id}" />
+                        <GridViewColumn Header="Token" DisplayMemberBinding="{Binding Path=userToken}" />
+                        <GridViewColumn Header="Rozmiar pliku" DisplayMemberBinding="{Binding Path=fileSize}" />
+                        <GridViewColumn Header="Data" DisplayMemberBinding="{Binding Path=date}"/>
+                        <GridViewColumn Header="Typ transmisji" DisplayMemberBinding="{Binding Path=transmissionType}">
                         </GridViewColumn>
                     </GridView>
                 </ListView.View>

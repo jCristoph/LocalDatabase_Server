@@ -162,12 +162,15 @@ namespace LocalDatabase_Server
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>
-        public static string DownloadRecognizer(string s)
+        public static string[] DownloadRecognizer(string s)
         {
             int IndexHome = s.IndexOf("<Path>") + "<Path>".Length;
             int IndexEnd = s.LastIndexOf("</Path>");
             string path = s.Substring(IndexHome, IndexEnd - IndexHome);
-            return path;
+            IndexHome = s.IndexOf("<Name>") + "<Name>".Length;
+            IndexEnd = s.LastIndexOf("</Name>");
+            string name = s.Substring(IndexHome, IndexEnd - IndexHome);
+            return new string[] { path, name};
         }
 
         /// <summary>

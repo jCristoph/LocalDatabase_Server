@@ -16,6 +16,7 @@ using System.Threading;
 using System.Diagnostics;
 using System.IO;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 
 namespace LocalDatabase_Server
 {
@@ -37,6 +38,9 @@ namespace LocalDatabase_Server
             transmissions = new ObservableCollection<Database.Transmission>();
             transmissionsList.ItemsSource = transmissions;
             activeUsersList.ItemsSource = activeUsers;
+            CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(transmissionsList.ItemsSource);
+            view.SortDescriptions.Add(new SortDescription("date", ListSortDirection.Descending));
+            transmissions.Add(new Database.Transmission(1, DateTime.Now, 0, "ABC", 0));
             Task t = new Task(() => newThread());
             t.Start();
         }

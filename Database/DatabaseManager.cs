@@ -147,10 +147,8 @@ namespace LocalDatabase_Server.Database
             return null;
         }
 
-        public void AddToTransmission(string userToken, string TransmissionDate, float fileSize, int transmissionType)
+        public void AddToTransmission(string userToken, DateTime TransmissionDate, long fileSize, int transmissionType)
         {
-
-            SqlConnection polaczenie = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\krzem\source\repos\PZ_Panel_Logowania\PZ_Panel_Logowania\Baza_Danych\PZ_BD.mdf;Integrated Security=True;Connect Timeout=30");
             SqlCommand zapytanie = new SqlCommand();
             zapytanie.Connection = polaczenie;
 
@@ -158,7 +156,24 @@ namespace LocalDatabase_Server.Database
             polaczenie.Open();
             zapytanie.ExecuteNonQuery();
             polaczenie.Close();
+        }
 
+        public void LoadTransmissions(ObservableCollection<Transmission> transmissions)
+        {
+            //ObservableCollection<Transmission> transmissons = new ObservableCollection<Transmission>();
+            transmissions.Clear();
+            SqlCommand zapytanie = new SqlCommand();
+            zapytanie.Connection = polaczenie;
+            zapytanie.CommandText = "SELECT * FROM [Transaction]";
+            SqlDataAdapter adapter = new SqlDataAdapter(zapytanie);
+            DataTable tabela = new DataTable();
+            adapter.Fill(tabela);
+            for (int i = 0; i < tabela.Rows.Count; i++)
+            {
+                Transmission t = new Transmission(Int32.Parse(tabela.Rows[i].ItemArray.GetValue(0).ToString()), (DateTime)tabela.Rows[i].ItemArray.GetValue(1), Int64.Parse(tabela.Rows[i].ItemArray.GetValue(2).ToString()), tabela.Rows[i].ItemArray.GetValue(3).ToString(), Int32.Parse(tabela.Rows[i].ItemArray.GetValue(4).ToString()));
+                transmissions.Add(t);
+            }
+           // return transmissons;
         }
 
         private string generateRandomString()

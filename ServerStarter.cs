@@ -17,7 +17,6 @@ namespace LocalDatabase_Server
     class ServerStarter
     {
         TcpListener server = null;
-        int connectedDevices = 0;
         DirectoryManager dm = null;
         ObservableCollection<Database.User> activeUsers;
         List<string> activeUserTokens;
@@ -27,6 +26,8 @@ namespace LocalDatabase_Server
         {
             this.activeUsers = activeUsers;
             this.transmissions = transmissions;
+            Database.DatabaseManager databaseManager = new Database.DatabaseManager();
+            Application.Current.Dispatcher.Invoke(new Action(() => { databaseManager.LoadTransmissions(transmissions); }));
             activeUserTokens = new List<string>();
             IPAddress localAddr = IPAddress.Parse(ip);
             server = new TcpListener(localAddr, port);
@@ -40,7 +41,6 @@ namespace LocalDatabase_Server
                 while (true)
                 {
                     TcpClient client = server.AcceptTcpClient();
-                    connectedDevices++;
                     Task t1 = new Task(() => HandleDeivce(client));
                     t1.Start();
                 }
@@ -72,9 +72,15 @@ namespace LocalDatabase_Server
             int taskIndexHome = data.IndexOf("<Task=") + "<Task=".Length;
             int taskIndexEnd = data.IndexOf(">");
             string task = data.Substring(taskIndexHome, taskIndexEnd - taskIndexHome);
+            string token = "";
+            if(data.Contains("<Token>"))
+            {
+                taskIndexHome = data.IndexOf("<Token>") + "<Token>".Length;
+                taskIndexEnd = data.IndexOf("</Token>");
+                token = data.Substring(taskIndexHome, taskIndexEnd - taskIndexHome);
+            }
             string destinationPath = "";
             Database.DatabaseManager databaseManager = new Database.DatabaseManager();
-            string token = "";
             string path = "";
             switch (task)
             {
@@ -86,17 +92,25 @@ namespace LocalDatabase_Server
                     break;
                 case "ReadOrder": //kiedy wysylane jest zadanie pobrania pliku
                     sendMessage(ServerCom.responseMessage("Pobieram..."), client);
-                    destinationPath = ServerCom.DownloadRecognizer(data);
+                    string[] arr = ServerCom.DownloadRecognizer(data);
                     Thread.Sleep(1000);
-                    downloadFile(client, destinationPath);
+                    downloadFile(client, arr[0]);
+
+                    databaseManager.AddToTransmission(token, DateTime.Now, new FileInfo((arr[0] + "\\" + arr[1]).Replace("Main_Folder", @"C:\Directory_test")).Length, 1);
+                    Application.Current.Dispatcher.Invoke(new Action(() => { databaseManager.LoadTransmissions(transmissions); }));
                     break;
                 case "Send": ////kiedy wysylane jest zadanie wyslania pliku
-                    sendFile(client, ServerCom.SendRecognizer(data));
+                    path = ServerCom.SendRecognizer(data);
+                    sendFile(client, path);
+                    databaseManager.AddToTransmission(token, DateTime.Now, new FileInfo(path.Replace("Main_Folder", @"C:\Directory_test")).Length, 0);
+                    Application.Current.Dispatcher.Invoke(new Action(() => { databaseManager.LoadTransmissions(transmissions); }));
                     break;
                 case "Share":
                     string[] values = ServerCom.ShareRecognizer(data);
-                    values[3] = values[3].Replace("Main_Folder", @"C:\Directory_test");
+                    values[2] = values[2].Replace("Main_Folder", @"C:\Directory_test");
                     databaseManager.AddToSharedFile(values[0], values[1], values[2], values[3]);
+                    databaseManager.AddToTransmission(values[0], DateTime.Now, new FileInfo(values[2]).Length, 3);
+                    Application.Current.Dispatcher.Invoke(new Action(() => { databaseManager.LoadTransmissions(transmissions); }));
                     break;
                 case "SendUsers":
                     token = ServerCom.SendUsersOrderRecognizer(data);
@@ -129,13 +143,16 @@ namespace LocalDatabase_Server
                     break;
                 case "CreateFolder":
                     sendMessage(ServerCom.responseMessage("Stworzono nowy folder"), client);
-                    destinationPath = ServerCom.DownloadRecognizer(data);
+                    destinationPath = ServerCom.DownloadRecognizer(data)[0];
                     dm.CreateFolder(destinationPath);
                     break;
                 case "Delete":
                     path = ServerCom.DeleteRecognizer(data)[0];
+                    long deletedFileSize = new FileInfo(path.Replace("Main_Folder", @"C:\Directory_test")).Length;
                     string isFolder = ServerCom.DeleteRecognizer(data)[1];
                     sendMessage(ServerCom.responseMessage(dm.DeleteElement(path, isFolder)), client);
+                    databaseManager.AddToTransmission(token, DateTime.Now, deletedFileSize, 2);
+                    Application.Current.Dispatcher.Invoke(new Action(() => { databaseManager.LoadTransmissions(transmissions); }));
                     break;
                 case "Response":
                     MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel(ServerCom.responseRecognizer(data), false);
