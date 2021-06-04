@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,9 +22,10 @@ namespace LocalDatabase_Server.Users
     public partial class Users : Window
     {
         private ObservableCollection<Database.User> users;
+        Database.DatabaseManager dm;
         public Users()
         {
-            Database.DatabaseManager dm = new Database.DatabaseManager();
+            dm = new Database.DatabaseManager();
             users = dm.LoadUsers();
             WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;
             InitializeComponent();
@@ -34,6 +36,31 @@ namespace LocalDatabase_Server.Users
         {
             Owner.Show();
             this.Close();
+        }
+
+        private void deleteUserButton(object sender, RoutedEventArgs e)
+        {
+            Database.User u = (Database.User)(((Button)sender).DataContext);
+            dm.DeleteUser(u.token);
+            string path = @"C:\Directory_test\" + u.token;
+            for (int i = 0; i < users.Count; i++)
+            {
+                if (users[i].token.Equals(u.token))
+                {
+                    users.Remove(users[i]);
+                    if (Directory.Exists(path))
+                    {
+                        Directory.Delete(path, true);
+                    }
+                }
+            }
+        }
+        private void changeLimitButton(object sender, RoutedEventArgs e)
+        {
+            Database.User u = (Database.User)(((Button)sender).DataContext);
+            ChangeLimitPanel.ChangeLimitPanel clp = new ChangeLimitPanel.ChangeLimitPanel();
+            clp.ShowDialog();
+            dm.ChangeLimit(clp.newlimit, u.token);
         }
     }
 }

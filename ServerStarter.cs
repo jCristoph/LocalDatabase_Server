@@ -148,8 +148,12 @@ namespace LocalDatabase_Server
                     break;
                 case "Delete":
                     path = ServerCom.DeleteRecognizer(data)[0];
-                    long deletedFileSize = new FileInfo(path.Replace("Main_Folder", @"C:\Directory_test")).Length;
                     string isFolder = ServerCom.DeleteRecognizer(data)[1];
+                    long deletedFileSize;
+                    if (isFolder.Equals("False"))
+                        deletedFileSize = new FileInfo(path.Replace("Main_Folder", @"C:\Directory_test")).Length;
+                    else
+                        deletedFileSize = 0;
                     sendMessage(ServerCom.responseMessage(dm.DeleteElement(path, isFolder)), client);
                     databaseManager.AddToTransmission(token, DateTime.Now, deletedFileSize, 2);
                     Application.Current.Dispatcher.Invoke(new Action(() => { databaseManager.LoadTransmissions(transmissions); }));

@@ -14,8 +14,9 @@ namespace LocalDatabase_Server.Database
         public string login { set; get; }
         public string password { set; get; }
         public string token { set; get; }
-        
-        public User(int id, string surname, string name, string login, string password, string token)
+        public long limit { set; get; }
+
+        public User(int id, string surname, string name, string login, string password, string token, long limit)
         {
             this.id = id;
             this.surname = surname;
@@ -23,6 +24,7 @@ namespace LocalDatabase_Server.Database
             this.login = login;
             this.password = password;
             this.token = token;
+            this.limit = limit;
         }
     }
 }

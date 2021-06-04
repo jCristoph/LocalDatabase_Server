@@ -6,99 +6,103 @@
         xmlns:local="clr-namespace:LocalDatabase_Server"
         mc:Ignorable="d"
         Title="Serwer"
-        Height="600"
-        Width="1000"
+        Height="800"
+        Width="1400"
         WindowStyle="None"
         Background="Transparent"
         AllowsTransparency="True">
     
     <Border Background="#272537"
             CornerRadius="10">
-        <Grid x:Name="___Brak_nazwy_">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
+        <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="5*"/>
-                <RowDefinition Height="40*"/>
-                <RowDefinition Height="40*"/>
+                <RowDefinition Height="8*"/>
+                <RowDefinition Height="92*"/>
             </Grid.RowDefinitions>
-            <StackPanel Grid.Row="2" Grid.Column="1">
-                <Button Content="Rejestracja" HorizontalAlignment="Center" VerticalAlignment="Center" Width="240" Height="30" Name="registrationButton" Click="registrationButton_Click" Margin="0,40,0,0" Style="{StaticResource MenuButtonTheme}"/>
-                <Button Content="Lista wszystkich użytkowników" HorizontalAlignment="Center"  VerticalAlignment="Center" Width="240" Height="30" Name="allUsersButton" Click="allUsersButton_Click" Margin="0,40,0,0" Style="{StaticResource MenuButtonTheme}"/>
-                <Button Content="Wyłącz system" HorizontalAlignment="Center" VerticalAlignment="Center" Width="240" Height="30" Name="exitButton" Click="exitButton_Click" Margin="0,40,0,0" Style="{StaticResource MenuButtonTheme}"/>
-            </StackPanel>
-            <ListView Margin="10" Name="transmissionsList" Grid.Column="0" Grid.Row="1" Background="Aquamarine" Style="{StaticResource ListViewTheme}" ItemContainerStyle="{StaticResource ContainerStyle}">
-                <ListView.View>
-                    <GridView  ColumnHeaderContainerStyle="{StaticResource ListViewHeaderTheme}">
-                        <GridViewColumn Header="ID" DisplayMemberBinding="{Binding Path=id}" />
-                        <GridViewColumn Header="Token" DisplayMemberBinding="{Binding Path=userToken}" />
-                        <GridViewColumn Header="Rozmiar pliku" DisplayMemberBinding="{Binding Path=fileSize}" />
-                        <GridViewColumn Header="Data" DisplayMemberBinding="{Binding Path=date}"/>
-                        <GridViewColumn Header="Typ transmisji" DisplayMemberBinding="{Binding Path=transmissionType}">
-                        </GridViewColumn>
-                    </GridView>
-                </ListView.View>
-            </ListView>
-            <ListView Margin="10" Name="activeUsersList" Grid.Column="1" Grid.Row="1" Background="Aquamarine" Style="{StaticResource ListViewTheme}" ItemContainerStyle="{StaticResource ContainerStyle}">
-                <ListView.View>
-                    <GridView  ColumnHeaderContainerStyle="{StaticResource ListViewHeaderTheme}">
-                        <GridViewColumn Header="Login" DisplayMemberBinding="{Binding login}" />
-                        <GridViewColumn Header="Token" DisplayMemberBinding="{Binding token}" />
-                        <GridViewColumn Header="Akcja">
-                        </GridViewColumn>
-                    </GridView>
-                </ListView.View>
-            </ListView>
-            <StackPanel
-            Grid.Column="0"
-            Grid.Row="3"
-            x:Name="PieChart"
-                Orientation="Horizontal"
-                VerticalAlignment="Center"
-                HorizontalAlignment="Center">
-                <Canvas x:Name="canv"
-                Margin="20,0"/>
-
-                <ScrollViewer Margin="20,0"
-                              Background="Transparent"
-                      Padding="10"
-                      VerticalAlignment="Center"
-                      VerticalScrollBarVisibility="Auto"
-                      HorizontalScrollBarVisibility="Hidden">
-                    <ItemsControl x:Name="detailsItemsControl">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate DataType="{x:Type local:Category}">
-                                <StackPanel Orientation="Horizontal"
+            <TextBlock  Grid.Row="0" Foreground="White" Text="Menadżer Filebase.local" FontSize="36" HorizontalAlignment="Left" Margin="10,10,0,0" FontFamily="Lucida Sans" />
+            <Grid x:Name="___Brak_nazwy_" Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="3*"/>
+                    <RowDefinition Height="40*"/>
+                    <RowDefinition Height="40*"/>
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Column="0" Grid.Row="0" Foreground="White" Text="Lista ostatnich transmisji plików" FontSize="16" HorizontalAlignment="Center"  FontFamily="Lucida Sans" />
+                <TextBlock Grid.Column="1" Grid.Row="0" Foreground="White" Text="Lista aktywnych użytkowników" FontSize="16" HorizontalAlignment="Center"  FontFamily="Lucida Sans" />
+                <StackPanel Grid.Row="2" Grid.Column="1" VerticalAlignment="Center">
+                    <Button Content="Rejestracja" HorizontalAlignment="Center" VerticalAlignment="Center" Width="240" Height="30" Name="registrationButton" Click="registrationButton_Click"  Style="{StaticResource MenuButtonTheme}"/>
+                    <Button Content="Lista wszystkich użytkowników" HorizontalAlignment="Center"  VerticalAlignment="Center" Width="240" Height="30" Name="allUsersButton" Click="allUsersButton_Click" Margin="0,40,0,0" Style="{StaticResource MenuButtonTheme}"/>
+                    <Button Content="Wyłącz system" HorizontalAlignment="Center" VerticalAlignment="Center" Width="240" Height="30" Name="exitButton" Click="exitButton_Click" Margin="0,40,0,0" Style="{StaticResource MenuButtonTheme}"/>
+                </StackPanel>
+                <ListView Margin="20,0,10,0" Name="transmissionsList"  Grid.Column="0" Grid.Row="1"  Background="Aquamarine" Style="{StaticResource ListViewTheme}" ItemContainerStyle="{StaticResource ContainerStyle}">
+                    <ListView.View>
+                        <GridView  ColumnHeaderContainerStyle="{StaticResource ListViewHeaderTheme}">
+                            <GridViewColumn Header="Token" DisplayMemberBinding="{Binding Path=userToken}" Width="90"/>
+                            <GridViewColumn Header="Typ transmisji" DisplayMemberBinding="{Binding Path=transmissionType}" Width="110"/>
+                            <GridViewColumn Header="Data" DisplayMemberBinding="{Binding Path=date}"/>
+                            <GridViewColumn Header="Rozmiar pliku" DisplayMemberBinding="{Binding Path=fileSize}" />
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+                <ListView Margin="10,0,20,0" Name="activeUsersList" Grid.Column="1" Grid.Row="1" Background="Aquamarine" Style="{StaticResource ListViewTheme}" ItemContainerStyle="{StaticResource ContainerStyle}">
+                    <ListView.View>
+                        <GridView  ColumnHeaderContainerStyle="{StaticResource ListViewHeaderTheme}">
+                            <GridViewColumn Header="Login" DisplayMemberBinding="{Binding login}" Width="200" />
+                            <GridViewColumn Header="Token" DisplayMemberBinding="{Binding token}"  Width="200" />
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+                <Grid Grid.Column="0" Grid.Row="3">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="9*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock  Grid.Row="0" Foreground="White" Text="Miejsce na dysku" FontSize="16" HorizontalAlignment="Center" FontFamily="Lucida Sans" VerticalAlignment="Bottom"/>
+                    <StackPanel Grid.Row="1" x:Name="PieChart" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <Canvas x:Name="canv" Margin="20,0"/>
+                        <ScrollViewer Margin="20,0"
+                            Background="Transparent"
+                            Padding="10"
+                            VerticalAlignment="Center"
+                            VerticalScrollBarVisibility="Auto"
+                            HorizontalScrollBarVisibility="Hidden">
+                            <ItemsControl x:Name="detailsItemsControl">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate DataType="{x:Type local:Category}">
+                                        <StackPanel Orientation="Horizontal"
                                     Margin="10">
-                                    <Rectangle Width="20"
+                                            <Rectangle Width="20"
                                        Height="20"
                                        Fill="{Binding ColorBrush}"
                                        Margin="0,0,5,0"
                                        VerticalAlignment="Center"/>
 
-                                    <TextBlock Text="{Binding Title}"
+                                            <TextBlock Text="{Binding Title}"
                                        Foreground="White"
                                        FontSize="20"
                                        VerticalAlignment="Center"/>
 
-                                    <TextBlock Text="{Binding Percentage}"
+                                            <TextBlock Text="{Binding Percentage}"
                                        Foreground="White"
                                        FontSize="20"
                                        Margin="20,0,0,0"
                                        VerticalAlignment="Center"/>
 
-                                    <TextBlock Text="%"
+                                            <TextBlock Text="%"
                                        Foreground="White"
                                        FontSize="20"
                                        VerticalAlignment="Center"/>
-                                </StackPanel>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </ScrollViewer>
-            </StackPanel>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </StackPanel>
+                </Grid>
+            </Grid>
         </Grid>
     </Border>
 </Window>

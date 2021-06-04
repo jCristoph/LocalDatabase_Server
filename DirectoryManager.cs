@@ -103,7 +103,7 @@ namespace LocalDatabase_Server
             {
                 if (Directory.Exists(path))
                 {
-                    Directory.Delete(path);
+                    Directory.Delete(path, true);
                     return "Usunięto element";
                 }
                 return "Nie udało się usunąć elementu";

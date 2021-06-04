@@ -85,8 +85,8 @@ namespace LocalDatabase_Server
 
         private void pieChart()
         {
-            float pieWidth = 100;
-            float pieHeight = 100;
+            float pieWidth = 200;
+            float pieHeight = 200;
             float centerX = pieWidth / 2;
             float centerY = pieHeight / 2;
             float radius = pieWidth / 2;

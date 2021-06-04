@@ -15,10 +15,10 @@ namespace LocalDatabase_Server
         /// </summary>
         /// <param name="isLogged"></param>
         /// <returns></returns>
-        public static string CheckLoginMessage(string isLogged)
+        public static string CheckLoginMessage(string[] isLogged)
         {
             if (!isLogged.Equals("ERROR"))
-                return "<Task=CheckLogin><isLogged>" + isLogged +"</isLogged><Login>";
+                return "<Task=CheckLogin><isLogged>" + isLogged[0] +"</isLogged><Limit>" + isLogged[1] + "</Limit><Login>";
             else
                 return "<Task=CheckLogin><isLogged>ERROR</isLogged><Login>";
         }
@@ -121,7 +121,7 @@ namespace LocalDatabase_Server
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>
-        public static string LoginRecognizer(string s)
+        public static string[] LoginRecognizer(string s)
         {
             int IndexHome = s.IndexOf("<Login>") + "<Login>".Length;
             int IndexEnd = s.LastIndexOf("</Login>");
@@ -167,9 +167,13 @@ namespace LocalDatabase_Server
             int IndexHome = s.IndexOf("<Path>") + "<Path>".Length;
             int IndexEnd = s.LastIndexOf("</Path>");
             string path = s.Substring(IndexHome, IndexEnd - IndexHome);
-            IndexHome = s.IndexOf("<Name>") + "<Name>".Length;
-            IndexEnd = s.LastIndexOf("</Name>");
-            string name = s.Substring(IndexHome, IndexEnd - IndexHome);
+            string name = "";
+            if (s.Contains("<Name>"))
+            {
+                IndexHome = s.IndexOf("<Name>") + "<Name>".Length;
+                IndexEnd = s.LastIndexOf("</Name>");
+                name = s.Substring(IndexHome, IndexEnd - IndexHome);
+            }
             return new string[] { path, name};
         }
 
