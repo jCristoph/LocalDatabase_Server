@@ -6,13 +6,14 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace LocalDatabase_Server.Database
 {
     class DatabaseManager
     {
         private ObservableCollection<User> users;
-        SqlConnection polaczenie = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\thekr\source\repos\LocalDatabase_Server\PZ_BD.mdf;Integrated Security=True;Connect Timeout=30");
+        SqlConnection polaczenie = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\Database\PZ_BD.mdf;Integrated Security=True;Connect Timeout=30");
 
         public DatabaseManager()
         {
