@@ -1,90 +1,81 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
-using System.Threading;
 using System.Diagnostics;
 using System.IO;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 
+
 namespace LocalDatabase_Server
 {
-    /// <summary>
-    /// Logika interakcji dla klasy MainWindow.xaml
-    /// </summary>ty
     public partial class MainWindow : Window
     {
+        //list of active users and transmissions has to be here because gui use them
+        //Observable Collection is a special container where things in gui and things in container are allways the same - automatic refresh
         ObservableCollection<Database.User> activeUsers;
         ObservableCollection<Database.Transmission> transmissions;
 
         private List<Category> Categories { get; set; }
+
         public MainWindow()
         {
-            WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;
-            InitializeComponent();
-            pieChart();
+            WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen; //app is always in center of screen
+            InitializeComponent(); //runs gui
+            pieChart(); //creates pie chart
             activeUsers = new ObservableCollection<Database.User>();
             transmissions = new ObservableCollection<Database.Transmission>();
             transmissionsList.ItemsSource = transmissions;
             activeUsersList.ItemsSource = activeUsers;
             CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(transmissionsList.ItemsSource);
             view.SortDescriptions.Add(new SortDescription("date", ListSortDirection.Descending));
-            transmissions.Add(new Database.Transmission(1, DateTime.Now, 0, "ABC", 0));
-            Task t = new Task(() => newThread());
-            t.Start();
+            //transmissions.Add(new Database.Transmission(1, DateTime.Now, 0, "ABC", 0));
+            Task serverThread = new Task(() => newThread());
+            serverThread.Start();
         }
 
+        //method that starts server - it has to be in other thread because meanwhile the gui has to run
         private void newThread()
         {
             ServerStarter ss = new ServerStarter("127.0.0.1", 25000, activeUsers, transmissions);
         }
+        #region button events
 
+        //shows registration panel -> lets go to Panels/Registration/Registration.xaml.cs
         private void registrationButton_Click(object sender, RoutedEventArgs e)
         {
             Registration.Registration r = new Registration.Registration();
             r.Show();
         }
 
+        //shows users panel and hides main window -> lets go to Panels/Users/Users.xaml.cs
         private void allUsersButton_Click(object sender, RoutedEventArgs e)
         {
             Users.Users usersPanel = new Users.Users();
-            usersPanel.Owner = this;
+            usersPanel.Owner = this; //its needed to show again main window in users panel
             usersPanel.Show();
             this.Hide();
         }
+
+        //ends app
         private void exitButton_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
         }
+        #endregion
 
-        public static long GetFileSizeSumFromDirectory(string searchDirectory)
-        {
-            var files = Directory.EnumerateFiles(searchDirectory);
 
-            // get the sizeof all files in the current directory
-            var currentSize = (from file in files let fileInfo = new FileInfo(file) select fileInfo.Length).Sum();
-
-            var directories = Directory.EnumerateDirectories(searchDirectory);
-
-            // get the size of all files in all subdirectories
-            var subDirSize = (from directory in directories select GetFileSizeSumFromDirectory(directory)).Sum();
-
-            return currentSize + subDirSize;
-        }
-
+        /// <summary>
+        /// method that creates a pie chart from paths
+        /// </summary>
         private void pieChart()
         {
+            ///parameters for pie chart
             float pieWidth = 200;
             float pieHeight = 200;
             float centerX = pieWidth / 2;
@@ -92,6 +83,8 @@ namespace LocalDatabase_Server
             float radius = pieWidth / 2;
             canv.Width = pieWidth;
             canv.Height = pieHeight;
+
+            ///data is loaded - free space on disk and size of app folder
             DriveInfo dDrive = new DriveInfo("C");
             var folderSize = (double)GetFileSizeSumFromDirectory(@"C:\Directory_test\");
             var availableSpace = dDrive.AvailableFreeSpace;
@@ -186,7 +179,27 @@ namespace LocalDatabase_Server
                 canv.Children.Add(outline2);
             }
         }
+
+        //methods that counts a folder size - it has to sum every file in folder and subfolders
+        public static long GetFileSizeSumFromDirectory(string searchDirectory)
+        {
+            var files = Directory.EnumerateFiles(searchDirectory);
+
+            // get the sizeof all files in the current directory
+            var currentSize = (from file in files let fileInfo = new FileInfo(file) select fileInfo.Length).Sum();
+
+            var directories = Directory.EnumerateDirectories(searchDirectory);
+
+            // get the size of all files in all subdirectories
+            var subDirSize = (from directory in directories select GetFileSizeSumFromDirectory(directory)).Sum();
+
+            return currentSize + subDirSize;
+        }
     }
+    /// <summary>
+    /// a class which is needed for pie chart
+    /// these parameters set a pie chart
+    /// </summary>
     public class Category
     {
         public double Percentage { get; set; }
