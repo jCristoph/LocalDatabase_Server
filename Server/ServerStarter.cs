@@ -143,7 +143,7 @@ namespace LocalDatabase_Server
                     break;
             }
         }
-        //tcp/ip read message method. Reads bytes and translate it to string
+        //tcp/ip read message method. Reads bytes and translate it to string  - it will be changed for ssl connection
         private void readMessage(TcpClient client)
         {
             try
@@ -166,7 +166,7 @@ namespace LocalDatabase_Server
 
             }
         }
-        //tcp/ip send message method. translate string to bytes and send it to client by stream.
+        //tcp/ip send message method. translate string to bytes and send it to client by stream  - it will be changed for ssl connection
         private void sendMessage(string str, TcpClient client)
         {
             try

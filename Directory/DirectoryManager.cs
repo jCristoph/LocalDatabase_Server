@@ -44,7 +44,7 @@ namespace LocalDatabase_Server
             }
         }
 
-        /*If client send message with path, it has to be translate. The message is in kind of xml message.
+        /*If client sends message with path, it has to be translate. The message is in kind of xml message.
          * This method is used to translate it. 
          */
         public void ProcessPath(string s)
