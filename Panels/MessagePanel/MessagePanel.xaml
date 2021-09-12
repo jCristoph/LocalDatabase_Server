@@ -20,8 +20,8 @@
             </Grid.RowDefinitions>
             <TextBlock HorizontalAlignment="Center" TextWrapping="Wrap" VerticalAlignment="Center" Grid.Row="0" FontSize="14" Foreground="White" Name="message" Text=""/>
             <StackPanel Grid.Row="1" Orientation="Horizontal">
-                <Button Content="Tak" VerticalAlignment="Center" Width="80" Height="40" Name="yesButton" Click="yesButton_Click" Margin="50,20,20,20" Style="{StaticResource MenuButtonTheme}" FontSize="20"/>
-                <Button Content="Nie" VerticalAlignment="Center" Width="80" Height="40" Name="okNoButton" Click="okNoButton_Click" Margin="20" Style="{StaticResource MenuButtonTheme}" FontSize="20"/>
+                <Button Content="Tak" VerticalAlignment="Center" Width="80" Height="54" Name="yesButton" Click="yesButton_Click" Margin="50,20,20,20" Style="{StaticResource MenuButtonTheme}" FontSize="20"/>
+                <Button Content="Nie" VerticalAlignment="Center" Width="80" Height="54" Name="okNoButton" Click="okNoButton_Click" Margin="20" Style="{StaticResource MenuButtonTheme}" FontSize="20"/>
             </StackPanel>
         </Grid>
     </Border>

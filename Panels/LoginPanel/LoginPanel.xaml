@@ -28,10 +28,10 @@
             <PasswordBox VerticalAlignment="Center" Height="32" Name="passwordBoxPassword" Grid.Column="1" Grid.Row="2" Margin="10" Style="{StaticResource ModernPasswordBox}" FontSize="16"/>
             <TextBlock HorizontalAlignment="Right" TextWrapping="Wrap" Text="Nazwa użytkownika" VerticalAlignment="Center" Grid.Column="0" Grid.Row="1" FontSize="20" Foreground="White"/>
             <TextBlock HorizontalAlignment="Right" TextWrapping="Wrap" Text="Hasło" VerticalAlignment="Center" Grid.Column="0" Grid.Row="2" FontSize="20" Foreground="White"/>
-            <TextBlock Width="263" Grid.Column="0" Grid.Row="0" Foreground="White" Text="Filebase.local" FontSize="36" HorizontalAlignment="Left" Margin="20,20,0,0" FontFamily="Lucida Sans" />
-            <Button Content="Loguj" HorizontalAlignment="Center" VerticalAlignment="Center" Width="170" Height="50" Name="loginButton" Click="loginButton_Click" Grid.Column="1" Grid.Row="3" Style="{StaticResource MenuButtonTheme}" FontSize="20"/>
-            <Button Content="Pomoc" HorizontalAlignment="Center" VerticalAlignment="Center" Width="170" Height="50" Grid.Column="0" Grid.Row="4" Style="{StaticResource MenuButtonTheme}" FontSize="20"/>
-            <Button Content="Wyjdź" HorizontalAlignment="Center" VerticalAlignment="Center" Width="170" Height="50" Grid.Column="2" Grid.Row="4" Style="{StaticResource MenuButtonTheme}" FontSize="20" Click="exitButton_Click"/>
+            <TextBlock Grid.Column="0" Grid.Row="0" Foreground="White" Text="Filebase.local" FontSize="36" HorizontalAlignment="Center"  VerticalAlignment="Center" FontFamily="Lucida Sans" />
+            <Button Content="Loguj" HorizontalAlignment="Center" VerticalAlignment="Center" Width="170" Height="54" Name="loginButton" Click="loginButton_Click" Grid.Column="1" Grid.Row="3" Style="{StaticResource MenuButtonTheme}" FontSize="20"/>
+            <Button Content="Pomoc" HorizontalAlignment="Center" VerticalAlignment="Center" Width="170" Height="54" Grid.Column="2" Style="{StaticResource MenuButtonTheme}" FontSize="20" />
+            <Button Content="Wyjdź" HorizontalAlignment="Center" VerticalAlignment="Center" Width="170" Height="54" Grid.Row="4" Style="{StaticResource MenuButtonTheme}" FontSize="20" Click="exitButton_Click"/>
         </Grid>
     </Border>
 </Window>

@@ -1,18 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+
 
 namespace LocalDatabase_Server.Users
 {
@@ -22,13 +12,13 @@ namespace LocalDatabase_Server.Users
     public partial class Users : Window
     {
         private ObservableCollection<Database.User> users;
-        Database.DatabaseManager dm;
+        readonly Database.DatabaseManager databaseManager;
         //constructor. When user open this panel, system load all users and list them.
         public Users()
         {
-            dm = new Database.DatabaseManager();
-            users = dm.LoadUsers();
-            WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen; //app is always in center of screen
+            databaseManager = new Database.DatabaseManager();
+            users = databaseManager.LoadUsers();
+            WindowStartupLocation = WindowStartupLocation.CenterScreen; //app is always in center of screen
             InitializeComponent();
             listView.ItemsSource = users;
         }

@@ -26,18 +26,30 @@ namespace LocalDatabase_Server.ChangeLimitPanel
 
         private void changeButton_Click(object sender, RoutedEventArgs e)
         {
+            MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Zła wartość", false);
             string input = textBox.Text.Replace(".", ","); //protection if user uses dot insted of comma
+            if(string.IsNullOrEmpty(input))
+            {
+                mp.ShowDialog();
+                return;
+            }
+
             Regex rx = new Regex(@"\D+"); //protection if user type something different than numbers
+
             if(!rx.IsMatch(input))
             {
                 newlimit = (long)(Convert.ToDouble(input) * 1000000000); //user enter value in GB but in system uses just Bytes
                 this.Close();
+                return;
             }
-            else
-            {
-                MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Zła wartość",false);
-                mp.ShowDialog();
-            }
+            
+            mp.ShowDialog();
+            
+        }
+
+        private void backButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
         }
     }
 }

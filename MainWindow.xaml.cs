@@ -25,7 +25,7 @@ namespace LocalDatabase_Server
 
         public MainWindow()
         {
-            WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen; //app is always in center of screen
+            WindowStartupLocation = WindowStartupLocation.CenterScreen; //app is always in center of screen
             InitializeComponent(); //runs gui
             pieChart(); //creates pie chart
             activeUsers = new ObservableCollection<Database.User>();

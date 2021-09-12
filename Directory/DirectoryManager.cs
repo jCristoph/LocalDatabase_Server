@@ -10,16 +10,15 @@ namespace LocalDatabase_Server
         public List<DirectoryElement> directoryElements { get; set; }
         private string tokenDirectory;
 
-        //Consturctor
         public DirectoryManager(string targetDirectory)
         {
             tokenDirectory = targetDirectory.Remove(targetDirectory.Length - 1);
             directoryElements = new List<DirectoryElement>();
-            DirectoryElement de = new DirectoryElement("\\Main_Folder", 0, "None", true);
-            directoryElements.Add(de);
+            DirectoryElement directoryElement = new DirectoryElement("\\Main_Folder", 0, "None", true);
+            directoryElements.Add(directoryElement);
             ProcessDirectory(tokenDirectory);
         }
-        //Consturctor
+       
         public DirectoryManager(List<DirectoryElement> directoryElements)
         {
             this.directoryElements = directoryElements;
@@ -31,15 +30,15 @@ namespace LocalDatabase_Server
             string[] fileEntries = Directory.GetFiles(targetDirectory);
             foreach (string path in fileEntries)
             {
-                DirectoryElement de = new DirectoryElement(path.Replace(tokenDirectory, "Main_Folder"), new FileInfo(path).Length, File.GetLastWriteTime(path).ToString(), false);
-                directoryElements.Add(de);
+                DirectoryElement directoryElement = new DirectoryElement(path.Replace(tokenDirectory, "Main_Folder"), new FileInfo(path).Length, File.GetLastWriteTime(path).ToString(), false);
+                directoryElements.Add(directoryElement);
             }
 
             string[] subdirectoryEntries = Directory.GetDirectories(targetDirectory);
             foreach (string subdirectory in subdirectoryEntries)
             {
-                DirectoryElement de = new DirectoryElement(subdirectory.Replace(tokenDirectory, "Main_Folder"), 0, "None", true);
-                directoryElements.Add(de);
+                DirectoryElement directoryElement = new DirectoryElement(subdirectory.Replace(tokenDirectory, "Main_Folder"), 0, "None", true);
+                directoryElements.Add(directoryElement);
                 ProcessDirectory(subdirectory);
             }
         }
@@ -90,13 +89,13 @@ namespace LocalDatabase_Server
             directoryElements.Remove(directoryElements.Find(x => x.path == path && x.name == name));
             if (isFolder.Equals("False"))
             {
-                if (System.IO.File.Exists(path))
+                if (File.Exists(path))
                 {
                     try
                     {
-                        System.IO.File.Delete(path);
+                        File.Delete(path);
                     }
-                    catch (System.IO.IOException e)
+                    catch (IOException e)
                     {
                         return e.Message;
                     }
@@ -120,7 +119,7 @@ namespace LocalDatabase_Server
         public void CreateFolder(string path)
         {
             path = path.Replace("Main_Folder", @"C:\Directory_test");
-            System.IO.Directory.CreateDirectory(path);
+            Directory.CreateDirectory(path);
         }
     }
 }

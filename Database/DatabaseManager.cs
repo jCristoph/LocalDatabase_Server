@@ -9,9 +9,10 @@ namespace LocalDatabase_Server.Database
     class DatabaseManager
     {
         //container with users 
-        private ObservableCollection<User> users;
+        private readonly ObservableCollection<User> users;
+
         //connection string for database - universal 
-        SqlConnection connectionString = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\Database\PZ_BD.mdf;Integrated Security=True;Connect Timeout=30");
+        readonly SqlConnection connectionString = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\Database\PZ_BD.mdf;Integrated Security=True;Connect Timeout=30");
 
         //consturctor
         public DatabaseManager()
@@ -39,9 +40,11 @@ namespace LocalDatabase_Server.Database
         //method that edit a row in user table in db. simple update query.
         public void DeleteUser(string token)
         {
-            SqlCommand query = new SqlCommand();
-            query.CommandText = @"DELETE FROM [User] WHERE token = '" + token + "'";
-            query.Connection = connectionString;
+            SqlCommand query = new SqlCommand
+            {
+                CommandText = @"DELETE FROM [User] WHERE token = '" + token + "'",
+                Connection = connectionString
+            };
             connectionString.Open();
             query.ExecuteNonQuery();
             connectionString.Close();
@@ -50,11 +53,13 @@ namespace LocalDatabase_Server.Database
         //method that edit a row in user table in db. simple update query.
         public void ChangeLimit(long newLimit, string token)
         {
-            SqlCommand query = new SqlCommand();
-            query.CommandText = @"UPDATE [User]
+            SqlCommand query = new SqlCommand
+            {
+                CommandText = @"UPDATE [User]
                                       SET limit = '" + newLimit + "'" +
-                                      "WHERE token = '" + token + "'";
-            query.Connection = connectionString;
+                                      "WHERE token = '" + token + "'",
+                Connection = connectionString
+            };
             connectionString.Open();
             query.ExecuteNonQuery();
             connectionString.Close();
@@ -63,11 +68,13 @@ namespace LocalDatabase_Server.Database
         //method that edit a row in user table in db. simple update query.
         public void ChangePassword(string newPassword, string token)
         {
-            SqlCommand query = new SqlCommand();
-            query.CommandText = @"UPDATE [User]
+            SqlCommand query = new SqlCommand
+            {
+                CommandText = @"UPDATE [User]
                                       SET password = '" + newPassword + "'" +
-                                      "WHERE token = '" + token + "'";
-            query.Connection = connectionString;
+                                      "WHERE token = '" + token + "'",
+                Connection = connectionString
+            };
             connectionString.Open();
             query.ExecuteNonQuery();
             connectionString.Close();
@@ -76,10 +83,12 @@ namespace LocalDatabase_Server.Database
         //method that add new transmission to transmission table in db. simple insert into query.
         public void AddToTransmission(string userToken, DateTime TransmissionDate, long fileSize, int transmissionType)
         {
-            SqlCommand query = new SqlCommand();
-            query.Connection = connectionString;
+            SqlCommand query = new SqlCommand
+            {
+                Connection = connectionString,
 
-            query.CommandText = @"INSERT INTO [Transaction]([transactionDate],[fileSize],[userToken],[transactionType]) VALUES ('" + TransmissionDate + "', '" + fileSize + "', '" + userToken + "', '" + transmissionType + "')";
+                CommandText = @"INSERT INTO [Transaction]([transactionDate],[fileSize],[userToken],[transactionType]) VALUES ('" + TransmissionDate + "', '" + fileSize + "', '" + userToken + "', '" + transmissionType + "')"
+            };
             connectionString.Open();
             query.ExecuteNonQuery();
             connectionString.Close();
@@ -91,9 +100,11 @@ namespace LocalDatabase_Server.Database
         //If password is incorrect then returns "error message"
         public string[] CheckLogin(string login, string password)
         {
-            SqlCommand query = new SqlCommand();
-            query.Connection = connectionString;
-            query.CommandText = "SELECT * FROM [User] WHERE Login = '" + login + "' and Password = '" + password + "'";
+            SqlCommand query = new SqlCommand
+            {
+                Connection = connectionString,
+                CommandText = "SELECT * FROM [User] WHERE Login = '" + login + "' and Password = '" + password + "'"
+            };
             SqlDataAdapter adapter = new SqlDataAdapter(query);
             DataTable table = new DataTable();
             adapter.Fill(table);
@@ -109,9 +120,11 @@ namespace LocalDatabase_Server.Database
         //method with simple sql query - load all users from database to app
         public ObservableCollection<User> LoadUsers()
         {
-            SqlCommand query = new SqlCommand();
-            query.Connection = connectionString;
-            query.CommandText = "SELECT * FROM [User]";
+            SqlCommand query = new SqlCommand
+            {
+                Connection = connectionString,
+                CommandText = "SELECT * FROM [User]"
+            };
             SqlDataAdapter adapter = new SqlDataAdapter(query);
             DataTable table = new DataTable();
             adapter.Fill(table);
@@ -163,9 +176,11 @@ namespace LocalDatabase_Server.Database
         public void LoadTransmissions(ObservableCollection<Transmission> transmissions)
         {
             transmissions.Clear();
-            SqlCommand query = new SqlCommand();
-            query.Connection = connectionString;
-            query.CommandText = "SELECT * FROM [Transaction]";
+            SqlCommand query = new SqlCommand
+            {
+                Connection = connectionString,
+                CommandText = "SELECT * FROM [Transaction]"
+            };
             SqlDataAdapter adapter = new SqlDataAdapter(query);
             DataTable table = new DataTable();
             adapter.Fill(table);
