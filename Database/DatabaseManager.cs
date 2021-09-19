@@ -9,13 +9,11 @@ namespace LocalDatabase_Server.Database
     class DatabaseManager
     {
         //container with users 
-        private ObservableCollection<User> users;
-        //connection string for database - universal 
-        SqlConnection connectionString = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\Database\PZ_BD.mdf;Integrated Security=True;Connect Timeout=30");
+
+     
         private readonly ObservableCollection<User> users;
         readonly string dbFilePath;
         readonly SqlConnection connectionString;
-
 
         public DatabaseManager()
         {
