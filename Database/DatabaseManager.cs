@@ -10,7 +10,6 @@ namespace LocalDatabase_Server.Database
     {
         //container with users 
 
-     
         private readonly ObservableCollection<User> users;
         readonly string dbFilePath;
         readonly SqlConnection connectionString;
