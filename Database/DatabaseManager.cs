@@ -2,7 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Data.SqlClient;
-
+using System.IO;
 
 namespace LocalDatabase_Server.Database
 {
@@ -12,11 +12,18 @@ namespace LocalDatabase_Server.Database
         private ObservableCollection<User> users;
         //connection string for database - universal 
         SqlConnection connectionString = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\Database\PZ_BD.mdf;Integrated Security=True;Connect Timeout=30");
+        private readonly ObservableCollection<User> users;
+        readonly string dbFilePath;
+        readonly SqlConnection connectionString;
 
-        //consturctor
+
         public DatabaseManager()
         {
             users = new ObservableCollection<User>();
+            string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
+
+            dbFilePath = $"{projectDirectory}\\Database\\PZ_BD.mdf";
+            connectionString = new SqlConnection($@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename={dbFilePath};Integrated Security=True;Connect Timeout=30");
         }
 
         #region Database getters
@@ -24,16 +31,18 @@ namespace LocalDatabase_Server.Database
         //N in query means that we can use polish characters
         public void AddUser(string surname, string name)
         {
+
             SqlCommand query = new SqlCommand();
             string token = generateRandomString(); //token has to be unique so better to check if it isnt duplicated
-            query.CommandText = @"INSERT INTO [User]([Name],[Surname],[Login],[Password],[Token]) VALUES (N'" + surname + "', N'" + name + "', '" + generateLogin(surname, name) + "', '" + token + "', '" + token + "')";
+            query.CommandText = "INSERT INTO [User]([Name],[Surname],[Login],[Password],[Token])";
+            query.CommandText += $"VALUES ('{name}', '{surname}', '{generateLogin(surname, name)}', '{token}', '{token}')";
             query.Connection = connectionString;
             connectionString.Open();
             query.ExecuteNonQuery();
             connectionString.Close();
 
-            string pathString = System.IO.Path.Combine(@"C:\Directory_test", token);
-            System.IO.Directory.CreateDirectory(pathString);
+            string pathString = Path.Combine(@"C:\Directory_test", token);
+            Directory.CreateDirectory(pathString);
         }
 
         //method that edit a row in user table in db. simple update query.
