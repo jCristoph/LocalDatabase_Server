@@ -22,12 +22,12 @@ namespace LocalDatabase_Server.Users
     public partial class Users : Window
     {
         private ObservableCollection<Database.User> users;
-        Database.DatabaseManager dm;
+        Database.DatabaseManager databaseManager;
         //constructor. When user open this panel, system load all users and list them.
         public Users()
         {
-            dm = new Database.DatabaseManager();
-            users = dm.LoadUsers();
+            databaseManager = new Database.DatabaseManager();
+            users = databaseManager.LoadUsers();
             WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen; //app is always in center of screen
             InitializeComponent();
             listView.ItemsSource = users;
