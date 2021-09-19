@@ -70,26 +70,26 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="ChangeLimitPanel\ChangeLimitPanel.xaml.cs">
+    <Compile Include="Panels\ChangeLimitPanel\ChangeLimitPanel.xaml.cs">
       <DependentUpon>ChangeLimitPanel.xaml</DependentUpon>
     </Compile>
     <Compile Include="Database\DatabaseManager.cs" />
     <Compile Include="Database\Transmission.cs" />
     <Compile Include="Database\User.cs" />
-    <Compile Include="LoginPanel\LoginPanel.xaml.cs">
+    <Compile Include="Panels\LoginPanel\LoginPanel.xaml.cs">
       <DependentUpon>LoginPanel.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MessagePanel\MessagePanel.xaml.cs">
+    <Compile Include="Panels\MessagePanel\MessagePanel.xaml.cs">
       <DependentUpon>MessagePanel.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Users\Users.xaml.cs">
+    <Compile Include="Panels\Users\Users.xaml.cs">
       <DependentUpon>Users.xaml</DependentUpon>
     </Compile>
-    <Page Include="ChangeLimitPanel\ChangeLimitPanel.xaml">
+    <Page Include="Panels\ChangeLimitPanel\ChangeLimitPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="LoginPanel\LoginPanel.xaml">
+    <Page Include="Panels\LoginPanel\LoginPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -101,29 +101,29 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Registration\Registration.xaml.cs">
+    <Compile Include="Panels\Registration\Registration.xaml.cs">
       <DependentUpon>Registration.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Registration\RegistrationResult.xaml.cs">
+    <Compile Include="Panels\Registration\RegistrationResult.xaml.cs">
       <DependentUpon>RegistrationResult.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ServerCom.cs" />
-    <Compile Include="DirectoryElement.cs" />
-    <Compile Include="DirectoryManager.cs" />
-    <Compile Include="ServerStarter.cs" />
+    <Compile Include="Server\ServerCom.cs" />
+    <Compile Include="Directory\DirectoryElement.cs" />
+    <Compile Include="Directory\DirectoryManager.cs" />
+    <Compile Include="Server\ServerStarter.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="MessagePanel\MessagePanel.xaml">
+    <Page Include="Panels\MessagePanel\MessagePanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Registration\Registration.xaml">
+    <Page Include="Panels\Registration\Registration.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Registration\RegistrationResult.xaml">
+    <Page Include="Panels\Registration\RegistrationResult.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -155,7 +155,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Users\Users.xaml">
+    <Page Include="Panels\Users\Users.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

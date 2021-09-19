@@ -11,7 +11,7 @@
         WindowStyle="None"
         Background="Transparent"
         AllowsTransparency="True">
-    
+
     <Border Background="#272537"
             CornerRadius="10">
         <Grid>
@@ -33,9 +33,9 @@
                 <TextBlock Grid.Column="0" Grid.Row="0" Foreground="White" Text="Lista ostatnich transmisji plików" FontSize="16" HorizontalAlignment="Center"  FontFamily="Lucida Sans" />
                 <TextBlock Grid.Column="1" Grid.Row="0" Foreground="White" Text="Lista aktywnych użytkowników" FontSize="16" HorizontalAlignment="Center"  FontFamily="Lucida Sans" />
                 <StackPanel Grid.Row="2" Grid.Column="1" VerticalAlignment="Center">
-                    <Button Content="Rejestracja" HorizontalAlignment="Center" VerticalAlignment="Center" Width="240" Height="30" Name="registrationButton" Click="registrationButton_Click"  Style="{StaticResource MenuButtonTheme}"/>
-                    <Button Content="Lista wszystkich użytkowników" HorizontalAlignment="Center"  VerticalAlignment="Center" Width="240" Height="30" Name="allUsersButton" Click="allUsersButton_Click" Margin="0,40,0,0" Style="{StaticResource MenuButtonTheme}"/>
-                    <Button Content="Wyłącz system" HorizontalAlignment="Center" VerticalAlignment="Center" Width="240" Height="30" Name="exitButton" Click="exitButton_Click" Margin="0,40,0,0" Style="{StaticResource MenuButtonTheme}"/>
+                    <Button Content="Rejestracja" VerticalAlignment="Center" Height="54" Name="registrationButton" Click="registrationButton_Click"  Style="{StaticResource MenuButtonTheme}" FontSize="20" Margin="80,0,80,0"/>
+                    <Button Content="Lista wszystkich użytkowników" HorizontalAlignment="Center"  VerticalAlignment="Center" Height="54" Name="allUsersButton" Click="allUsersButton_Click" Margin="80,40,80,0" Style="{StaticResource MenuButtonTheme}"   FontSize="20" Width="700"/>
+                    <Button Content="Wyłącz system" HorizontalAlignment="Center" VerticalAlignment="Center" Height="54" Name="exitButton" Click="exitButton_Click" Margin="80,40,80,0" Style="{StaticResource MenuButtonTheme}"  FontSize="20" Width="700"/>
                 </StackPanel>
                 <ListView Margin="20,0,10,0" Name="transmissionsList"  Grid.Column="0" Grid.Row="1"  Background="Aquamarine" Style="{StaticResource ListViewTheme}" ItemContainerStyle="{StaticResource ContainerStyle}">
                     <ListView.View>
