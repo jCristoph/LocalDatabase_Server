@@ -100,7 +100,7 @@ namespace LocalDatabase_Server.Database
             if (table.Rows.Count == 1)
             {
                 double temp = (double)(Int64.Parse(table.Rows[0].ItemArray.GetValue(6).ToString()) / 1000000000.0);
-                return new string[] { table.Rows[0].ItemArray.GetValue(5).ToString(), temp.ToString() };
+                return new string[] { table.Rows[0].ItemArray.GetValue(5).ToString(), temp.ToString() }; //array contains token [0] and limit [1]
             }
             else
                 return new string[] { "ERROR", "0" };

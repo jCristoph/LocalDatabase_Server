@@ -20,7 +20,7 @@ namespace LocalDatabase_Server
             if (!isLogged.Equals("ERROR"))
                 return "<Task=CheckLogin><isLogged>" + isLogged[0] +"</isLogged><Limit>" + isLogged[1] + "</Limit><Login>";
             else
-                return "<Task=CheckLogin><isLogged>ERROR</isLogged><Login>";
+                return "<Task=CheckLogin><isLogged>ERROR</isLogged><Limit></Limit><Login>";
         }
 
         /// <summary>
@@ -191,6 +191,13 @@ namespace LocalDatabase_Server
             data[0] = s.Substring(IndexHomePath, IndexEndPath - IndexHomePath);
             data[1] = s.Substring(IndexHomeFolder, IndexEndFolder - IndexHomeFolder);
             return data;
+        }
+        
+        public static string LogOutRecognizer(string s)
+        {
+            int IndexHome = s.IndexOf("<Token>") + "<Token>".Length;
+            int IndexEnd = s.LastIndexOf("</Token>");
+            return s.Substring(IndexHome, IndexEnd - IndexHome);
         }
 
         public static string[] CreateFolderRecognizer(string s)

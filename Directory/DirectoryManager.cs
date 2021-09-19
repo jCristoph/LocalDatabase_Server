@@ -5,7 +5,7 @@ using System.IO;
 
 namespace LocalDatabase_Server
 {
-    class DirectoryManager
+    public class DirectoryManager
     {
         public List<DirectoryElement> directoryElements { get; set; }
         private string tokenDirectory;

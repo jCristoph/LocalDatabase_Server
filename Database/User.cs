@@ -26,5 +26,29 @@ namespace LocalDatabase_Server.Database
             this.token = token;
             this.limit = limit;
         }
+
+        // ObservableCollection container doesn't have a lambda "Contains" version of method so I have to create new user and 
+        //compare them. To do it simply I compare users only by token - which is unique so to create new user (only for compare operation) I use this
+        //kind of consturctor.
+        public User(string token)
+        {
+            this.id = 0;
+            this.surname = "";
+            this.name = "";
+            this.login = "";
+            this.password = "";
+            this.token = token;
+            this.limit = 0;
+        }
+
+        //ObservableCollection container doesn't have a lambda "Contains" version of method so I have to create new user and 
+        //compare them. To do it simply I compare users only by token - which is unique
+        public override bool Equals(object obj)
+        {
+            if (obj == null) return false;
+            User u = obj as User;
+            if (u == null) return false;
+            return u.token.Equals(token);
+        }
     }
 }
