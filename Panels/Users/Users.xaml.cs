@@ -44,7 +44,7 @@ namespace LocalDatabase_Server.Users
         private void deleteUserButton(object sender, RoutedEventArgs e)
         {
             Database.User u = (Database.User)(((Button)sender).DataContext); //checking who was choosed.
-            dm.DeleteUser(u.token); //deleted from db
+            databaseManager.DeleteUser(u.token); //deleted from db
             string path = @"C:\Directory_test\" + u.token;
             for (int i = 0; i < users.Count; i++)
             {
@@ -65,7 +65,7 @@ namespace LocalDatabase_Server.Users
             Database.User u = (Database.User)(((Button)sender).DataContext); //checking who was choosed.
             ChangeLimitPanel.ChangeLimitPanel clp = new ChangeLimitPanel.ChangeLimitPanel(); //new panel opens. Look at Panels/ChangeLimitPanel
             clp.ShowDialog();
-            dm.ChangeLimit(clp.newlimit, u.token); //limit is also saved in container
+            databaseManager.ChangeLimit(clp.newlimit, u.token); //limit is also saved in container
         }
     }
 }
