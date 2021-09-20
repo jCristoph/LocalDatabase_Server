@@ -64,7 +64,7 @@ namespace LocalDatabase_Server
                             {
                                 readMessage(client);
                             }
-                            catch
+                            catch (Exception e)
                             {
                                 isConnected = false;
                             }

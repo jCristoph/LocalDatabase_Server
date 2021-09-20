@@ -32,7 +32,7 @@ namespace LocalDatabase_Server.Database
             SqlCommand query = new SqlCommand();
             string token = generateRandomString(); //token has to be unique so better to check if it isnt duplicated
             query.CommandText = "INSERT INTO [User]([Name],[Surname],[Login],[Password],[Token])";
-            query.CommandText += $"VALUES ('{name}', '{surname}', '{generateLogin(surname, name)}', '{token}', '{token}')";
+            query.CommandText += $"VALUES (N'{surname}', N'{name}', '{generateLogin(surname, name)}', '{token}', '{token}')";
             query.Connection = connectionString;
             connectionString.Open();
             query.ExecuteNonQuery();
@@ -85,7 +85,7 @@ namespace LocalDatabase_Server.Database
             SqlCommand query = new SqlCommand();
             query.Connection = connectionString;
 
-            query.CommandText = @"INSERT INTO [Transaction]([transactionDate],[fileSize],[userToken],[transactionType]) VALUES ('" + TransmissionDate + "', '" + fileSize + "', '" + userToken + "', '" + transmissionType + "')";
+            query.CommandText = @"INSERT INTO [Transaction]([transactionDate],[fileSize],[userToken],[transactionType]) VALUES ('" + TransmissionDate.ToString("yyyy-MM-dd HH:mm:ss") + "', '" + fileSize + "', '" + userToken + "', '" + transmissionType + "')";
             connectionString.Open();
             query.ExecuteNonQuery();
             connectionString.Close();
