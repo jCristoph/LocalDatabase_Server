@@ -148,9 +148,11 @@ namespace LocalDatabase_Server
                 case "Send": //when client sends upload file request
                     u = new User(token);
                     // TODO: Client and server has to be prepared to wait for message 
+                    sendMessage(ServerCom.responseMessage("OK"), client);
                     if (activeUsers.Contains(u)) //if user isnt in active users container he has to log in one more time - session is limited
                     {
                         path = ServerCom.SendRecognizer(data);
+                        Thread.Sleep(10);
                         sendFile(client, path);
                         databaseManager.AddToTransmission(token, DateTime.Now, new FileInfo(path.Replace("Main_Folder", @"C:\Directory_test")).Length, 0);
                         Application.Current.Dispatcher.Invoke(new Action(() => { databaseManager.LoadTransmissions(transmissions); }));
