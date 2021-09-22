@@ -4,7 +4,10 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.Net.Security;
 using System.Net.Sockets;
+using System.Security.Authentication;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -56,13 +59,17 @@ namespace LocalDatabase_Server
                     TcpClient client = server.AcceptTcpClient();
                     Task handleDeviceTask = new Task(() => 
                     {
+                        var serverCertificate = getServerCert();
+                        var sslStream = new SslStream(client.GetStream(), false, ValidateCertificate);
+                        sslStream.AuthenticateAsServer(serverCertificate, true, SslProtocols.Tls12, false);
+
                         isConnected = true;
                         while (isConnected)
                         {
                             //the only thing that server have to do with client is listen to request. Then eventually answer.
                             try
                             {
-                                readMessage(client);
+                                readMessage(sslStream);
                             }
                             catch (Exception e)
                             {
@@ -79,8 +86,47 @@ namespace LocalDatabase_Server
             }
         }
 
+        static bool ValidateCertificate(Object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+        {
+            // For this sample under Windows 7 I also get
+            // a remote cert not available error, so we
+            // just do a return true here to signal that
+            // we are trusting things. In the real world,
+            // this would be very bad practice.
+            //return true;
+
+            if (sslPolicyErrors == SslPolicyErrors.None)
+                return true;
+            // we don't have a proper certificate tree
+            if (sslPolicyErrors == SslPolicyErrors.RemoteCertificateChainErrors)
+                return true;
+            return false;
+        }
+        private static X509Certificate getServerCert()
+        {
+            X509Store store = new X509Store(StoreName.My,
+               StoreLocation.CurrentUser);
+            store.Open(OpenFlags.ReadOnly);
+
+            X509Certificate2 foundCertificate = null;
+            foreach (X509Certificate2 currentCertificate
+               in store.Certificates)
+            {
+                if (currentCertificate.IssuerName.Name
+                   != null && currentCertificate.IssuerName.
+                   Name.Equals("CN=MySslSocketCertificate"))
+                {
+                    foundCertificate = currentCertificate;
+                    break;
+                }
+            }
+
+
+            return foundCertificate;
+        }
+
         //method that recognie messages from xml language
-        public void recognizeMessage(string data, TcpClient client)
+        public void recognizeMessage(string data, SslStream sslStream)
         {
             int taskIndexHome = data.IndexOf("<Task=") + "<Task=".Length;
             int taskIndexEnd = data.IndexOf(">");
@@ -110,56 +156,56 @@ namespace LocalDatabase_Server
                             {
                                 activeUsers.Add(loggedUser);
                             }));
-                        sendMessage(ServerCom.CheckLoginMessage(temp), client);
+                        sendMessage(ServerCom.CheckLoginMessage(temp), sslStream);
                     }
                     else
                     {
-                        sendMessage("<Task=CheckLogin><isLogged>ERROR1</isLogged><Limit></Limit><Login>", client);
+                        sendMessage("<Task=CheckLogin><isLogged>ERROR1</isLogged><Limit></Limit><Login>", sslStream);
                     }
                     break;
                 case "ChngPass":
                     u = new User(token);
                     if (activeUsers.Contains(u)) //if user isnt in active users container he has to log in one more time - session is limited
                     {
-                        sendMessage(ServerCom.responseMessage(ServerCom.ChangePasswordRecognizer(data)), client);
+                        sendMessage(ServerCom.responseMessage(ServerCom.ChangePasswordRecognizer(data)), sslStream);
                     }
                     else
                     {
-                        sendMessage("<Task=SessionExpired></SessionExpired>", client);
+                        sendMessage("<Task=SessionExpired></SessionExpired>", sslStream);
                     }
                     break;
                 case "ReadOrder": //when client sends download file request
                     u = new User(token);
                     if (activeUsers.Contains(u)) //if user isnt in active users container he has to log in one more time - session is limited
                     {
-                        sendMessage(ServerCom.responseMessage("Pobieram..."), client);
+                        sendMessage(ServerCom.responseMessage("Pobieram..."), sslStream);
                         string[] arr = ServerCom.DownloadRecognizer(data);
                         Thread.Sleep(1000);
-                        downloadFile(client, arr[0]);
+                        //downloadFile(client, arr[0]);
 
                         databaseManager.AddToTransmission(token, DateTime.Now, new FileInfo((arr[0] + "\\" + arr[1]).Replace("Main_Folder", @"C:\Directory_test")).Length, 1);
                         Application.Current.Dispatcher.Invoke(new Action(() => { databaseManager.LoadTransmissions(transmissions); }));
                     }
                     else
                     {
-                        sendMessage("<Task=SessionExpired></SessionExpired>", client);
+                        sendMessage("<Task=SessionExpired></SessionExpired>", sslStream);
                     }
                     break;
                 case "Send": //when client sends upload file request
                     u = new User(token);
                     // TODO: Client and server has to be prepared to wait for message 
-                    sendMessage(ServerCom.responseMessage("OK"), client);
+                    sendMessage(ServerCom.responseMessage("OK"), sslStream);
                     if (activeUsers.Contains(u)) //if user isnt in active users container he has to log in one more time - session is limited
                     {
                         path = ServerCom.SendRecognizer(data);
                         Thread.Sleep(10);
-                        sendFile(client, path);
+                        //sendFile(client, path);
                         databaseManager.AddToTransmission(token, DateTime.Now, new FileInfo(path.Replace("Main_Folder", @"C:\Directory_test")).Length, 0);
                         Application.Current.Dispatcher.Invoke(new Action(() => { databaseManager.LoadTransmissions(transmissions); }));
                     }
                     else
                     {
-                        sendMessage("<Task=SessionExpired></SessionExpired>", client);
+                        sendMessage("<Task=SessionExpired></SessionExpired>", sslStream);
                     }
                     break;
                 case "SendDir": //when client sends send my directory request
@@ -168,24 +214,24 @@ namespace LocalDatabase_Server
                     {
                         dm = new DirectoryManager(@"C:\Directory_test\" + token + "\\");
                         foreach (var mess in ServerCom.SendDirectoryMessage(dm.directoryElements))
-                            sendMessage(mess, client);
+                            sendMessage(mess, sslStream);
                     }
                     else
                     {
-                        sendMessage("<Task=SessionExpired></SessionExpired>", client);
+                        sendMessage("<Task=SessionExpired></SessionExpired>", sslStream);
                     }
                     break;
                 case "CreateFolder":
                     u = new User(token);
                     if (activeUsers.Contains(u)) //if user isnt in active users container he has to log in one more time - session is limited
                     {
-                        sendMessage(ServerCom.responseMessage("Stworzono nowy folder"), client);
+                        sendMessage(ServerCom.responseMessage("Stworzono nowy folder"), sslStream);
                         destinationPath = ServerCom.DownloadRecognizer(data)[0];
                         dm.CreateFolder(destinationPath);
                     }
                     else
                     {
-                        sendMessage("<Task=SessionExpired></SessionExpired>", client);
+                        sendMessage("<Task=SessionExpired></SessionExpired>", sslStream);
                     }
                     break;
                 case "Delete":
@@ -199,20 +245,20 @@ namespace LocalDatabase_Server
                             deletedFileSize = new FileInfo(path.Replace("Main_Folder", @"C:\Directory_test")).Length;
                         else
                             deletedFileSize = 0;
-                        sendMessage(ServerCom.responseMessage(dm.DeleteElement(path, isFolder)), client);
+                        sendMessage(ServerCom.responseMessage(dm.DeleteElement(path, isFolder)), sslStream);
                         databaseManager.AddToTransmission(token, DateTime.Now, deletedFileSize, 2);
                         Application.Current.Dispatcher.Invoke(new Action(() => { databaseManager.LoadTransmissions(transmissions); }));
                     }
                     else
                     {
-                        sendMessage("<Task=SessionExpired></SessionExpired>", client);
+                        sendMessage("<Task=SessionExpired></SessionExpired>", sslStream);
                     }
                     break;
                 case "Logout":
                     u = new User(ServerCom.LogOutRecognizer(data));
                     if (activeUsers.Contains(u)) //if user isnt in active users container he has to log in one more time - session is limited
                     {
-                        client.Close();
+                        sslStream.Close();
                         isConnected = false;
                         Application.Current.Dispatcher.Invoke(new Action(() => { activeUsers.Remove(u); }));
                     }
@@ -224,34 +270,25 @@ namespace LocalDatabase_Server
             }
         }
         //tcp/ip read message method. Reads bytes and translate it to string  - it will be changed for ssl connection
-        private void readMessage(TcpClient client)
+        public void readMessage(SslStream sslStream)
         {
-            var stream = client.GetStream();
-            Byte[] bytes = new Byte[1024];
-            int i;
-            string data = "";
-            do
+            var inputBuffer = new byte[4096];
+            var inputBytes = 0;
+            while (inputBytes == 0)
             {
-                i = stream.Read(bytes, 0, bytes.Length);
-                data += Encoding.UTF8.GetString(bytes, 0, i);
-                if (!stream.DataAvailable)
-                    Thread.Sleep(1);
-            } while (stream.DataAvailable);
-            recognizeMessage(data, client);
+                inputBytes = sslStream.Read(inputBuffer, 0,
+                   inputBuffer.Length);
+            }
+            var inputMessage = Encoding.UTF8.GetString(inputBuffer,
+               0, inputBytes);
+            recognizeMessage(inputMessage, sslStream);
         }
         //tcp/ip send message method. translate string to bytes and send it to client by stream  - it will be changed for ssl connection
-        private void sendMessage(string str, TcpClient client)
+        private string sendMessage(string outputMessage, SslStream sslStream)
         {
-            try
-            {
-                var stream = client.GetStream();
-                Byte[] reply = System.Text.Encoding.UTF8.GetBytes(str);
-                stream.Write(reply, 0, reply.Length);
-            }
-            catch (Exception e)
-            {
-
-            }
+            var outputBuffer = Encoding.UTF8.GetBytes(outputMessage);
+            sslStream.Write(outputBuffer);
+            return outputMessage;
         }
         //tcp/ip download method. gets bytes and sum it to create a file. From bytes read a name of file. Saves it in path chosed by user.
         private void downloadFile(TcpClient client, string destinationPath)
