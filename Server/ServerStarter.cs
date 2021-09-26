@@ -1,4 +1,5 @@
 ﻿using LocalDatabase_Server.Database;
+using LocalDatabase_Server.Server;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -41,19 +42,6 @@ namespace LocalDatabase_Server
         {
             try
             {
-                Task sessionWatcherTask = new Task(() =>
-                {
-                    //server after session time clear active user container. then all users have to log in another time. 
-                    Stopwatch stopWatch = new Stopwatch();
-                    stopWatch.Start();
-                    while (true)
-                    {
-                        stopWatch.Restart();
-                        Application.Current.Dispatcher.Invoke(new Action(() => { activeUsers.Clear(); }));
-                        Thread.Sleep(15 * 60 * 1000); // setting session time at 15 minutes right now
-                    }
-                });
-                sessionWatcherTask.Start();
                 while (true)
                 {
                     TcpClient client = server.AcceptTcpClient();
@@ -62,8 +50,9 @@ namespace LocalDatabase_Server
                         var serverCertificate = getServerCert();
                         var sslStream = new SslStream(client.GetStream(), false, ValidateCertificate);
                         sslStream.AuthenticateAsServer(serverCertificate, true, SslProtocols.Tls12, false);
-
+                        sslStream.ReadTimeout = 15 * 60 * 1000; //after 15 minutes afk user is logged out
                         isConnected = true;
+                        var token = readMessage(sslStream);
                         while (isConnected)
                         {
                             //the only thing that server have to do with client is listen to request. Then eventually answer.
@@ -73,7 +62,10 @@ namespace LocalDatabase_Server
                             }
                             catch (Exception e)
                             {
+                                User u = new User(token);
+                                sslStream.Close();
                                 isConnected = false;
+                                Application.Current.Dispatcher.Invoke(new Action(() => { activeUsers.Remove(u); }));
                             }
                         }
                     }); //when new client wants to connect, the new thread is created
@@ -86,6 +78,7 @@ namespace LocalDatabase_Server
             }
         }
 
+        #region ssl_methods
         static bool ValidateCertificate(Object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
         {
             // For this sample under Windows 7 I also get
@@ -120,13 +113,12 @@ namespace LocalDatabase_Server
                     break;
                 }
             }
-
-
             return foundCertificate;
         }
+        #endregion
 
         //method that recognie messages from xml language
-        public void recognizeMessage(string data, SslStream sslStream)
+        public string recognizeMessage(string data, SslStream sslStream)
         {
             int taskIndexHome = data.IndexOf("<Task=") + "<Task=".Length;
             int taskIndexEnd = data.IndexOf(">");
@@ -142,12 +134,12 @@ namespace LocalDatabase_Server
             string destinationPath = "";
             Database.DatabaseManager databaseManager = new Database.DatabaseManager();
             string path = "";
-            //after translate system choose which method run 
+            //after translation system choose which method run 
             switch (task)
             {
                 case "Login":
                     string[] temp = ServerCom.LoginRecognizer(data);
-                    u = new User(temp[0]);
+                    u = new User(temp[0]); //temp[0] - token
                     if (!activeUsers.Contains(u)) //user can be logged in only on one device in the same time. It could be a problem if device or program stopped running unexpectedly
                     {
                         User loggedUser = databaseManager.FindUserByToken(temp[0]);
@@ -162,7 +154,7 @@ namespace LocalDatabase_Server
                     {
                         sendMessage("<Task=CheckLogin><isLogged>ERROR1</isLogged><Limit></Limit><Login>", sslStream);
                     }
-                    break;
+                    return temp[0];
                 case "ChngPass":
                     u = new User(token);
                     if (activeUsers.Contains(u)) //if user isnt in active users container he has to log in one more time - session is limited
@@ -181,7 +173,9 @@ namespace LocalDatabase_Server
                         sendMessage(ServerCom.responseMessage("Pobieram..."), sslStream);
                         string[] arr = ServerCom.DownloadRecognizer(data);
                         Thread.Sleep(1000);
-                        //downloadFile(client, arr[0]);
+                        FileTransporter fileTransporter = new FileTransporter("127.0.0.1", (arr[0] + "\\" + arr[1]).Replace("Main_Folder", @"C:\Directory_test"));
+                        fileTransporter.connectAsServer();
+                        fileTransporter.recieveFile();
 
                         databaseManager.AddToTransmission(token, DateTime.Now, new FileInfo((arr[0] + "\\" + arr[1]).Replace("Main_Folder", @"C:\Directory_test")).Length, 1);
                         Application.Current.Dispatcher.Invoke(new Action(() => { databaseManager.LoadTransmissions(transmissions); }));
@@ -199,7 +193,11 @@ namespace LocalDatabase_Server
                     {
                         path = ServerCom.SendRecognizer(data);
                         Thread.Sleep(10);
-                        //sendFile(client, path);
+
+                        FileTransporter fileTransporter = new FileTransporter("127.0.0.1", path);
+                        fileTransporter.connectAsServer();
+                        fileTransporter.sendFile();
+
                         databaseManager.AddToTransmission(token, DateTime.Now, new FileInfo(path.Replace("Main_Folder", @"C:\Directory_test")).Length, 0);
                         Application.Current.Dispatcher.Invoke(new Action(() => { databaseManager.LoadTransmissions(transmissions); }));
                     }
@@ -213,8 +211,10 @@ namespace LocalDatabase_Server
                     if (activeUsers.Contains(u)) //if user isnt in active users container he has to log in one more time - session is limited
                     {
                         dm = new DirectoryManager(@"C:\Directory_test\" + token + "\\");
+                        string message = "";
                         foreach (var mess in ServerCom.SendDirectoryMessage(dm.directoryElements))
-                            sendMessage(mess, sslStream);
+                            message += mess;
+                        sendMessage(message, sslStream);
                     }
                     else
                     {
@@ -268,9 +268,10 @@ namespace LocalDatabase_Server
                     mp.ShowDialog();
                     break;
             }
+            return "";
         }
         //tcp/ip read message method. Reads bytes and translate it to string  - it will be changed for ssl connection
-        public void readMessage(SslStream sslStream)
+        public string readMessage(SslStream sslStream)
         {
             var inputBuffer = new byte[4096];
             var inputBytes = 0;
@@ -281,13 +282,15 @@ namespace LocalDatabase_Server
             }
             var inputMessage = Encoding.UTF8.GetString(inputBuffer,
                0, inputBytes);
-            recognizeMessage(inputMessage, sslStream);
+            sslStream.Flush();
+            return recognizeMessage(inputMessage, sslStream);
         }
         //tcp/ip send message method. translate string to bytes and send it to client by stream  - it will be changed for ssl connection
         private string sendMessage(string outputMessage, SslStream sslStream)
         {
             var outputBuffer = Encoding.UTF8.GetBytes(outputMessage);
             sslStream.Write(outputBuffer);
+            sslStream.Flush();
             return outputMessage;
         }
         //tcp/ip download method. gets bytes and sum it to create a file. From bytes read a name of file. Saves it in path chosed by user.
