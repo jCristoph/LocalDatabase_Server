@@ -42,7 +42,7 @@ namespace LocalDatabase_Server
         //method that starts server - it has to be in other thread because meanwhile the gui has to run
         private void newThread()
         {
-            ServerStarter ss = new ServerStarter("127.0.0.1", 25000, activeUsers, transmissions);
+            new ServerStarter(activeUsers: activeUsers, transmissions: transmissions);
         }
         #region button events
 

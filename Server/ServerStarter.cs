@@ -21,7 +21,7 @@ namespace LocalDatabase_Server
         bool isConnected;
 
         //constructor
-        public ServerStarter(string ip, int port, ObservableCollection<Database.User> activeUsers, ObservableCollection<Database.Transmission> transmissions)
+        public ServerStarter(ObservableCollection<Database.User> activeUsers, ObservableCollection<Database.Transmission> transmissions, string ip = "127.0.0.1", int port = 25000)
         {
             this.activeUsers = activeUsers;
             this.transmissions = transmissions;
@@ -54,7 +54,7 @@ namespace LocalDatabase_Server
                 while (true)
                 {
                     TcpClient client = server.AcceptTcpClient();
-                    Task handleDeviceTask = new Task(() => 
+                    Task handleDeviceTask = new Task(() =>
                     {
                         isConnected = true;
                         while (isConnected)
@@ -87,7 +87,7 @@ namespace LocalDatabase_Server
             string task = data.Substring(taskIndexHome, taskIndexEnd - taskIndexHome);
             string token = "";
             User u = null;
-            if(data.Contains("<Token>"))
+            if (data.Contains("<Token>"))
             {
                 taskIndexHome = data.IndexOf("<Token>") + "<Token>".Length;
                 taskIndexEnd = data.IndexOf("</Token>");
@@ -137,7 +137,7 @@ namespace LocalDatabase_Server
                         Thread.Sleep(1000);
                         downloadFile(client, arr[0]);
 
-                        databaseManager.AddToTransmission(token, DateTime.Now, new FileInfo((arr[0] + "\\" + arr[1]).Replace("Main_Folder", @"C:\Directory_test")).Length, 1);
+                        databaseManager.AddToTransmission(token, DateTime.Now, new FileInfo((arr[0] + "\\" + arr[1]).Replace("Main_Folder", @"C:\Directory_test")).Length, TransmissionType.Wysyłanie);
                         Application.Current.Dispatcher.Invoke(new Action(() => { databaseManager.LoadTransmissions(transmissions); }));
                     }
                     else
@@ -200,7 +200,7 @@ namespace LocalDatabase_Server
                         else
                             deletedFileSize = 0;
                         sendMessage(ServerCom.responseMessage(dm.DeleteElement(path, isFolder)), client);
-                        databaseManager.AddToTransmission(token, DateTime.Now, deletedFileSize, 2);
+                        databaseManager.AddToTransmission(token, DateTime.Now, deletedFileSize, TransmissionType.Usuwanie);
                         Application.Current.Dispatcher.Invoke(new Action(() => { databaseManager.LoadTransmissions(transmissions); }));
                     }
                     else
@@ -281,7 +281,7 @@ namespace LocalDatabase_Server
                             fileStream.Write(dataByte, 0, thisRead);
                             if (!networkStream.DataAvailable)
                                 Thread.Sleep(10);
-                        } 
+                        }
                         fileStream.Close();
                     }
                     handlerSocket = null;
