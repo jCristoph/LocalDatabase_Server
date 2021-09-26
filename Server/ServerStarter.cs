@@ -310,7 +310,7 @@ namespace LocalDatabase_Server
                     lock (this)
                     {
                         string folderPath = destinationPath.Replace("Main_Folder", @"C:\Directory_test") + @"\";
-                        handlerSocket.Receive(dataByte);
+                        //handlerSocket.recieve(dataByte);
                         int fileNameLen = BitConverter.ToInt32(dataByte, 0);
                         fileName = Encoding.UTF8.GetString(dataByte, 4, fileNameLen);
                         Stream fileStream = File.OpenWrite(folderPath + fileName);
