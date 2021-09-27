@@ -1,9 +1,12 @@
-﻿using System;
+﻿using LocalDatabase_Server.Database;
+using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace LocalDatabase_Server.Server
 {
@@ -14,6 +17,10 @@ namespace LocalDatabase_Server.Server
         private FileInfo file;
         static int BUFFER_SIZE = 4096;
         Socket socket;
+
+        DatabaseManager databaseManager;
+        ObservableCollection<Transmission> transmissions;
+        string token;
 
         public FileTransporter(string ip, string fileName)
         {
@@ -86,10 +93,8 @@ namespace LocalDatabase_Server.Server
         }
         private void recieveFile_bg_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            if (e.Error != null)
-            {
-                Console.WriteLine(e.Error.ToString());
-            }
+            databaseManager.AddToTransmission(token, DateTime.Now, new FileInfo(fileName).Length, 1);
+            Application.Current.Dispatcher.Invoke(new Action(() => { databaseManager.LoadTransmissions(transmissions); }));
             if (e.Cancelled)
                 Console.WriteLine("Stopped by button");
             else
@@ -159,6 +164,13 @@ namespace LocalDatabase_Server.Server
                 Console.WriteLine("Stopped by button");
             else
                 Console.WriteLine("Stopped by the end of operation");
+        }
+
+        internal void setContainers(DatabaseManager databaseManager, ObservableCollection<Transmission> transmissions, string token)
+        {
+            this.transmissions = transmissions;
+            this.databaseManager = databaseManager;
+            this.token = token;
         }
         #endregion
 

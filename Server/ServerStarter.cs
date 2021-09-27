@@ -163,7 +163,7 @@ namespace LocalDatabase_Server
                     }
                     else
                     {
-                        sendMessage("<Task=SessionExpired></SessionExpired>", sslStream);
+                        sendMessage(ServerCom.sessionExpired(), sslStream);
                     }
                     break;
                 case "ReadOrder": //when client sends download file request
@@ -176,13 +176,11 @@ namespace LocalDatabase_Server
                         FileTransporter fileTransporter = new FileTransporter("127.0.0.1", (arr[0] + "\\" + arr[1]).Replace("Main_Folder", @"C:\Directory_test"));
                         fileTransporter.connectAsServer();
                         fileTransporter.recieveFile();
-
-                        databaseManager.AddToTransmission(token, DateTime.Now, new FileInfo((arr[0] + "\\" + arr[1]).Replace("Main_Folder", @"C:\Directory_test")).Length, 1);
-                        Application.Current.Dispatcher.Invoke(new Action(() => { databaseManager.LoadTransmissions(transmissions); }));
+                        fileTransporter.setContainers(databaseManager, transmissions, token);
                     }
                     else
                     {
-                        sendMessage("<Task=SessionExpired></SessionExpired>", sslStream);
+                        sendMessage(ServerCom.sessionExpired(), sslStream);
                     }
                     break;
                 case "Send": //when client sends upload file request
@@ -203,7 +201,7 @@ namespace LocalDatabase_Server
                     }
                     else
                     {
-                        sendMessage("<Task=SessionExpired></SessionExpired>", sslStream);
+                        sendMessage(ServerCom.sessionExpired(), sslStream);
                     }
                     break;
                 case "SendDir": //when client sends send my directory request
@@ -218,7 +216,7 @@ namespace LocalDatabase_Server
                     }
                     else
                     {
-                        sendMessage("<Task=SessionExpired></SessionExpired>", sslStream);
+                        sendMessage(ServerCom.sessionExpired(), sslStream);
                     }
                     break;
                 case "CreateFolder":
@@ -231,7 +229,7 @@ namespace LocalDatabase_Server
                     }
                     else
                     {
-                        sendMessage("<Task=SessionExpired></SessionExpired>", sslStream);
+                        sendMessage(ServerCom.sessionExpired(), sslStream);
                     }
                     break;
                 case "Delete":
@@ -251,7 +249,7 @@ namespace LocalDatabase_Server
                     }
                     else
                     {
-                        sendMessage("<Task=SessionExpired></SessionExpired>", sslStream);
+                        sendMessage(ServerCom.sessionExpired(), sslStream);
                     }
                     break;
                 case "Logout":
@@ -273,12 +271,12 @@ namespace LocalDatabase_Server
         //tcp/ip read message method. Reads bytes and translate it to string  - it will be changed for ssl connection
         public string readMessage(SslStream sslStream)
         {
+            sslStream.Flush();
             var inputBuffer = new byte[4096];
             var inputBytes = 0;
             while (inputBytes == 0)
             {
-                inputBytes = sslStream.Read(inputBuffer, 0,
-                   inputBuffer.Length);
+                inputBytes = sslStream.Read(inputBuffer, 0, inputBuffer.Length);
             }
             var inputMessage = Encoding.UTF8.GetString(inputBuffer,
                0, inputBytes);
@@ -288,6 +286,7 @@ namespace LocalDatabase_Server
         //tcp/ip send message method. translate string to bytes and send it to client by stream  - it will be changed for ssl connection
         private string sendMessage(string outputMessage, SslStream sslStream)
         {
+            sslStream.Flush();
             var outputBuffer = Encoding.UTF8.GetBytes(outputMessage);
             sslStream.Write(outputBuffer);
             sslStream.Flush();
