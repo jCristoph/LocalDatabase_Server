@@ -271,17 +271,23 @@ namespace LocalDatabase_Server
         //tcp/ip read message method. Reads bytes and translate it to string  - it will be changed for ssl connection
         public string readMessage(SslStream sslStream)
         {
-            sslStream.Flush();
             var inputBuffer = new byte[4096];
+            StringBuilder messageData = new StringBuilder();
             var inputBytes = 0;
-            while (inputBytes == 0)
+            do
             {
                 inputBytes = sslStream.Read(inputBuffer, 0, inputBuffer.Length);
-            }
-            var inputMessage = Encoding.UTF8.GetString(inputBuffer,
-               0, inputBytes);
+                Decoder decoder = Encoding.UTF8.GetDecoder();
+                char[] chars = new char[decoder.GetCharCount(inputBuffer, 0, inputBytes)];
+                decoder.GetChars(inputBuffer, 0, inputBytes, chars, 0);
+                messageData.Append(chars);
+                if (messageData.ToString().IndexOf("<EOM>") != -1)
+                {
+                    break;
+                }
+            } while (inputBytes != 0);
             sslStream.Flush();
-            return recognizeMessage(inputMessage, sslStream);
+            return recognizeMessage(messageData.ToString(), sslStream);
         }
         //tcp/ip send message method. translate string to bytes and send it to client by stream  - it will be changed for ssl connection
         private string sendMessage(string outputMessage, SslStream sslStream)
@@ -291,71 +297,6 @@ namespace LocalDatabase_Server
             sslStream.Write(outputBuffer);
             sslStream.Flush();
             return outputMessage;
-        }
-        //tcp/ip download method. gets bytes and sum it to create a file. From bytes read a name of file. Saves it in path chosed by user.
-        private void downloadFile(TcpClient client, string destinationPath)
-        {
-            try
-            {
-                client.GetStream().Flush();
-                Socket handlerSocket = client.Client;
-                if (handlerSocket.Connected)
-                {
-                    string fileName = string.Empty;
-                    NetworkStream networkStream = new NetworkStream(handlerSocket);
-                    int thisRead = 0;
-                    int blockSize = 1024;
-                    Byte[] dataByte = new Byte[blockSize];
-                    lock (this)
-                    {
-                        string folderPath = destinationPath.Replace("Main_Folder", @"C:\Directory_test") + @"\";
-                        //handlerSocket.recieve(dataByte);
-                        int fileNameLen = BitConverter.ToInt32(dataByte, 0);
-                        fileName = Encoding.UTF8.GetString(dataByte, 4, fileNameLen);
-                        Stream fileStream = File.OpenWrite(folderPath + fileName);
-                        fileStream.Write(dataByte, 4 + fileNameLen, (1024 - (4 + fileNameLen)));
-                        while (networkStream.DataAvailable)
-                        {
-                            thisRead = networkStream.Read(dataByte, 0, blockSize);
-                            fileStream.Write(dataByte, 0, thisRead);
-                            if (!networkStream.DataAvailable)
-                                Thread.Sleep(10);
-                        } 
-                        fileStream.Close();
-                    }
-                    handlerSocket = null;
-                }
-            }
-            catch (Exception e)
-            {
-
-            }
-        }
-        //tcp/ip send file method. Read the entire file to program then bytes sends by stream.
-        private void sendFile(TcpClient client, string path)
-        {
-            int IndexHome = path.LastIndexOf("\\") + "\\".Length;
-            int IndexEnd = path.Length;
-            string shortFileName = path.Substring(IndexHome, IndexEnd - IndexHome);
-            path = path.Replace("Main_Folder", @"C:\Directory_test");
-            string longFileName = path;
-            try
-            {
-                byte[] fileNameByte = Encoding.UTF8.GetBytes(shortFileName);
-                byte[] fileData = File.ReadAllBytes(longFileName);
-                byte[] clientData = new byte[4 + fileNameByte.Length + fileData.Length];
-                byte[] fileNameLen = BitConverter.GetBytes(fileNameByte.Length);
-                fileNameLen.CopyTo(clientData, 0);
-                fileNameByte.CopyTo(clientData, 4);
-                fileData.CopyTo(clientData, 4 + fileNameByte.Length);
-                NetworkStream networkStream = new NetworkStream(client.Client);
-                networkStream.Write(clientData, 0, clientData.GetLength(0));
-                networkStream.Close();
-            }
-            catch (Exception e)
-            {
-
-            }
         }
     }
 }
