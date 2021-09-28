@@ -115,6 +115,7 @@
     <Compile Include="Panels\Registration\RegistrationResult.xaml.cs">
       <DependentUpon>RegistrationResult.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Server\FileTransporter.cs" />
     <Compile Include="Server\ServerCom.cs" />
     <Compile Include="Directory\DirectoryElement.cs" />
     <Compile Include="Directory\DirectoryManager.cs" />

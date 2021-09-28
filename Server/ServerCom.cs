@@ -18,9 +18,9 @@ namespace LocalDatabase_Server
         public static string CheckLoginMessage(string[] isLogged)
         {
             if (!isLogged.Equals("ERROR"))
-                return "<Task=CheckLogin><isLogged>" + isLogged[0] +"</isLogged><Limit>" + isLogged[1] + "</Limit><Login>";
+                return "<Task=CheckLogin><isLogged>" + isLogged[0] +"</isLogged><Limit>" + isLogged[1] + "</Limit><Login><EOM>";
             else
-                return "<Task=CheckLogin><isLogged>ERROR</isLogged><Limit></Limit><Login>";
+                return "<Task=CheckLogin><isLogged>ERROR</isLogged><Limit></Limit><Login><EOM>";
         }
 
         /// <summary>
@@ -30,7 +30,7 @@ namespace LocalDatabase_Server
         /// <returns></returns>
         public static string DownloadMessage()
         {
-            return "<Task=Download></Task><#>";
+            return "<Task=Download></Task><EOM>";
         }
 
         /// <summary>
@@ -40,7 +40,7 @@ namespace LocalDatabase_Server
         /// <returns></returns>
         public static string SendMessge(string path)
         {
-            return "<Task=Send><Path>" + path + "</Path></Task>";
+            return "<Task=Send><Path>" + path + "</Path></Task><EOM>";
         }
 
         /// <summary>
@@ -59,19 +59,22 @@ namespace LocalDatabase_Server
                                 "<Path>" + de.path + " </Path>" +
                                 "<Name>" + de.name + "</Name>" +
                                 "<Size>" + de.size + "</Size>" +
-                                "<Last Write>" + de.lwr + "</Last Write></Task>";
+                                "<Last Write>" + de.lwr + "</Last Write></Task><EOM>";
                 else
                     dirMessage[i] = "<Task=SendingDir><Folder>" + de.isFolder + "</Folder>" +
                                 "<Path>" + de.path + " </Path>" +
                                 "<Name>" + de.name + "</Name>" +
                                 "<Size>" + de.size + "</Size>" +
-                                "<Last Write>" + de.lwr + "</Last Write></Task>";
+                                "<Last Write>" + de.lwr + "</Last Write></Task><EOM>";
                 i++;
             }
             return dirMessage;
         }
 
-
+        public static string sessionExpired()
+        {
+            return "<Task=SessionExpired></SessionExpired><EOM>";
+        }
 
         /// <summary>
         /// For client and server usage. If something goes wrong or needs only confirmations then this method
@@ -82,7 +85,7 @@ namespace LocalDatabase_Server
         /// <returns></returns>
         public static string responseMessage(string content)
         {
-            return "<Task=Response><Content>" + content + "</Content></Task><#>";
+            return "<Task=Response><Content>" + content + "</Content></Task><EOM>";
         }
         #endregion
 

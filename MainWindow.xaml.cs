@@ -28,13 +28,16 @@ namespace LocalDatabase_Server
             WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen; //app is always in center of screen
             InitializeComponent(); //runs gui
             pieChart(); //creates pie chart
+
+
             activeUsers = new ObservableCollection<Database.User>();
             transmissions = new ObservableCollection<Database.Transmission>();
             transmissionsList.ItemsSource = transmissions;
             activeUsersList.ItemsSource = activeUsers;
             CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(transmissionsList.ItemsSource);
             view.SortDescriptions.Add(new SortDescription("date", ListSortDirection.Descending));
-            //transmissions.Add(new Database.Transmission(1, DateTime.Now, 0, "ABC", 0));
+
+
             Task serverThread = new Task(() => newThread());
             serverThread.Start();
         }
