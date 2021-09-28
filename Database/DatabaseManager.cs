@@ -2,25 +2,21 @@
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Data.SqlClient;
-using System.IO;
 
 namespace LocalDatabase_Server.Database
 {
     class DatabaseManager
     {
         //container with users 
-
+     
+     
         private readonly ObservableCollection<User> users;
-        readonly string dbFilePath;
-        readonly SqlConnection connectionString;
+
+        readonly SqlConnection connectionString = new ConnectionString().GetConnectionString();
 
         public DatabaseManager()
         {
             users = new ObservableCollection<User>();
-            string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
-
-            dbFilePath = $"{projectDirectory}\\Database\\PZ_BD.mdf";
-            connectionString = new SqlConnection($@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename={dbFilePath};Integrated Security=True;Connect Timeout=30");
         }
 
         #region Database getters
@@ -28,67 +24,29 @@ namespace LocalDatabase_Server.Database
         //N in query means that we can use polish characters
         public void AddUser(string surname, string name)
         {
-
-            SqlCommand query = new SqlCommand();
-            string token = generateRandomString(); //token has to be unique so better to check if it isnt duplicated
-            query.CommandText = "INSERT INTO [User]([Name],[Surname],[Login],[Password],[Token])";
-            query.CommandText += $"VALUES (N'{surname}', N'{name}', '{generateLogin(surname, name)}', '{token}', '{token}')";
-            query.Connection = connectionString;
-            connectionString.Open();
-            query.ExecuteNonQuery();
-            connectionString.Close();
-
-            string pathString = Path.Combine(@"C:\Directory_test", token);
-            Directory.CreateDirectory(pathString);
+            AddUserUseCase.invoke(surname, name, connectionString);
         }
 
-        //method that edit a row in user table in db. simple update query.
+
         public void DeleteUser(string token)
         {
-            SqlCommand query = new SqlCommand();
-            query.CommandText = @"DELETE FROM [User] WHERE token = '" + token + "'";
-            query.Connection = connectionString;
-            connectionString.Open();
-            query.ExecuteNonQuery();
-            connectionString.Close();
+            DeleteUserUseCase.invoke(token, connectionString);
         }
 
-        //method that edit a row in user table in db. simple update query.
+ 
         public void ChangeLimit(long newLimit, string token)
         {
-            SqlCommand query = new SqlCommand();
-            query.CommandText = @"UPDATE [User]
-                                      SET limit = '" + newLimit + "'" +
-                                      "WHERE token = '" + token + "'";
-            query.Connection = connectionString;
-            connectionString.Open();
-            query.ExecuteNonQuery();
-            connectionString.Close();
+            ChangeLimitUseCase.invoke(token, newLimit, connectionString);
         }
 
-        //method that edit a row in user table in db. simple update query.
         public void ChangePassword(string newPassword, string token)
         {
-            SqlCommand query = new SqlCommand();
-            query.CommandText = @"UPDATE [User]
-                                      SET password = '" + newPassword + "'" +
-                                      "WHERE token = '" + token + "'";
-            query.Connection = connectionString;
-            connectionString.Open();
-            query.ExecuteNonQuery();
-            connectionString.Close();
+            ChangePasswordUseCase.invoke(token, newPassword, connectionString);
         }
-
-        //method that add new transmission to transmission table in db. simple insert into query.
-        public void AddToTransmission(string userToken, DateTime TransmissionDate, long fileSize, int transmissionType)
+        
+        public void AddToTransmission(string userToken, DateTime transmissionDate, long fileSize, TransmissionType transmissionType)
         {
-            SqlCommand query = new SqlCommand();
-            query.Connection = connectionString;
-
-            query.CommandText = @"INSERT INTO [Transaction]([transactionDate],[fileSize],[userToken],[transactionType]) VALUES ('" + TransmissionDate.ToString("yyyy-MM-dd HH:mm:ss") + "', '" + fileSize + "', '" + userToken + "', '" + transmissionType + "')";
-            connectionString.Open();
-            query.ExecuteNonQuery();
-            connectionString.Close();
+            AddToTransmissionUseCase.invoke(token: userToken, transmissionDate, fileSize, transmissionType, connectionString);
         }
         #endregion
 
@@ -97,9 +55,11 @@ namespace LocalDatabase_Server.Database
         //If password is incorrect then returns "error message"
         public string[] CheckLogin(string login, string password)
         {
-            SqlCommand query = new SqlCommand();
-            query.Connection = connectionString;
-            query.CommandText = "SELECT * FROM [User] WHERE Login = '" + login + "' and Password = '" + password + "'";
+            SqlCommand query = new SqlCommand
+            {
+                Connection = connectionString,
+                CommandText = $"SELECT * FROM [User] WHERE Login = {login} and Password = {password}"
+            };
             SqlDataAdapter adapter = new SqlDataAdapter(query);
             DataTable table = new DataTable();
             adapter.Fill(table);
@@ -109,15 +69,20 @@ namespace LocalDatabase_Server.Database
                 return new string[] { table.Rows[0].ItemArray.GetValue(5).ToString(), temp.ToString() }; //array contains token [0] and limit [1]
             }
             else
+            {
                 return new string[] { "ERROR", "0" };
+            }
+               
         }
 
         //method with simple sql query - load all users from database to app
         public ObservableCollection<User> LoadUsers()
         {
-            SqlCommand query = new SqlCommand();
-            query.Connection = connectionString;
-            query.CommandText = "SELECT * FROM [User]";
+            SqlCommand query = new SqlCommand
+            {
+                Connection = connectionString,
+                CommandText = "SELECT * FROM [User]"
+            };
             SqlDataAdapter adapter = new SqlDataAdapter(query);
             DataTable table = new DataTable();
             adapter.Fill(table);
@@ -169,42 +134,29 @@ namespace LocalDatabase_Server.Database
         public void LoadTransmissions(ObservableCollection<Transmission> transmissions)
         {
             transmissions.Clear();
-            SqlCommand query = new SqlCommand();
-            query.Connection = connectionString;
-            query.CommandText = "SELECT * FROM [Transaction]";
+            SqlCommand query = new SqlCommand
+            {
+                Connection = connectionString,
+                CommandText = "SELECT * FROM [Transaction]"
+            };
             SqlDataAdapter adapter = new SqlDataAdapter(query);
             DataTable table = new DataTable();
             adapter.Fill(table);
             for (int i = 0; i < table.Rows.Count; i++)
             {
+              
                 //when the data is loaded then program has to clean it all. From each row it has to load a correct data and cast it to right data type.
                 //Check Transmissions table in database to see what every column contains.
-                Transmission t = new Transmission(Int32.Parse(table.Rows[i].ItemArray.GetValue(0).ToString()), (DateTime)table.Rows[i].ItemArray.GetValue(1), Int64.Parse(table.Rows[i].ItemArray.GetValue(2).ToString()), table.Rows[i].ItemArray.GetValue(3).ToString(), Int32.Parse(table.Rows[i].ItemArray.GetValue(4).ToString()));
+                int id = Int32.Parse(table.Rows[i].ItemArray.GetValue(0).ToString());
+                DateTime date = (DateTime)table.Rows[i].ItemArray.GetValue(1);
+                long fileSize = Int64.Parse(table.Rows[i].ItemArray.GetValue(2).ToString());
+                string userToken = table.Rows[i].ItemArray.GetValue(3).ToString();
+                TransmissionType transmissionType = (TransmissionType)Int32.Parse(table.Rows[i].ItemArray.GetValue(4).ToString());
+
+                Transmission t = new Transmission(id, date, fileSize, userToken, transmissionType);
                 transmissions.Add(t);
             }
         }
         #endregion
-
-        /*
-         * WATCHOUT THIS METHOD IS UNSAFE - IT HAS TO BE CHANGED IN FUTURE
-         */
-        private string generateRandomString()
-        {
-            var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-            var stringChars = new char[10];
-            var random = new Random();
-
-            for (int i = 0; i < stringChars.Length; i++)
-            {
-                stringChars[i] = chars[random.Next(chars.Length)];
-            }
-            return new string(stringChars);
-        }
-
-        //method that creates a login from surname and name
-        private string generateLogin(string surname, string name)
-        {
-            return surname + '.' + name;
-        }
     }
 }

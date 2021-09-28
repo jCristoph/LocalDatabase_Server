@@ -25,7 +25,7 @@ namespace LocalDatabase_Server
         bool isConnected;
 
         //constructor
-        public ServerStarter(string ip, int port, ObservableCollection<Database.User> activeUsers, ObservableCollection<Database.Transmission> transmissions)
+        public ServerStarter(ObservableCollection<Database.User> activeUsers, ObservableCollection<Database.Transmission> transmissions, string ip = "127.0.0.1", int port = 25000)
         {
             this.activeUsers = activeUsers;
             this.transmissions = transmissions;
@@ -45,7 +45,7 @@ namespace LocalDatabase_Server
                 while (true)
                 {
                     TcpClient client = server.AcceptTcpClient();
-                    Task handleDeviceTask = new Task(() => 
+                    Task handleDeviceTask = new Task(() =>
                     {
                         var serverCertificate = getServerCert();
                         var sslStream = new SslStream(client.GetStream(), false, ValidateCertificate);
@@ -125,7 +125,7 @@ namespace LocalDatabase_Server
             string task = data.Substring(taskIndexHome, taskIndexEnd - taskIndexHome);
             string token = "";
             User u = null;
-            if(data.Contains("<Token>"))
+            if (data.Contains("<Token>"))
             {
                 taskIndexHome = data.IndexOf("<Token>") + "<Token>".Length;
                 taskIndexEnd = data.IndexOf("</Token>");
@@ -244,7 +244,7 @@ namespace LocalDatabase_Server
                         else
                             deletedFileSize = 0;
                         sendMessage(ServerCom.responseMessage(dm.DeleteElement(path, isFolder)), sslStream);
-                        databaseManager.AddToTransmission(token, DateTime.Now, deletedFileSize, 2);
+                        databaseManager.AddToTransmission(token, DateTime.Now, deletedFileSize, TransmissionType.Usuwanie);
                         Application.Current.Dispatcher.Invoke(new Action(() => { databaseManager.LoadTransmissions(transmissions); }));
                     }
                     else
