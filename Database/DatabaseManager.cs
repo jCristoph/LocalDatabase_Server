@@ -58,7 +58,7 @@ namespace LocalDatabase_Server.Database
             SqlCommand query = new SqlCommand
             {
                 Connection = connectionString,
-                CommandText = $"SELECT * FROM [User] WHERE Login = {login} and Password = {password}"
+                CommandText = $"SELECT * FROM [User] WHERE Login = '{login}' and Password = '{password}'"
             };
             SqlDataAdapter adapter = new SqlDataAdapter(query);
             DataTable table = new DataTable();

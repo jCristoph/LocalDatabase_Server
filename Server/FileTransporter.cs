@@ -93,7 +93,7 @@ namespace LocalDatabase_Server.Server
         }
         private void recieveFile_bg_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            databaseManager.AddToTransmission(token, DateTime.Now, new FileInfo(fileName).Length, TransmissionType.Pobieranie);
+            databaseManager.AddToTransmission(token, DateTime.Now, new FileInfo(fileName).Length, TransmissionType.Wysyłanie);
             Application.Current.Dispatcher.Invoke(new Action(() => { databaseManager.LoadTransmissions(transmissions); }));
             if (e.Cancelled)
                 Console.WriteLine("Stopped by button");
