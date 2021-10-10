@@ -244,7 +244,7 @@ namespace LocalDatabase_Server
                         else
                             deletedFileSize = 0;
                         sendMessage(ServerCom.responseMessage(dm.DeleteElement(path, isFolder)), sslStream);
-                        databaseManager.AddToTransmission(token, DateTime.Now, deletedFileSize, TransmissionType.Usuwanie);
+                        databaseManager.AddToTransmission(token, DateTime.Now, deletedFileSize, TransmissionType.Delete);
                         Application.Current.Dispatcher.Invoke(new Action(() => { databaseManager.LoadTransmissions(transmissions); }));
                     }
                     else
