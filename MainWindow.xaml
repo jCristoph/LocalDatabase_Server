@@ -52,6 +52,15 @@
                         <GridView  ColumnHeaderContainerStyle="{StaticResource ListViewHeaderTheme}">
                             <GridViewColumn Header="Login" DisplayMemberBinding="{Binding login}" Width="200" />
                             <GridViewColumn Header="Token" DisplayMemberBinding="{Binding token}"  Width="200" />
+                            <GridViewColumn Header="Akcja">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Stretch" >
+                                            <Button Content="Wyloguj użytkownika" Click="logUserOutButton_Click" Margin="10" Width="180" Height="20" Style="{StaticResource MenuButtonTheme}"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
                         </GridView>
                     </ListView.View>
                 </ListView>
