@@ -2,11 +2,11 @@
 
 namespace LocalDatabase_Server.Database
 {
-    public enum TransmissionType
+    public enum TransmissionType : Int16
     {
-        Pobieranie,
-        Wysyłanie,
-        Usuwanie
+        Pobieranie = 0,
+        Wysyłanie = 1,
+        Usuwanie = 2
     }
 
     class Transmission

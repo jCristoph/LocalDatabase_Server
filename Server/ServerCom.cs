@@ -50,7 +50,7 @@ namespace LocalDatabase_Server
         /// <returns></returns>
         public static string[] SendDirectoryMessage(List<DirectoryElement> directory)
         {
-            string[] dirMessage = new string[directory.Count];
+            string[] dirMessage = new string[directory.Count+1];
             int i = 0;
             foreach (var de in directory)
             {
@@ -59,15 +59,16 @@ namespace LocalDatabase_Server
                                 "<Path>" + de.path + " </Path>" +
                                 "<Name>" + de.name + "</Name>" +
                                 "<Size>" + de.size + "</Size>" +
-                                "<Last Write>" + de.lwr + "</Last Write></Task><EOM>";
+                                "<Last Write>" + de.lwr + "</Last Write></Task>";
                 else
                     dirMessage[i] = "<Task=SendingDir><Folder>" + de.isFolder + "</Folder>" +
                                 "<Path>" + de.path + " </Path>" +
                                 "<Name>" + de.name + "</Name>" +
                                 "<Size>" + de.size + "</Size>" +
-                                "<Last Write>" + de.lwr + "</Last Write></Task><EOM>";
+                                "<Last Write>" + de.lwr + "</Last Write></Task>";
                 i++;
             }
+            dirMessage[i] = "<EOM>";
             return dirMessage;
         }
 

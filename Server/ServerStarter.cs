@@ -81,13 +81,6 @@ namespace LocalDatabase_Server
         #region ssl_methods
         static bool ValidateCertificate(Object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
         {
-            // For this sample under Windows 7 I also get
-            // a remote cert not available error, so we
-            // just do a return true here to signal that
-            // we are trusting things. In the real world,
-            // this would be very bad practice.
-            //return true;
-
             if (sslPolicyErrors == SslPolicyErrors.None)
                 return true;
             // we don't have a proper certificate tree
