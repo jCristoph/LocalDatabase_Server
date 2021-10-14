@@ -105,13 +105,13 @@ namespace LocalDatabase_Server
             Categories = new List<Category>() {
                 new Category
                 {
-                    Title = "Zajęte",
+                    Title = "Allocated",
                     Percentage = p1,
                     ColorBrush = Brushes.Red,
                 },
                 new Category
                 {
-                    Title = "Wolne",
+                    Title = "Free",
                     Percentage = p2,
                     ColorBrush = Brushes.Aqua,
                 },

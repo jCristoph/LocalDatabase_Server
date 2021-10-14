@@ -100,19 +100,19 @@ namespace LocalDatabase_Server
                     {
                         return e.Message;
                     }
-                    return "Usunięto element";
+                    return "Delete success";
                 }
                 else
-                    return "Nie udało się usunąć elementu";
+                    return "Delete failed";
             }
             else
             {
                 if (Directory.Exists(path))
                 {
                     Directory.Delete(path, true);
-                    return "Usunięto element";
+                    return "Delete success";
                 }
-                return "Nie udało się usunąć elementu";
+                return "Delete failed";
             }
         }
 

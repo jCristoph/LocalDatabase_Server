@@ -38,13 +38,13 @@ namespace LocalDatabase_Server.Registration
                 Database.DatabaseManager dm = new Database.DatabaseManager();
                 dm.AddUser(surnameTextBox.Text, nameTextBox.Text);
 
-                mp = new MessagePanel.MessagePanel("Dodano użytkownika", false);
+                mp = new MessagePanel.MessagePanel("Registration success", false);
                 mp.ShowDialog();
                 this.Close();
             }
             else
             {
-                mp = new MessagePanel.MessagePanel("Dane nieprawidłowe. Spróbuj ponownie", false);
+                mp = new MessagePanel.MessagePanel("Data is not valid", false);
                 mp.ShowDialog();
             }
                 
