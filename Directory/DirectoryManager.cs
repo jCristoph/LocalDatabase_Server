@@ -122,5 +122,15 @@ namespace LocalDatabase_Server
             path = path.Replace("Main_Folder", @"C:\Directory_test");
             System.IO.Directory.CreateDirectory(path);
         }
+
+        public double usedSpace()
+        {
+            long usedSpaceCounter = 0;
+            for (int i = 0; i < directoryElements.Count; i++)
+            {
+                usedSpaceCounter += directoryElements[i].size;
+            }
+            return (double)(usedSpaceCounter / 1000000000.0);
+        }
     }
 }

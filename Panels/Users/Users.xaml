@@ -19,7 +19,7 @@
                 <RowDefinition Height="8*"/>
                 <RowDefinition Height="1*"/>
             </Grid.RowDefinitions>
-            <TextBlock Margin="10" Text="Filebase.local" HorizontalAlignment="Left" Foreground="White" FontSize="32"/>
+            <TextBlock Margin="10" Text="Filebase.safe" HorizontalAlignment="Left" Foreground="White" FontSize="32"/>
             <ListView Margin="10,0,10,0" Grid.Row="1" Name="listView" Background="Aquamarine" Style="{StaticResource ListViewTheme}" ItemContainerStyle="{StaticResource ContainerStyle}">
                 <ListView.View>
                     <GridView ColumnHeaderContainerStyle="{StaticResource ListViewHeaderTheme}">
@@ -43,7 +43,7 @@
                     </GridView>
                 </ListView.View>
             </ListView>
-            <Button Margin="10" HorizontalAlignment="Right" x:Name="backButton" Content="Cofnij" Width="170" Grid.Row="2" Style="{StaticResource MenuButtonTheme}" Click="backButton_Click"/>
+            <Button Margin="10" HorizontalAlignment="Right" x:Name="backButton" Content="Return" Width="170" Grid.Row="2" Style="{StaticResource MenuButtonTheme}" Click="backButton_Click"/>
         </Grid>
     </Border>
 </Window>

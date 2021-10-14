@@ -163,13 +163,23 @@ namespace LocalDatabase_Server
                     u = new User(token);
                     if (activeUsers.Contains(u)) //if user isnt in active users container he has to log in one more time - session is limited
                     {
-                        sendMessage(ServerCom.responseMessage("Pobieram..."), sslStream);
-                        string[] arr = ServerCom.DownloadRecognizer(data);
-                        Thread.Sleep(1000);
-                        FileTransporter fileTransporter = new FileTransporter("127.0.0.1", (arr[0] + "\\" + arr[1]).Replace("Main_Folder", @"C:\Directory_test"));
-                        fileTransporter.connectAsServer();
-                        fileTransporter.recieveFile();
-                        fileTransporter.setContainers(databaseManager, transmissions, token);
+                        u = databaseManager.FindUserByToken(token);
+                        dm = new DirectoryManager(@"C:\Directory_test\" + token + "\\");
+
+                        if((dm.usedSpace() * 1000000000) < u.limit) //dm.usedspace returns space in gigabytes and u.limit in bytes so we have to convert it
+                        {
+                            sendMessage(ServerCom.responseMessage("It's ok"), sslStream);
+                            string[] arr = ServerCom.DownloadRecognizer(data);
+                            Thread.Sleep(1000);
+                            FileTransporter fileTransporter = new FileTransporter("127.0.0.1", (arr[0] + "\\" + arr[1]).Replace("Main_Folder", @"C:\Directory_test"));
+                            fileTransporter.connectAsServer();
+                            fileTransporter.recieveFile();
+                            fileTransporter.setContainers(databaseManager, transmissions, token);
+                        }
+                        else
+                        {
+                            sendMessage(ServerCom.responseMessage("Oooppsss! You don't have enough space. Contact your admin."), sslStream);
+                        }
                     }
                     else
                     {
