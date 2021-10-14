@@ -24,18 +24,18 @@
                 <ListView.View>
                     <GridView ColumnHeaderContainerStyle="{StaticResource ListViewHeaderTheme}">
                         <GridViewColumn DisplayMemberBinding="{Binding Path=id}" Header="ID"/>
-                        <GridViewColumn DisplayMemberBinding="{Binding Path=surname}" Header="Imię"/>
-                        <GridViewColumn DisplayMemberBinding="{Binding Path=name}" Header="Nazwisko"/>
-                        <GridViewColumn DisplayMemberBinding="{Binding Path=login}" Header="Login"/>
-                        <GridViewColumn DisplayMemberBinding="{Binding Path=password}" Header="Hasło"/>
-                        <GridViewColumn DisplayMemberBinding="{Binding Path=token}" Header="Token"/>
+                        <GridViewColumn DisplayMemberBinding="{Binding Path=surname}" Header="First name"/>
+                        <GridViewColumn DisplayMemberBinding="{Binding Path=name}" Header="Last name"  />
+                        <GridViewColumn DisplayMemberBinding="{Binding Path=login}" Header="Login"  />
+                        <GridViewColumn DisplayMemberBinding="{Binding Path=password}" Header="Password"  />
+                        <GridViewColumn DisplayMemberBinding="{Binding Path=token}" Header="Token" />
                         <GridViewColumn DisplayMemberBinding="{Binding Path=limit}" Header="Limit"/>
-                        <GridViewColumn Header="Akcja" Width="350">
+                        <GridViewColumn Header="Action" Width="350">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal" VerticalAlignment="Stretch" >
-                                        <Button Content="Usuń użytkownika" Click="deleteUserButton" Margin="10" Height="20" Style="{StaticResource MenuButtonTheme}" Width="140"/>
-                                        <Button Content="Zmień limit danych" Click="changeLimitButton" Margin="10" Height="20" Style="{StaticResource MenuButtonTheme}" Width="140"/>
+                                        <Button Content="Delete user" Click="deleteUserButton" Margin="10" Height="20" Style="{StaticResource MenuButtonTheme}" Width="140"/>
+                                        <Button Content="Change space limit" Click="changeLimitButton" Margin="10" Height="20" Style="{StaticResource MenuButtonTheme}" Width="140"/>
                                     </StackPanel>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>

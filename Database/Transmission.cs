@@ -4,9 +4,9 @@ namespace LocalDatabase_Server.Database
 {
     public enum TransmissionType
     {
-        Pobieranie,
-        Wysyłanie,
-        Usuwanie
+        Download,
+        Upload,
+        Delete
     }
 
     class Transmission
