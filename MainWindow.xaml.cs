@@ -10,7 +10,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-
+using System.Windows.Controls;
+using LocalDatabase_Server.Database;
 
 namespace LocalDatabase_Server
 {
@@ -69,6 +70,13 @@ namespace LocalDatabase_Server
         private void exitButton_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
+        }
+
+        private void logUserOutButton_Click(object sender, RoutedEventArgs e)
+        {
+            Button btn = ((Button)sender);
+            var temp = (User)btn.DataContext;
+            activeUsers.Remove(temp);
         }
         #endregion
 

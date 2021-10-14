@@ -11,7 +11,7 @@ namespace LocalDatabase_Server.Database
             SqlCommand query = new SqlCommand
             {
                 Connection = connectionString,
-                CommandText = $@"INSERT INTO [Transaction]([transactionDate],[fileSize],[userToken],[transactionType]) VALUES ('{transmissionDate}', '{fileSize}', '{token}' ,'{transmissionType}')"
+                CommandText = $@"INSERT INTO [Transaction]([transactionDate],[fileSize],[userToken],[transactionType]) VALUES ('{transmissionDate}', '{fileSize}', '{token}' ,'{(int)transmissionType}')"
             };
             connectionString.Open();
             query.ExecuteNonQuery();

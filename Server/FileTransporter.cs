@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -81,11 +82,10 @@ namespace LocalDatabase_Server.Server
                         readed = 0;
                     }
                     //If you test it on loopback better uncomment line below. Buffer is slower than loopback transfer
-                    //Thread.Sleep(1);
+                    Thread.Sleep(1);
                 } while (readed > (BUFFER_SIZE - 1));
                 networkStream.Close();
             }
-            e.Result = "zwracany typ";
         }
         private void recieveFile_bg_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
@@ -95,10 +95,7 @@ namespace LocalDatabase_Server.Server
         {
             databaseManager.AddToTransmission(token, DateTime.Now, new FileInfo(fileName).Length, TransmissionType.Upload);
             Application.Current.Dispatcher.Invoke(new Action(() => { databaseManager.LoadTransmissions(transmissions); }));
-            if (e.Cancelled)
-                Console.WriteLine("Stopped by button");
-            else
-                Console.WriteLine("Stopped by the end of operation");
+            socket.Close();
         }
         #endregion
 
@@ -136,19 +133,18 @@ namespace LocalDatabase_Server.Server
                             networkStream.Write(buffer, 0, readed);
                             helperBW.ReportProgress(i++);
                             //If you test it on loopback better uncomment line below. Buffer is slower than loopback transfer
-                            //Thread.Sleep(1);
+                            Thread.Sleep(1);
                         }
                         catch (Exception ex)
                         {
                             Console.WriteLine(ex.ToString());
+                            readed = 0;
                         }
-
                     }
                 }
                 buffer = new byte[BUFFER_SIZE];
                 networkStream.Close();
             }
-            e.Result = "zwracany typ";
         }
         private void sendFile_bg_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
@@ -156,14 +152,11 @@ namespace LocalDatabase_Server.Server
         }
         private void sendFile_bg_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+            socket.Close();
             if (e.Error != null)
             {
                 Console.WriteLine(e.Error.ToString());
             }
-            if (e.Cancelled)
-                Console.WriteLine("Stopped by button");
-            else
-                Console.WriteLine("Stopped by the end of operation");
         }
 
         internal void setContainers(DatabaseManager databaseManager, ObservableCollection<Transmission> transmissions, string token)
