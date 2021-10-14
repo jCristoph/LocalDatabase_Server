@@ -28,7 +28,7 @@
             <PasswordBox VerticalAlignment="Center" Height="32" Name="passwordBoxPassword" Grid.Column="1" Grid.Row="2" Margin="10" Style="{StaticResource ModernPasswordBox}" FontSize="16"/>
             <TextBlock HorizontalAlignment="Right" TextWrapping="Wrap" Text="Username" VerticalAlignment="Center" Grid.Column="0" Grid.Row="1" FontSize="20" Foreground="White"/>
             <TextBlock HorizontalAlignment="Right" TextWrapping="Wrap" Text="Password" VerticalAlignment="Center" Grid.Column="0" Grid.Row="2" FontSize="20" Foreground="White"/>
-            <TextBlock Width="263" Grid.Column="0" Grid.Row="0" Foreground="White" Text="Filebase.local" FontSize="36" HorizontalAlignment="Left" Margin="20,20,0,0" FontFamily="Lucida Sans" />
+            <TextBlock Width="263" Grid.Column="0" Grid.Row="0" Foreground="White" FontSize="36" HorizontalAlignment="Left" Margin="20,20,0,0" FontFamily="Lucida Sans" ><Run Text="Filebase."/><Run Text="safe"/></TextBlock>
             <Button Content="Sign in" HorizontalAlignment="Center" VerticalAlignment="Center" Width="170" Height="50" Name="loginButton" Click="loginButton_Click" Grid.Column="1" Grid.Row="3" Style="{StaticResource MenuButtonTheme}" FontSize="20"/>
             <Button Content="Help" HorizontalAlignment="Center" VerticalAlignment="Center" Width="170" Height="50" Grid.Column="0" Grid.Row="4" Style="{StaticResource MenuButtonTheme}" FontSize="20"/>
             <Button Content="Close" HorizontalAlignment="Center" VerticalAlignment="Center" Width="170" Height="50" Grid.Column="2" Grid.Row="4" Style="{StaticResource MenuButtonTheme}" FontSize="20" Click="exitButton_Click"/>

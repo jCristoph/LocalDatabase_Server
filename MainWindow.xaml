@@ -19,7 +19,7 @@
                 <RowDefinition Height="8*"/>
                 <RowDefinition Height="92*"/>
             </Grid.RowDefinitions>
-            <TextBlock  Grid.Row="0" Foreground="White" Text="Menager Filebase.local" FontSize="36" HorizontalAlignment="Left" Margin="10,10,0,0" FontFamily="Lucida Sans" />
+            <TextBlock  Grid.Row="0" Foreground="White" FontSize="36" HorizontalAlignment="Left" Margin="10,10,0,0" FontFamily="Lucida Sans" ><Run Text="Filebase.safe"/><Run Text=" manager"/></TextBlock>
             <Grid x:Name="___Brak_nazwy_" Grid.Row="1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
@@ -52,11 +52,11 @@
                         <GridView  ColumnHeaderContainerStyle="{StaticResource ListViewHeaderTheme}">
                             <GridViewColumn Header="Login" DisplayMemberBinding="{Binding login}" Width="200" />
                             <GridViewColumn Header="Token" DisplayMemberBinding="{Binding token}"  Width="200" />
-                            <GridViewColumn Header="Akcja">
+                            <GridViewColumn Header="Action">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal" VerticalAlignment="Stretch" >
-                                            <Button Content="Wyloguj użytkownika" Click="logUserOutButton_Click" Margin="10" Width="180" Height="20" Style="{StaticResource MenuButtonTheme}"/>
+                                            <Button Content="Log user out" Click="logUserOutButton_Click" Margin="10" Width="180" Height="20" Style="{StaticResource MenuButtonTheme}"/>
                                         </StackPanel>
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
