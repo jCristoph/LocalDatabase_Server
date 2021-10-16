@@ -1,4 +1,5 @@
-﻿using System.Data.SqlClient;
+﻿using LocalDatabase_Server.Directory;
+using System.Data.SqlClient;
 using System.IO;
 
 namespace LocalDatabase_Server.Database
@@ -18,8 +19,8 @@ namespace LocalDatabase_Server.Database
             query.ExecuteNonQuery();
             connectionString.Close();
 
-            string pathString = Path.Combine(@"C:\Directory_test", token);
-            Directory.CreateDirectory(pathString);
+            string pathString = Path.Combine(SettingsManager.Instance.GetSavePath(), token);
+            System.IO.Directory.CreateDirectory(pathString);
         }
     }
 }

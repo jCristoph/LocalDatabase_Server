@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LocalDatabase_Server.Directory;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -28,14 +29,14 @@ namespace LocalDatabase_Server
         //method that finds every element in folder. It look for in every subfolder so this method is recurrent.
         public void ProcessDirectory(string targetDirectory)
         {
-            string[] fileEntries = Directory.GetFiles(targetDirectory);
+            string[] fileEntries = System.IO.Directory.GetFiles(targetDirectory);
             foreach (string path in fileEntries)
             {
                 DirectoryElement de = new DirectoryElement(path.Replace(tokenDirectory, "Main_Folder"), new FileInfo(path).Length, File.GetLastWriteTime(path).ToString(), false);
                 directoryElements.Add(de);
             }
 
-            string[] subdirectoryEntries = Directory.GetDirectories(targetDirectory);
+            string[] subdirectoryEntries = System.IO.Directory.GetDirectories(targetDirectory);
             foreach (string subdirectory in subdirectoryEntries)
             {
                 DirectoryElement de = new DirectoryElement(subdirectory.Replace(tokenDirectory, "Main_Folder"), 0, "None", true);
@@ -86,7 +87,7 @@ namespace LocalDatabase_Server
             int IndexHome = path.LastIndexOf("\\") + "\\".Length;
             int IndexEnd = path.Length;
             string name = path.Substring(IndexHome, IndexEnd - IndexHome);
-            path = path.Replace("Main_Folder", @"C:\Directory_test");
+            path = path.Replace("Main_Folder", SettingsManager.Instance.GetSavePath());
             directoryElements.Remove(directoryElements.Find(x => x.path == path && x.name == name));
             if (isFolder.Equals("False"))
             {
@@ -107,9 +108,9 @@ namespace LocalDatabase_Server
             }
             else
             {
-                if (Directory.Exists(path))
+                if (System.IO.Directory.Exists(path))
                 {
-                    Directory.Delete(path, true);
+                    System.IO.Directory.Delete(path, true);
                     return "Delete success";
                 }
                 return "Delete failed";
@@ -119,7 +120,7 @@ namespace LocalDatabase_Server
         //this method is used for create new folder in server disk.
         public void CreateFolder(string path)
         {
-            path = path.Replace("Main_Folder", @"C:\Directory_test");
+            path = path.Replace("Main_Folder", SettingsManager.Instance.GetSavePath());
             System.IO.Directory.CreateDirectory(path);
         }
 

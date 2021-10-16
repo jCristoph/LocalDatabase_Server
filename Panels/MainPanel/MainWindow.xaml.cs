@@ -12,6 +12,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Controls;
 using LocalDatabase_Server.Database;
+using LocalDatabase_Server.Directory;
 
 namespace LocalDatabase_Server
 {
@@ -96,11 +97,13 @@ namespace LocalDatabase_Server
             canv.Height = pieHeight;
 
             ///data is loaded - free space on disk and size of app folder
-            DriveInfo dDrive = new DriveInfo("C");
-            var folderSize = (double)GetFileSizeSumFromDirectory(@"C:\Directory_test\");
-            var availableSpace = dDrive.AvailableFreeSpace;
-            double p1 = Math.Round((folderSize / availableSpace),2) * 100.0f;
-            double p2 = Math.Round(((float)(dDrive.AvailableFreeSpace - GetFileSizeSumFromDirectory(@"C:\Directory_test\")) / dDrive.AvailableFreeSpace),2) * 100.0f;
+            ///
+            var folderSize = (double)GetFileSizeSumFromDirectory(SettingsManager.Instance.GetSavePath());
+            long availableSpace = SettingsManager.Instance.GetAvailableSpace();
+
+
+            double p1 = Math.Round((folderSize / availableSpace), 2) * 100.0f;
+            double p2 = Math.Round(((float)(availableSpace - GetFileSizeSumFromDirectory(SettingsManager.Instance.GetSavePath())) / availableSpace),2) * 100.0f;
 
             Categories = new List<Category>() {
                 new Category
@@ -194,12 +197,12 @@ namespace LocalDatabase_Server
         //methods that counts a folder size - it has to sum every file in folder and subfolders
         public static long GetFileSizeSumFromDirectory(string searchDirectory)
         {
-            var files = Directory.EnumerateFiles(searchDirectory);
+            var files = System.IO.Directory.EnumerateFiles(searchDirectory);
 
             // get the sizeof all files in the current directory
             var currentSize = (from file in files let fileInfo = new FileInfo(file) select fileInfo.Length).Sum();
 
-            var directories = Directory.EnumerateDirectories(searchDirectory);
+            var directories = System.IO.Directory.EnumerateDirectories(searchDirectory);
 
             // get the size of all files in all subdirectories
             var subDirSize = (from directory in directories select GetFileSizeSumFromDirectory(directory)).Sum();

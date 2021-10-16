@@ -35,7 +35,7 @@ namespace LocalDatabase_Server.ChangeLimitPanel
             }
             else
             {
-                MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Zła wartość",false);
+                MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Wrong value", false);
                 mp.ShowDialog();
             }
         }

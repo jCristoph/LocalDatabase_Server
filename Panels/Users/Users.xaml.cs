@@ -1,18 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using LocalDatabase_Server.Directory;
 using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace LocalDatabase_Server.Users
 {
@@ -45,15 +34,15 @@ namespace LocalDatabase_Server.Users
         {
             Database.User u = (Database.User)(((Button)sender).DataContext); //checking who was choosed.
             databaseManager.DeleteUser(u.token); //deleted from db
-            string path = @"C:\Directory_test\" + u.token;
+            string path = SettingsManager.Instance.GetSavePath() + u.token;
             for (int i = 0; i < users.Count; i++)
             {
                 if (users[i].token.Equals(u.token))
                 {
                     users.Remove(users[i]); //deleted from container
-                    if (Directory.Exists(path))
+                    if (System.IO.Directory.Exists(path))
                     {
-                        Directory.Delete(path, true); //deleted his data
+                        System.IO.Directory.Delete(path, true); //deleted his data
                     }
                 }
             }

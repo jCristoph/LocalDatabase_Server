@@ -1,4 +1,5 @@
 ﻿using LocalDatabase_Server.Database;
+using LocalDatabase_Server.Directory;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -113,7 +114,7 @@ namespace LocalDatabase_Server.Server
 
         private void sendFile_bg_DoWork(object sender, DoWorkEventArgs e)
         {
-            var path = fileName.Replace("Main_Folder", @"C:\Directory_test");
+            var path = fileName.Replace("Main_Folder", SettingsManager.Instance.GetSavePath());
             file = new FileInfo(path);
             BackgroundWorker helperBW = sender as BackgroundWorker;
             helperBW.ReportProgress(0);

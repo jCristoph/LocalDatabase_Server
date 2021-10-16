@@ -1,8 +1,8 @@
 ﻿using LocalDatabase_Server.Database;
+using LocalDatabase_Server.Directory;
 using LocalDatabase_Server.Server;
 using System;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Security;
@@ -48,9 +48,9 @@ namespace LocalDatabase_Server
                     Task handleDeviceTask = new Task(() =>
                     {
                         var serverCertificate = getServerCert();
-                        var sslStream = new SslStream(client.GetStream(), false, ValidateCertificate);
+                        SslStream sslStream = new SslStream(client.GetStream(), false, ValidateCertificate);
                         sslStream.AuthenticateAsServer(serverCertificate, true, SslProtocols.Tls12, false);
-                        sslStream.ReadTimeout = 15 * 60 * 1000; //after 15 minutes afk user is logged out
+                        sslStream.ReadTimeout = SettingsManager.Instance.GetIdleTime();
                         isConnected = true;
                         var token = readMessage(sslStream);
                         while (isConnected)
@@ -164,14 +164,14 @@ namespace LocalDatabase_Server
                     if (activeUsers.Contains(u)) //if user isnt in active users container he has to log in one more time - session is limited
                     {
                         u = databaseManager.FindUserByToken(token);
-                        dm = new DirectoryManager(@"C:\Directory_test\" + token + "\\");
+                        dm = new DirectoryManager(SettingsManager.Instance.GetSavePath() + token + "\\");
 
                         if((dm.usedSpace() * 1000000000) < u.limit) //dm.usedspace returns space in gigabytes and u.limit in bytes so we have to convert it
                         {
                             sendMessage(ServerCom.responseMessage("It's ok"), sslStream);
                             string[] arr = ServerCom.DownloadRecognizer(data);
                             Thread.Sleep(1000);
-                            FileTransporter fileTransporter = new FileTransporter("127.0.0.1", (arr[0] + "\\" + arr[1]).Replace("Main_Folder", @"C:\Directory_test"));
+                            FileTransporter fileTransporter = new FileTransporter("127.0.0.1", (arr[0] + "\\" + arr[1]).Replace("Main_Folder", SettingsManager.Instance.GetSavePath()));
                             fileTransporter.connectAsServer();
                             fileTransporter.recieveFile();
                             fileTransporter.setContainers(databaseManager, transmissions, token);
@@ -199,7 +199,7 @@ namespace LocalDatabase_Server
                         fileTransporter.connectAsServer();
                         fileTransporter.sendFile();
 
-                        databaseManager.AddToTransmission(token, DateTime.Now, new FileInfo(path.Replace("Main_Folder", @"C:\Directory_test")).Length, 0);
+                        databaseManager.AddToTransmission(token, DateTime.Now, new FileInfo(path.Replace("Main_Folder", SettingsManager.Instance.GetSavePath())).Length, 0);
                         Application.Current.Dispatcher.Invoke(new Action(() => { databaseManager.LoadTransmissions(transmissions); }));
                     }
                     else
@@ -211,7 +211,7 @@ namespace LocalDatabase_Server
                     u = new User(token);
                     if (activeUsers.Contains(u)) //if user isnt in active users container he has to log in one more time - session is limited
                     {
-                        dm = new DirectoryManager(@"C:\Directory_test\" + token + "\\");
+                        dm = new DirectoryManager(SettingsManager.Instance.GetSavePath() + token + "\\");
                         string message = "";
                         foreach (var mess in ServerCom.SendDirectoryMessage(dm.directoryElements))
                             message += mess;
@@ -243,7 +243,7 @@ namespace LocalDatabase_Server
                         string isFolder = ServerCom.DeleteRecognizer(data)[1];
                         long deletedFileSize;
                         if (isFolder.Equals("False"))
-                            deletedFileSize = new FileInfo(path.Replace("Main_Folder", @"C:\Directory_test")).Length;
+                            deletedFileSize = new FileInfo(path.Replace("Main_Folder", SettingsManager.Instance.GetSavePath())).Length;
                         else
                             deletedFileSize = 0;
                         sendMessage(ServerCom.responseMessage(dm.DeleteElement(path, isFolder)), sslStream);
