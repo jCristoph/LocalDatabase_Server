@@ -76,8 +76,7 @@
     <Compile Include="Database\UseCases\DeleteUserUseCase.cs" />
     <Compile Include="Database\UseCases\AddUserUseCase.cs" />
     <Compile Include="Database\Helper\ConnectionString.cs" />
-    <Compile Include="Database\Helper\RandomStringGenerator.cs" />
-    <Compile Include="Database\Helper\TokenGenerator.cs" />
+    <Compile Include="Database\Helper\Generator.cs" />
     <Compile Include="Panels\ChangeLimitPanel\ChangeLimitPanel.xaml.cs">
       <DependentUpon>ChangeLimitPanel.xaml</DependentUpon>
     </Compile>
