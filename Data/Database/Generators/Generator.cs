@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.Security;
 
 namespace LocalDatabase_Server.Database
 {
@@ -11,15 +12,8 @@ namespace LocalDatabase_Server.Database
     {
         public static string GenerateRandomString()
         {
-            string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-            char[] stringChars = new char[10];
-            Random random = new Random();
-
-            for (int i = 0; i < stringChars.Length; i++)
-            {
-                stringChars[i] = chars[random.Next(chars.Length)];
-            }
-            return new string(stringChars);
+            string value = Membership.GeneratePassword(10, 3);
+            return value;
         }
 
         public static string GenerateToken()
