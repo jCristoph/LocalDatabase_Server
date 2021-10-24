@@ -11,7 +11,7 @@ namespace LocalDatabase_Server
         public List<DirectoryElement> directoryElements { get; set; }
         private string tokenDirectory;
 
-        //Consturctor
+        //Constructor
         public DirectoryManager(string targetDirectory)
         {
             tokenDirectory = targetDirectory.Remove(targetDirectory.Length - 1);
