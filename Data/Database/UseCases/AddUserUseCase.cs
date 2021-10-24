@@ -10,10 +10,11 @@ namespace LocalDatabase_Server.Database
         {
 
             SqlCommand query = new SqlCommand();
-            string token = RandomStringGenerator.GenerateRandomString();
-            string login = TokenGenerator.GenerateLogin(surname, name);
+            string token = Generator.GenerateToken();
+            string login = Generator.GenerateLogin(surname, name);
+            string password = Generator.GenerateRandomString();
             query.CommandText = "INSERT INTO [User]([Name],[Surname],[Login],[Password],[Token])";
-            query.CommandText += $"VALUES ('{surname}', '{name}', '{login}', '{token}', '{token}')";
+            query.CommandText += $"VALUES ('{surname}', '{name}', '{login}', '{password}', '{token}')";
             query.Connection = connectionString;
             connectionString.Open();
             query.ExecuteNonQuery();
