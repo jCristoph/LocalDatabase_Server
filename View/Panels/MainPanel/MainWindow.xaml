@@ -35,6 +35,7 @@
                 <StackPanel Grid.Row="2" Grid.Column="1" VerticalAlignment="Center">
                     <Button Content="Register" HorizontalAlignment="Center" VerticalAlignment="Center" Width="240" Height="30" Name="registrationButton" Click="registrationButton_Click"  Style="{StaticResource MenuButtonTheme}"/>
                     <Button Content="All users list" HorizontalAlignment="Center"  VerticalAlignment="Center" Width="240" Height="30" Name="allUsersButton" Click="allUsersButton_Click" Margin="0,40,0,0" Style="{StaticResource MenuButtonTheme}"/>
+                    <Button Content="Stop server" HorizontalAlignment="Center" VerticalAlignment="Center" Width="240" Height="30" Name="stopButton" Click="stopButton_Click" Margin="0,40,0,0" Style="{StaticResource MenuButtonTheme}"/>
                     <Button Content="Shut down" HorizontalAlignment="Center" VerticalAlignment="Center" Width="240" Height="30" Name="exitButton" Click="exitButton_Click" Margin="0,40,0,0" Style="{StaticResource MenuButtonTheme}"/>
                 </StackPanel>
                 <ListView Margin="20,0,10,0" Name="transmissionsList"  Grid.Column="0" Grid.Row="1"  Background="Aquamarine" Style="{StaticResource ListViewTheme}" ItemContainerStyle="{StaticResource ContainerStyle}">

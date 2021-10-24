@@ -15,13 +15,18 @@ namespace LocalDatabase_Server
 
         private void settingsButton_Click(object sender, RoutedEventArgs e)
         {
-            Panels.SettingsPanel.SettingsPanel settingsPanel = new Panels.SettingsPanel.SettingsPanel();
-            settingsPanel.Show();
+            Panels.SettingsPanel.SettingsPanelOverview settingsOverview = new Panels.SettingsPanel.SettingsPanelOverview
+            {
+                Owner = this
+            };
+            settingsOverview.Show();
+            this.Hide();
         }
 
         private void exitButton_Click(object sender, RoutedEventArgs e)
         {
-            this.Close();
+            ServerStarter.Stop();
+            this.Close();   
         }
 
         private void startServerButton_Click(object sender, RoutedEventArgs e)

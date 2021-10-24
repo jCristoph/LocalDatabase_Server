@@ -47,7 +47,7 @@ namespace LocalDatabase_Server
         //method that starts server - it has to be in other thread because meanwhile the gui has to run
         private void newThread()
         {
-            new ServerStarter(activeUsers: activeUsers, transmissions: transmissions);
+           ServerStarter.Init(activeUsers: activeUsers, transmissions: transmissions);
         }
         #region button events
 
@@ -70,7 +70,18 @@ namespace LocalDatabase_Server
         //ends app
         private void exitButton_Click(object sender, RoutedEventArgs e)
         {
-            this.Close();
+            ServerStarter.Stop();
+            Close();
+        }
+
+        private void stopButton_Click(object sender, RoutedEventArgs e)
+        {
+            Start startPanel = new Start
+            {
+                Owner = this
+            };
+            startPanel.Show();
+            this.Hide();
         }
 
         private void logUserOutButton_Click(object sender, RoutedEventArgs e)

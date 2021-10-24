@@ -16,20 +16,22 @@ using System.Windows;
 
 namespace LocalDatabase_Server
 {
-    class ServerStarter
+    public static class ServerStarter
     {
-        TcpListener server = null;
-        DirectoryManager dm = null;
-        ObservableCollection<Database.User> activeUsers;
-        ObservableCollection<Database.Transmission> transmissions;
-        bool isConnected;
 
-        //constructor
-        public ServerStarter(ObservableCollection<Database.User> activeUsers, ObservableCollection<Database.Transmission> transmissions, string ip = "127.0.0.1", int port = 25000)
+        private static TcpListener server = null;
+        private static DirectoryManager dm = null;
+        private static ObservableCollection<User> ActiveUsers;
+        private static ObservableCollection<Transmission> Transmissions;
+        private static bool isConnected;
+        private static SslStream sslStream;
+        private static SslCertificate sslCertificate;
+
+        public static void Init(ObservableCollection<User> activeUsers, ObservableCollection<Transmission> transmissions, string ip = "127.0.0.1", int port = 25000)
         {
-            this.activeUsers = activeUsers;
-            this.transmissions = transmissions;
-            Database.DatabaseManager databaseManager = new Database.DatabaseManager();
+            ActiveUsers = activeUsers;
+            Transmissions = transmissions;
+            DatabaseManager databaseManager = new Database.DatabaseManager();
             Application.Current.Dispatcher.Invoke(new Action(() => { databaseManager.LoadTransmissions(transmissions); }));
             IPAddress localAddr = IPAddress.Parse(ip);
             server = new TcpListener(localAddr, port);
@@ -37,8 +39,22 @@ namespace LocalDatabase_Server
             StartListener();
         }
 
+        public static void Stop()
+        {
+            if (sslStream != null)
+            {
+                sslStream.Close();
+            }
+            isConnected = false;
+            if (server != null)
+            {
+                server.Stop();
+            }
+            Environment.Exit(0);
+        }
+
         //start server method
-        public void StartListener()
+        private static void StartListener()
         {
             try
             {
@@ -47,12 +63,13 @@ namespace LocalDatabase_Server
                     TcpClient client = server.AcceptTcpClient();
                     Task handleDeviceTask = new Task(() =>
                     {
-                        var serverCertificate = getServerCert();
-                        SslStream sslStream = new SslStream(client.GetStream(), false, ValidateCertificate);
+                        sslCertificate = new SslCertificate();
+                        X509Certificate serverCertificate = sslCertificate.GetCertificate();
+                        sslStream = new SslStream(client.GetStream(), false, sslCertificate.IsCertificateValid);
                         sslStream.AuthenticateAsServer(serverCertificate, true, SslProtocols.Tls12, false);
                         sslStream.ReadTimeout = SettingsManager.Instance.GetIdleTime();
                         isConnected = true;
-                        var token = readMessage(sslStream);
+                        string token = readMessage(sslStream);
                         while (isConnected)
                         {
                             //the only thing that server have to do with client is listen to request. Then eventually answer.
@@ -62,10 +79,9 @@ namespace LocalDatabase_Server
                             }
                             catch (Exception e)
                             {
-                                User u = new User(token);
-                                sslStream.Close();
-                                isConnected = false;
-                                Application.Current.Dispatcher.Invoke(new Action(() => { activeUsers.Remove(u); }));
+                                User u = new User(token);                   
+                                Application.Current.Dispatcher.Invoke(new Action(() => { ActiveUsers.Remove(u); }));
+                                Stop();
                             }
                         }
                     }); //when new client wants to connect, the new thread is created
@@ -74,44 +90,12 @@ namespace LocalDatabase_Server
             }
             catch (SocketException e)
             {
-                server.Stop();
+                Stop();
             }
         }
-
-        #region ssl_methods
-        static bool ValidateCertificate(Object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
-        {
-            if (sslPolicyErrors == SslPolicyErrors.None)
-                return true;
-            // we don't have a proper certificate tree
-            if (sslPolicyErrors == SslPolicyErrors.RemoteCertificateChainErrors)
-                return true;
-            return false;
-        }
-        private static X509Certificate getServerCert()
-        {
-            X509Store store = new X509Store(StoreName.My,
-               StoreLocation.CurrentUser);
-            store.Open(OpenFlags.ReadOnly);
-
-            X509Certificate2 foundCertificate = null;
-            foreach (X509Certificate2 currentCertificate
-               in store.Certificates)
-            {
-                if (currentCertificate.IssuerName.Name
-                   != null && currentCertificate.IssuerName.
-                   Name.Equals("CN=MySslSocketCertificate"))
-                {
-                    foundCertificate = currentCertificate;
-                    break;
-                }
-            }
-            return foundCertificate;
-        }
-        #endregion
 
         //method that recognie messages from xml language
-        public string recognizeMessage(string data, SslStream sslStream)
+        public static string recognizeMessage(string data, SslStream sslStream)
         {
             int taskIndexHome = data.IndexOf("<Task=") + "<Task=".Length;
             int taskIndexEnd = data.IndexOf(">");
@@ -133,13 +117,13 @@ namespace LocalDatabase_Server
                 case "Login":
                     string[] temp = ServerCom.LoginRecognizer(data);
                     u = new User(temp[0]); //temp[0] - token
-                    if (!activeUsers.Contains(u)) //user can be logged in only on one device in the same time. It could be a problem if device or program stopped running unexpectedly
+                    if (!ActiveUsers.Contains(u)) //user can be logged in only on one device in the same time. It could be a problem if device or program stopped running unexpectedly
                     {
                         User loggedUser = databaseManager.FindUserByToken(temp[0]);
                         if (loggedUser != null)
                             Application.Current.Dispatcher.Invoke(new Action(() =>
                             {
-                                activeUsers.Add(loggedUser);
+                                ActiveUsers.Add(loggedUser);
                             }));
                         sendMessage(ServerCom.CheckLoginMessage(temp), sslStream);
                     }
@@ -150,7 +134,7 @@ namespace LocalDatabase_Server
                     return temp[0];
                 case "ChngPass":
                     u = new User(token);
-                    if (activeUsers.Contains(u)) //if user isnt in active users container he has to log in one more time - session is limited
+                    if (ActiveUsers.Contains(u)) //if user isnt in active users container he has to log in one more time - session is limited
                     {
                         sendMessage(ServerCom.responseMessage(ServerCom.ChangePasswordRecognizer(data)), sslStream);
                     }
@@ -161,7 +145,7 @@ namespace LocalDatabase_Server
                     break;
                 case "ReadOrder": //when client sends download file request
                     u = new User(token);
-                    if (activeUsers.Contains(u)) //if user isnt in active users container he has to log in one more time - session is limited
+                    if (ActiveUsers.Contains(u)) //if user isnt in active users container he has to log in one more time - session is limited
                     {
                         u = databaseManager.FindUserByToken(token);
                         dm = new DirectoryManager(SettingsManager.Instance.GetSavePath() + token + "\\");
@@ -174,7 +158,7 @@ namespace LocalDatabase_Server
                             FileTransporter fileTransporter = new FileTransporter("127.0.0.1", (arr[0] + "\\" + arr[1]).Replace("Main_Folder", SettingsManager.Instance.GetSavePath()));
                             fileTransporter.connectAsServer();
                             fileTransporter.recieveFile();
-                            fileTransporter.setContainers(databaseManager, transmissions, token);
+                            fileTransporter.setContainers(databaseManager, Transmissions, token);
                         }
                         else
                         {
@@ -190,7 +174,7 @@ namespace LocalDatabase_Server
                     u = new User(token);
                     // TODO: Client and server has to be prepared to wait for message 
                     sendMessage(ServerCom.responseMessage("OK"), sslStream);
-                    if (activeUsers.Contains(u)) //if user isnt in active users container he has to log in one more time - session is limited
+                    if (ActiveUsers.Contains(u)) //if user isnt in active users container he has to log in one more time - session is limited
                     {
                         path = ServerCom.SendRecognizer(data);
                         Thread.Sleep(10);
@@ -200,7 +184,7 @@ namespace LocalDatabase_Server
                         fileTransporter.sendFile();
 
                         databaseManager.AddToTransmission(token, DateTime.Now, new FileInfo(path.Replace("Main_Folder", SettingsManager.Instance.GetSavePath())).Length, 0);
-                        Application.Current.Dispatcher.Invoke(new Action(() => { databaseManager.LoadTransmissions(transmissions); }));
+                        Application.Current.Dispatcher.Invoke(new Action(() => { databaseManager.LoadTransmissions(Transmissions); }));
                     }
                     else
                     {
@@ -209,7 +193,7 @@ namespace LocalDatabase_Server
                     break;
                 case "SendDir": //when client sends send my directory request
                     u = new User(token);
-                    if (activeUsers.Contains(u)) //if user isnt in active users container he has to log in one more time - session is limited
+                    if (ActiveUsers.Contains(u)) //if user isnt in active users container he has to log in one more time - session is limited
                     {
                         dm = new DirectoryManager(SettingsManager.Instance.GetSavePath() + token + "\\");
                         string message = "";
@@ -224,7 +208,7 @@ namespace LocalDatabase_Server
                     break;
                 case "CreateFolder":
                     u = new User(token);
-                    if (activeUsers.Contains(u)) //if user isnt in active users container he has to log in one more time - session is limited
+                    if (ActiveUsers.Contains(u)) //if user isnt in active users container he has to log in one more time - session is limited
                     {
                         sendMessage(ServerCom.responseMessage("Stworzono nowy folder"), sslStream);
                         destinationPath = ServerCom.DownloadRecognizer(data)[0];
@@ -237,7 +221,7 @@ namespace LocalDatabase_Server
                     break;
                 case "Delete":
                     u = new User(token);
-                    if (activeUsers.Contains(u)) //if user isnt in active users container he has to log in one more time - session is limited
+                    if (ActiveUsers.Contains(u)) //if user isnt in active users container he has to log in one more time - session is limited
                     {
                         path = ServerCom.DeleteRecognizer(data)[0];
                         string isFolder = ServerCom.DeleteRecognizer(data)[1];
@@ -248,7 +232,7 @@ namespace LocalDatabase_Server
                             deletedFileSize = 0;
                         sendMessage(ServerCom.responseMessage(dm.DeleteElement(path, isFolder)), sslStream);
                         databaseManager.AddToTransmission(token, DateTime.Now, deletedFileSize, TransmissionType.Delete);
-                        Application.Current.Dispatcher.Invoke(new Action(() => { databaseManager.LoadTransmissions(transmissions); }));
+                        Application.Current.Dispatcher.Invoke(new Action(() => { databaseManager.LoadTransmissions(Transmissions); }));
                     }
                     else
                     {
@@ -257,11 +241,11 @@ namespace LocalDatabase_Server
                     break;
                 case "Logout":
                     u = new User(ServerCom.LogOutRecognizer(data));
-                    if (activeUsers.Contains(u)) //if user isnt in active users container he has to log in one more time - session is limited
+                    if (ActiveUsers.Contains(u)) //if user isnt in active users container he has to log in one more time - session is limited
                     {
                         sslStream.Close();
                         isConnected = false;
-                        Application.Current.Dispatcher.Invoke(new Action(() => { activeUsers.Remove(u); }));
+                        Application.Current.Dispatcher.Invoke(new Action(() => { ActiveUsers.Remove(u); }));
                     }
                     break;
                 case "Response": // is universal request for sending messages
@@ -272,7 +256,7 @@ namespace LocalDatabase_Server
             return "";
         }
         //tcp/ip read message method. Reads bytes and translate it to string  - it will be changed for ssl connection
-        public string readMessage(SslStream sslStream)
+        public static string readMessage(SslStream sslStream)
         {
             var inputBuffer = new byte[4096];
             StringBuilder messageData = new StringBuilder();
@@ -293,7 +277,7 @@ namespace LocalDatabase_Server
             return recognizeMessage(messageData.ToString(), sslStream);
         }
         //tcp/ip send message method. translate string to bytes and send it to client by stream  - it will be changed for ssl connection
-        private string sendMessage(string outputMessage, SslStream sslStream)
+        private static string sendMessage(string outputMessage, SslStream sslStream)
         {
             sslStream.Flush();
             var outputBuffer = Encoding.UTF8.GetBytes(outputMessage);

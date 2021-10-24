@@ -17,7 +17,9 @@ namespace LocalDatabase_Server.Panels.SettingsPanel
 
         private void exitButton_Click(object sender, RoutedEventArgs e)
         {
-            this.Close();
+            Start start = new Start();
+            start.Show();
+            Close();
         }
 
         private void changeSessionTimeButton_Click(object sender, RoutedEventArgs e)
@@ -31,7 +33,11 @@ namespace LocalDatabase_Server.Panels.SettingsPanel
             if (int.TryParse(idleTimeText, out int IdleTimeInt))
             {
                 SettingsManager.Instance.SetIdleTime(IdleTimeInt);
-                ShowSuccessMessagePanel();
+                ShowMessagePanel();
+            }
+            else
+            {
+                ShowMessagePanel("Values are not numbers");
             }
         }
 
@@ -46,13 +52,17 @@ namespace LocalDatabase_Server.Panels.SettingsPanel
             if (int.TryParse(systemFolderSizeText, out int SystemFolderSizeInt))
             {
                 SettingsManager.Instance.SetAvailableSpace(SystemFolderSizeInt);
-                ShowSuccessMessagePanel();
+                ShowMessagePanel();
+            }
+            else
+            {
+                ShowMessagePanel("Values are not numbers");
             }
         }
 
-        private void ShowSuccessMessagePanel()
+        private void ShowMessagePanel(string message = "Changes applied")
         {
-            MessagePanel.MessagePanel messagePanel = new MessagePanel.MessagePanel("Changes applied", false);
+            MessagePanel.MessagePanel messagePanel = new MessagePanel.MessagePanel(message, false);
             messagePanel.ShowDialog();
         }
 
@@ -65,7 +75,7 @@ namespace LocalDatabase_Server.Panels.SettingsPanel
                 if (result == System.Windows.Forms.DialogResult.OK && !string.IsNullOrWhiteSpace(folderBrowserDialog.SelectedPath))
                 {
                     SettingsManager.Instance.SetSavePath(folderBrowserDialog.SelectedPath);
-                    System.Windows.Forms.MessageBox.Show("Changed default path to: " + folderBrowserDialog.SelectedPath);
+                    ShowMessagePanel("Changed default path to: " + folderBrowserDialog.SelectedPath);
                 }
             }
         }

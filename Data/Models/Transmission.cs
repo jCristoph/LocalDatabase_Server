@@ -9,7 +9,7 @@ namespace LocalDatabase_Server.Database
         Delete = 2
     }
 
-    class Transmission
+    public class Transmission
     {
         public int id { set; get; }
         public DateTime date { set; get; }

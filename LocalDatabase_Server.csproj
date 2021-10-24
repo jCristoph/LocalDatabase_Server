@@ -51,7 +51,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -80,6 +82,7 @@
     <Compile Include="Data\Database\Generators\RandomStringGenerator.cs" />
     <Compile Include="Data\Database\Generators\TokenGenerator.cs" />
     <Compile Include="Data\SettingsManager.cs" />
+    <Compile Include="Server\SslCertificate.cs" />
     <Compile Include="View\Panels\ChangeLimitPanel\ChangeLimitPanel.xaml.cs">
       <DependentUpon>ChangeLimitPanel.xaml</DependentUpon>
     </Compile>
@@ -94,6 +97,9 @@
     </Compile>
     <Compile Include="View\Panels\SettingsPanel\SettingsPanel.xaml.cs">
       <DependentUpon>SettingsPanel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Panels\SettingsPanel\SettingsPanelOverview.xaml.cs">
+      <DependentUpon>SettingsPanelOverview.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Panels\Users\Users.xaml.cs">
       <DependentUpon>Users.xaml</DependentUpon>
@@ -142,6 +148,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Start.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Panels\SettingsPanel\SettingsPanelOverview.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -196,6 +206,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
