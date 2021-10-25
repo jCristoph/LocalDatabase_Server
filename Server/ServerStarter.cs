@@ -31,8 +31,7 @@ namespace LocalDatabase_Server
         {
             ActiveUsers = activeUsers;
             Transmissions = transmissions;
-            DatabaseManager databaseManager = new Database.DatabaseManager();
-            Application.Current.Dispatcher.Invoke(new Action(() => { databaseManager.LoadTransmissions(transmissions); }));
+            Application.Current.Dispatcher.Invoke(new Action(() => { DatabaseManager.Instance.LoadTransmissions(transmissions); }));
             IPAddress localAddr = IPAddress.Parse(ip);
             server = new TcpListener(localAddr, port);
             server.Start();
@@ -107,7 +106,7 @@ namespace LocalDatabase_Server
                 token = data.Substring(taskIndexHome, taskIndexEnd - taskIndexHome);
             }
             string destinationPath = "";
-            Database.DatabaseManager databaseManager = new Database.DatabaseManager();
+            
             string path = "";
             //after translation system choose which method run 
             switch (task)
@@ -117,7 +116,7 @@ namespace LocalDatabase_Server
                     u = new User(temp[0]); //temp[0] - token
                     if (!ActiveUsers.Contains(u)) //user can be logged in only on one device in the same time. It could be a problem if device or program stopped running unexpectedly
                     {
-                        User loggedUser = databaseManager.FindUserByToken(temp[0]);
+                        User loggedUser = DatabaseManager.Instance.FindUserByToken(temp[0]);
                         if (loggedUser != null)
                             Application.Current.Dispatcher.Invoke(new Action(() =>
                             {
@@ -145,7 +144,7 @@ namespace LocalDatabase_Server
                     u = new User(token);
                     if (ActiveUsers.Contains(u)) //if user isnt in active users container he has to log in one more time - session is limited
                     {
-                        u = databaseManager.FindUserByToken(token);
+                        u = DatabaseManager.Instance.FindUserByToken(token);
                         dm = new DirectoryManager(SettingsManager.Instance.GetSavePath() + token + "\\");
 
                         if((dm.usedSpace() * 1000000000) < u.limit) //dm.usedspace returns space in gigabytes and u.limit in bytes so we have to convert it
@@ -156,7 +155,7 @@ namespace LocalDatabase_Server
                             FileTransporter fileTransporter = new FileTransporter("127.0.0.1", (arr[0] + "\\" + arr[1]).Replace("Main_Folder", SettingsManager.Instance.GetSavePath()));
                             fileTransporter.connectAsServer();
                             fileTransporter.recieveFile();
-                            fileTransporter.setContainers(databaseManager, Transmissions, token);
+                            fileTransporter.setContainers(Transmissions, token);
                         }
                         else
                         {
@@ -181,8 +180,8 @@ namespace LocalDatabase_Server
                         fileTransporter.connectAsServer();
                         fileTransporter.sendFile();
 
-                        databaseManager.AddToTransmission(token, DateTime.Now, new FileInfo(path.Replace("Main_Folder", SettingsManager.Instance.GetSavePath())).Length, 0);
-                        Application.Current.Dispatcher.Invoke(new Action(() => { databaseManager.LoadTransmissions(Transmissions); }));
+                        DatabaseManager.Instance.AddToTransmission(token, DateTime.Now, new FileInfo(path.Replace("Main_Folder", SettingsManager.Instance.GetSavePath())).Length, 0);
+                        Application.Current.Dispatcher.Invoke(new Action(() => { DatabaseManager.Instance.LoadTransmissions(Transmissions); }));
                     }
                     else
                     {
@@ -229,8 +228,8 @@ namespace LocalDatabase_Server
                         else
                             deletedFileSize = 0;
                         sendMessage(ServerCom.responseMessage(dm.DeleteElement(path, isFolder)), sslStream);
-                        databaseManager.AddToTransmission(token, DateTime.Now, deletedFileSize, TransmissionType.Delete);
-                        Application.Current.Dispatcher.Invoke(new Action(() => { databaseManager.LoadTransmissions(Transmissions); }));
+                        DatabaseManager.Instance.AddToTransmission(token, DateTime.Now, deletedFileSize, TransmissionType.Delete);
+                        Application.Current.Dispatcher.Invoke(new Action(() => { DatabaseManager.Instance.LoadTransmissions(Transmissions); }));
                     }
                     else
                     {

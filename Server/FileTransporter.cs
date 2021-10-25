@@ -7,7 +7,6 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace LocalDatabase_Server.Server
@@ -20,7 +19,6 @@ namespace LocalDatabase_Server.Server
         static int BUFFER_SIZE = 4096;
         Socket socket;
 
-        DatabaseManager databaseManager;
         ObservableCollection<Transmission> transmissions;
         string token;
 
@@ -94,8 +92,8 @@ namespace LocalDatabase_Server.Server
         }
         private void recieveFile_bg_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            databaseManager.AddToTransmission(token, DateTime.Now, new FileInfo(fileName).Length, TransmissionType.Upload);
-            Application.Current.Dispatcher.Invoke(new Action(() => { databaseManager.LoadTransmissions(transmissions); }));
+            DatabaseManager.Instance.AddToTransmission(token, DateTime.Now, new FileInfo(fileName).Length, TransmissionType.Upload);
+            Application.Current.Dispatcher.Invoke(new Action(() => { DatabaseManager.Instance.LoadTransmissions(transmissions); }));
             socket.Close();
         }
         #endregion
@@ -160,10 +158,9 @@ namespace LocalDatabase_Server.Server
             }
         }
 
-        internal void setContainers(DatabaseManager databaseManager, ObservableCollection<Transmission> transmissions, string token)
+        internal void setContainers(ObservableCollection<Transmission> transmissions, string token)
         {
             this.transmissions = transmissions;
-            this.databaseManager = databaseManager;
             this.token = token;
         }
         #endregion

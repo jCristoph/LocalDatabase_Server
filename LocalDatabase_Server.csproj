@@ -78,6 +78,7 @@
     <Compile Include="Data\Database\UseCases\AddToTransmissionUseCase.cs" />
     <Compile Include="Data\Database\UseCases\ChangePasswordUseCase.cs" />
     <Compile Include="Data\Database\UseCases\ChangeLimitUseCase.cs" />
+    <Compile Include="Data\Database\UseCases\CheckLoginUseCase.cs" />
     <Compile Include="Data\Database\UseCases\DeleteUserUseCase.cs" />
     <Compile Include="Data\Database\UseCases\AddUserUseCase.cs" />
     <Compile Include="Data\Database\ConnectionString.cs" />
@@ -236,6 +237,8 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Compile Include="Data\Database\UseCases\GetUserByTokenUseCase.cs" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
