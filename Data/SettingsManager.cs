@@ -16,6 +16,10 @@ namespace LocalDatabase_Server.Directory
             SetSetting(AvailableSpaceKey, AvailableSpace.ToString());
         }
 
+        /// <summary>
+        /// Available space on disc in GB
+        /// </summary>
+        /// <returns>Space in GB</returns>
         public long GetAvailableSpace()
         {
             return long.Parse(GetSetting(AvailableSpaceKey));
@@ -23,9 +27,13 @@ namespace LocalDatabase_Server.Directory
 
         public void SetIdleTime(int IdleTimeInMinutes)
         {
-            SetSetting(IdleTimeKey, ConvertToMinutes(IdleTimeInMinutes).ToString());
+            SetSetting(IdleTimeKey, IdleTimeInMinutes.ToString());
         }
 
+        /// <summary>
+        ///  Idle time in Minutes
+        /// </summary>
+        /// <returns>Idle time</returns>
         public int GetIdleTime()
         {
             return int.Parse(GetSetting(IdleTimeKey));
@@ -39,11 +47,6 @@ namespace LocalDatabase_Server.Directory
         public string GetSavePath()
         {
             return GetSetting(SavePathKey);
-        }
-
-        private int ConvertToMinutes(int TimeInMinutes)
-        {
-            return TimeInMinutes * 60 * 1000;
         }
 
         private const string IdleTimeKey = "IdleTimeKey";

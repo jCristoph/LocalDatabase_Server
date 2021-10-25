@@ -67,7 +67,7 @@ namespace LocalDatabase_Server
                         X509Certificate serverCertificate = sslCertificate.GetCertificate();
                         sslStream = new SslStream(client.GetStream(), false, sslCertificate.IsCertificateValid);
                         sslStream.AuthenticateAsServer(serverCertificate, true, SslProtocols.Tls12, false);
-                        sslStream.ReadTimeout = SettingsManager.Instance.GetIdleTime();
+                        sslStream.ReadTimeout = SettingsManager.Instance.GetIdleTime() * 60000;
                         isConnected = true;
                         string token = readMessage(sslStream);
                         while (isConnected)
