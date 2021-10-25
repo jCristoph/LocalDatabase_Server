@@ -71,17 +71,16 @@ namespace LocalDatabase_Server
         private void exitButton_Click(object sender, RoutedEventArgs e)
         {
             ServerStarter.Stop();
+            this.Owner.Close();
+            Environment.Exit(0);
             Close();
         }
 
         private void stopButton_Click(object sender, RoutedEventArgs e)
         {
-            Start startPanel = new Start
-            {
-                Owner = this
-            };
-            startPanel.Show();
-            this.Hide();
+            this.Owner.Show();
+            ServerStarter.Stop();
+            this.Close();
         }
 
         private void logUserOutButton_Click(object sender, RoutedEventArgs e)

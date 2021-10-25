@@ -50,7 +50,6 @@ namespace LocalDatabase_Server
             {
                 server.Stop();
             }
-            Environment.Exit(0);
         }
 
         //start server method
@@ -81,7 +80,6 @@ namespace LocalDatabase_Server
                             {
                                 User u = new User(token);                   
                                 Application.Current.Dispatcher.Invoke(new Action(() => { ActiveUsers.Remove(u); }));
-                                Stop();
                             }
                         }
                     }); //when new client wants to connect, the new thread is created

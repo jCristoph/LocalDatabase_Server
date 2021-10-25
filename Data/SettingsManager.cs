@@ -13,7 +13,7 @@ namespace LocalDatabase_Server.Directory
 
         public void SetAvailableSpace(long AvailableSpace)
         {
-            SetSetting(AvailableSpaceKey, AvailableSpace.ToString());
+            SetSetting(AvailableSpaceKey, (AvailableSpace * 1000000000).ToString());
         }
 
         /// <summary>

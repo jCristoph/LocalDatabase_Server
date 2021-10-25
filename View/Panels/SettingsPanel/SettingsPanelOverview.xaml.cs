@@ -18,7 +18,7 @@ namespace LocalDatabase_Server.Panels.SettingsPanel
         private void Init()
         {
             idleSessionTimeText.Text = Directory.SettingsManager.Instance.GetIdleTime().ToString();
-            systemfolderSizeText.Text = Directory.SettingsManager.Instance.GetAvailableSpace().ToString();
+            systemfolderSizeText.Text = (Directory.SettingsManager.Instance.GetAvailableSpace() / 1000000000.0).ToString();
             mainFolderPathText.Text = Directory.SettingsManager.Instance.GetSavePath();
         }
 
@@ -26,6 +26,7 @@ namespace LocalDatabase_Server.Panels.SettingsPanel
         {
             Start start = new Start();
             start.Show();
+            
             this.Close();
         }
 

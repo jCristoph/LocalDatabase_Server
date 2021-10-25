@@ -32,8 +32,9 @@ namespace LocalDatabase_Server
         private void startServerButton_Click(object sender, RoutedEventArgs e)
         {
             MainWindow mainPanel = new MainWindow();
+            mainPanel.Owner = this;
             mainPanel.Show();
-            this.Close();
+            this.Hide();
         }
     }
 }
