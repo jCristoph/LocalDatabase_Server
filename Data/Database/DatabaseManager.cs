@@ -14,18 +14,27 @@ namespace LocalDatabase_Server.Database
 
         private readonly SqlConnection connectionString;
         private static List<User> users;
+        private static ObservableCollection<Transmission> transmissions;
 
         private DatabaseManager()
         {
             connectionString = new ConnectionString().GetConnectionString();
-            users = new List<User>();
-            LoadUsers();
+            transmissions = GetTransmissions();
+            List<User> usersList = GetUsersUseCase.invoke(connectionString);
+            users = usersList;
         }
 
         public List<User> GetUsers()
         {
-            LoadUsers();
+            List<User> usersList = GetUsersUseCase.invoke(connectionString);
+            users = usersList;
             return users;
+        }
+
+        public ObservableCollection<Transmission> GetTransmissions()
+        {
+            LoadTransmissions();
+            return transmissions;
         }
 
         #region Database getters
@@ -35,7 +44,6 @@ namespace LocalDatabase_Server.Database
         {
             AddUserUseCase.invoke(surname, name, connectionString);
         }
-
 
         public void DeleteUser(string token)
         {
@@ -73,65 +81,20 @@ namespace LocalDatabase_Server.Database
             return result;
         }
 
-        //method with simple sql query - load all users from database to app
-        private void LoadUsers()
-        {
-            SqlCommand query = new SqlCommand
-            {
-                Connection = connectionString,
-                CommandText = "SELECT * FROM [User]"
-            };
-
-            SqlDataAdapter adapter = new SqlDataAdapter(query);
-            DataTable table = new DataTable();
-            adapter.Fill(table);
-            List<User> usersList = new List<User>();
-
-            for(int i = 0; i < table.Rows.Count; i++)
-            {
-                //when the data is loaded then program has to clean it all. From each row it has to load a correct data and cast it to right data type.
-                //Check Users table in database to see what every column contains.
-                User u = new User(Int32.Parse(table.Rows[i].ItemArray.GetValue(0).ToString()), table.Rows[i].ItemArray.GetValue(1).ToString(), table.Rows[i].ItemArray.GetValue(2).ToString(), table.Rows[i].ItemArray.GetValue(3).ToString(), table.Rows[i].ItemArray.GetValue(4).ToString(), table.Rows[i].ItemArray.GetValue(5).ToString(), Int64.Parse(table.Rows[i].ItemArray.GetValue(6).ToString()));
-                usersList.Add(u);
-            }
-
-            users = usersList;
-        }
-
-        //method that load all users and then from container looking for users witch tokens is the same with parameter container. Returns all users data.
-        //this method could be improve by looking for in database - without loading all users to container - memory save
         public User FindUserByToken(string token)
         {
             User matchingUser = GetUserByTokenUseCase.invoke(token, connectionString);
             return matchingUser;
         }
 
-        //a method that is needed to load transmissions to app. Then they could be shown in gui. To keep one transmissions container it is transferred by reference.
-        public void LoadTransmissions(ObservableCollection<Transmission> transmissions)
+        public void LoadTransmissions()
         {
-            transmissions.Clear();
-            SqlCommand query = new SqlCommand
+            if (transmissions != null)
             {
-                Connection = connectionString,
-                CommandText = "SELECT * FROM [Transaction]"
-            };
-            SqlDataAdapter adapter = new SqlDataAdapter(query);
-            DataTable table = new DataTable();
-            adapter.Fill(table);
-            for (int i = 0; i < table.Rows.Count; i++)
-            {
-              
-                //when the data is loaded then program has to clean it all. From each row it has to load a correct data and cast it to right data type.
-                //Check Transmissions table in database to see what every column contains.
-                int id = Int32.Parse(table.Rows[i].ItemArray.GetValue(0).ToString());
-                DateTime date = (DateTime)table.Rows[i].ItemArray.GetValue(1);
-                long fileSize = Int64.Parse(table.Rows[i].ItemArray.GetValue(2).ToString());
-                string userToken = table.Rows[i].ItemArray.GetValue(3).ToString();
-                TransmissionType transmissionType = (TransmissionType)Int32.Parse(table.Rows[i].ItemArray.GetValue(4).ToString());
-
-                Transmission t = new Transmission(id, date, fileSize, userToken, transmissionType);
-                transmissions.Add(t);
+                transmissions.Clear();
             }
+            List<Transmission> transmissionList = GetTransmissionsUseCase.invoke(connectionString);
+            transmissions = new ObservableCollection<Transmission>(transmissionList);
         }
         #endregion
     }

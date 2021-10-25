@@ -18,8 +18,6 @@ namespace LocalDatabase_Server.Server
         private FileInfo file;
         static int BUFFER_SIZE = 4096;
         Socket socket;
-
-        ObservableCollection<Transmission> transmissions;
         string token;
 
         public FileTransporter(string ip, string fileName)
@@ -93,7 +91,6 @@ namespace LocalDatabase_Server.Server
         private void recieveFile_bg_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             DatabaseManager.Instance.AddToTransmission(token, DateTime.Now, new FileInfo(fileName).Length, TransmissionType.Upload);
-            Application.Current.Dispatcher.Invoke(new Action(() => { DatabaseManager.Instance.LoadTransmissions(transmissions); }));
             socket.Close();
         }
         #endregion
@@ -158,9 +155,8 @@ namespace LocalDatabase_Server.Server
             }
         }
 
-        internal void setContainers(ObservableCollection<Transmission> transmissions, string token)
+        internal void setContainers(string token)
         {
-            this.transmissions = transmissions;
             this.token = token;
         }
         #endregion

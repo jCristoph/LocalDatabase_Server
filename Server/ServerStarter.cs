@@ -2,6 +2,7 @@
 using LocalDatabase_Server.Directory;
 using LocalDatabase_Server.Server;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Net;
@@ -22,16 +23,13 @@ namespace LocalDatabase_Server
         private static TcpListener server = null;
         private static DirectoryManager dm = null;
         private static ObservableCollection<User> ActiveUsers;
-        private static ObservableCollection<Transmission> Transmissions;
         private static bool isConnected;
         private static SslStream sslStream;
         private static SslCertificate sslCertificate;
 
-        public static void Init(ObservableCollection<User> activeUsers, ObservableCollection<Transmission> transmissions, string ip = "127.0.0.1", int port = 25000)
+        public static void Init(ObservableCollection<User> activeUsers, string ip = "127.0.0.1", int port = 25000)
         {
             ActiveUsers = activeUsers;
-            Transmissions = transmissions;
-            Application.Current.Dispatcher.Invoke(new Action(() => { DatabaseManager.Instance.LoadTransmissions(transmissions); }));
             IPAddress localAddr = IPAddress.Parse(ip);
             server = new TcpListener(localAddr, port);
             server.Start();
@@ -155,7 +153,7 @@ namespace LocalDatabase_Server
                             FileTransporter fileTransporter = new FileTransporter("127.0.0.1", (arr[0] + "\\" + arr[1]).Replace("Main_Folder", SettingsManager.Instance.GetSavePath()));
                             fileTransporter.connectAsServer();
                             fileTransporter.recieveFile();
-                            fileTransporter.setContainers(Transmissions, token);
+                            fileTransporter.setContainers(token);
                         }
                         else
                         {
@@ -181,7 +179,6 @@ namespace LocalDatabase_Server
                         fileTransporter.sendFile();
 
                         DatabaseManager.Instance.AddToTransmission(token, DateTime.Now, new FileInfo(path.Replace("Main_Folder", SettingsManager.Instance.GetSavePath())).Length, 0);
-                        Application.Current.Dispatcher.Invoke(new Action(() => { DatabaseManager.Instance.LoadTransmissions(Transmissions); }));
                     }
                     else
                     {
@@ -229,7 +226,6 @@ namespace LocalDatabase_Server
                             deletedFileSize = 0;
                         sendMessage(ServerCom.responseMessage(dm.DeleteElement(path, isFolder)), sslStream);
                         DatabaseManager.Instance.AddToTransmission(token, DateTime.Now, deletedFileSize, TransmissionType.Delete);
-                        Application.Current.Dispatcher.Invoke(new Action(() => { DatabaseManager.Instance.LoadTransmissions(Transmissions); }));
                     }
                     else
                     {
@@ -282,5 +278,6 @@ namespace LocalDatabase_Server
             sslStream.Flush();
             return outputMessage;
         }
+
     }
 }
