@@ -148,6 +148,39 @@ namespace LocalDatabase_Server
                         sendMessage("<Task=CheckLogin><isLogged>ERROR1</isLogged><Limit></Limit><Login>", sslStream);
                     }
                     return temp[0];
+
+                case "Registration":
+                    string[] temp = ServerCom.RegistrationRecognizer(data);
+                    u = new User(temp[0]); //temp[0] - token
+                    if (surname.Length > 2 && name.Length > 2)
+                    {
+                        Database.DatabaseManager dm = new Database.DatabaseManager();
+                        dm.AddUser(surname, name);
+                        sendMessage(ServerCom.responseMessage("Registration success"), sslStream);
+                        this.Close();
+                    }
+                    else
+                    {
+                        sendMessage(ServerCom.responseMessage("Data is not valid"), sslStream);
+                    }
+
+
+
+                    if (!activeUsers.Contains(u)) //user can be logged in only on one device in the same time. It could be a problem if device or program stopped running unexpectedly
+                    {
+                        User loggedUser = databaseManager.FindUserByToken(temp[0]);
+                        if (loggedUser != null)
+                            Application.Current.Dispatcher.Invoke(new Action(() =>
+                            {
+                                activeUsers.Add(loggedUser);
+                            }));
+                        sendMessage(ServerCom.CheckLoginMessage(temp), sslStream);
+                    }
+                    else
+                    {
+                        sendMessage("<Task=CheckLogin><isLogged>ERROR1</isLogged><Limit></Limit><Login>", sslStream);
+                    }
+                    return temp[0];
                 case "ChngPass":
                     u = new User(token);
                     if (activeUsers.Contains(u)) //if user isnt in active users container he has to log in one more time - session is limited

@@ -109,12 +109,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Panels\Registration\Registration.xaml.cs">
-      <DependentUpon>Registration.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Panels\Registration\RegistrationResult.xaml.cs">
-      <DependentUpon>RegistrationResult.xaml</DependentUpon>
-    </Compile>
+
     <Compile Include="Server\FileTransporter.cs" />
     <Compile Include="Server\ServerCom.cs" />
     <Compile Include="Directory\DirectoryElement.cs" />
@@ -128,14 +123,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Panels\Registration\Registration.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Panels\Registration\RegistrationResult.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
+
     <Page Include="Themes\ListViewHeaderTheme.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

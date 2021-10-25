@@ -6,6 +6,7 @@ namespace LocalDatabase_Server
 {
     public class DirectoryElement
     {
+        
         public string path { get; set; }
         public List<string> pathArray { get; set; }
         public string name { get; set; }

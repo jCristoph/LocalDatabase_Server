@@ -110,6 +110,7 @@ namespace LocalDatabase_Server
             return dm.CheckLogin(login, passowrd);
         }
 
+
         public static string ChangePasswordRecognizer(string s)
         {
             try
