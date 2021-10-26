@@ -13,21 +13,19 @@ namespace LocalDatabase_Server.Database
         public static DatabaseManager Instance { get { return lazy.Value; } }
 
         private readonly SqlConnection connectionString;
-        private static List<User> users;
+        private static ObservableCollection<User> users;
         private static ObservableCollection<Transmission> transmissions;
 
         private DatabaseManager()
         {
             connectionString = new ConnectionString().GetConnectionString();
             transmissions = GetTransmissions();
-            List<User> usersList = GetUsersUseCase.invoke(connectionString);
-            users = usersList;
+            users = GetUsers();
         }
 
-        public List<User> GetUsers()
+        public ObservableCollection<User> GetUsers()
         {
-            List<User> usersList = GetUsersUseCase.invoke(connectionString);
-            users = usersList;
+            LoadUsers();
             return users;
         }
 
@@ -87,7 +85,13 @@ namespace LocalDatabase_Server.Database
             return matchingUser;
         }
 
-        public void LoadTransmissions()
+        private void LoadUsers()
+        {
+            List<User> userList = GetUsersUseCase.invoke(connectionString);
+            users = new ObservableCollection<User>(userList);
+        }
+
+        private void LoadTransmissions()
         {
             if (transmissions != null)
             {
