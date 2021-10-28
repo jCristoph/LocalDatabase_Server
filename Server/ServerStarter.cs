@@ -82,6 +82,7 @@ namespace LocalDatabase_Server
                                 ExceptionCatcher.addExceptionToFile(e.ToString());
                                 User u = new User(token);                   
                                 Application.Current.Dispatcher.Invoke(new Action(() => { ActiveUsers.Remove(u); }));
+                                isConnected = false;
                             }
                         }
                     }); //when new client wants to connect, the new thread is created
