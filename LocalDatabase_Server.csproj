@@ -81,6 +81,7 @@
     <Compile Include="Data\Database\UseCases\DeleteUserUseCase.cs" />
     <Compile Include="Data\Database\UseCases\AddUserUseCase.cs" />
     <Compile Include="Data\Database\ConnectionString.cs" />
+    <Compile Include="Data\ExceptionCatcher.cs" />
     <Compile Include="Data\SettingsManager.cs" />
     <Compile Include="Server\SslCertificate.cs" />
     <Compile Include="View\Panels\ChangeLimitPanel\ChangeLimitPanel.xaml.cs">

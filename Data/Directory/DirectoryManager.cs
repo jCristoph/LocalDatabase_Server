@@ -1,4 +1,5 @@
-﻿using LocalDatabase_Server.Directory;
+﻿using LocalDatabase_Server.Data;
+using LocalDatabase_Server.Directory;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -76,7 +77,7 @@ namespace LocalDatabase_Server
             }
             catch (Exception e)
             {
-
+                ExceptionCatcher.addExceptionToFile(e.ToString());
             }
         }
 
@@ -98,7 +99,7 @@ namespace LocalDatabase_Server
                     }
                     catch (System.IO.IOException e)
                     {
-                        return e.Message;
+                        ExceptionCatcher.addExceptionToFile(e.ToString());
                     }
                     return "Delete success";
                 }

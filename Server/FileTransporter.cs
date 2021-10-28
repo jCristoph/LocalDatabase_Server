@@ -1,4 +1,5 @@
-﻿using LocalDatabase_Server.Database;
+﻿using LocalDatabase_Server.Data;
+using LocalDatabase_Server.Database;
 using LocalDatabase_Server.Directory;
 using System;
 using System.Collections.ObjectModel;
@@ -78,8 +79,9 @@ namespace LocalDatabase_Server.Server
                         fileStream.Write(buffer, 0, readed);
                         helperBW.ReportProgress(i++);
                     }
-                    catch
+                    catch (Exception ex)
                     {
+                        ExceptionCatcher.addExceptionToFile(ex.ToString());
                         readed = 0;
                     }
                     //If you test it on loopback better uncomment line below. Buffer is slower than loopback transfer
@@ -138,7 +140,7 @@ namespace LocalDatabase_Server.Server
                         }
                         catch (Exception ex)
                         {
-                            Console.WriteLine(ex.ToString());
+                            ExceptionCatcher.addExceptionToFile(ex.ToString());
                             readed = 0;
                         }
                     }
