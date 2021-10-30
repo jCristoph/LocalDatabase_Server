@@ -228,6 +228,22 @@ namespace LocalDatabase_Server
             int IndexEnd = s.LastIndexOf("</Content>");
             return s.Substring(IndexHome, IndexEnd - IndexHome); ;
         }
+        public static string[] RegistrationRecognizer(string s)
+        {
+            int IndexHome = s.IndexOf("<Name>") + "<Name>".Length;
+            int IndexEnd = s.LastIndexOf("</Name>");
+            string name = s.Substring(IndexHome, IndexEnd - IndexHome);
+            IndexHome = s.IndexOf("<Surname>") + "<Surname>".Length;
+            IndexEnd = s.LastIndexOf("</Surname>");
+            string surname = s.Substring(IndexHome, IndexEnd - IndexHome);
+            IndexHome = s.IndexOf("<Pass>") + "<Pass>".Length;
+            IndexEnd = s.LastIndexOf("</Pass>");
+            string passowrd = s.Substring(IndexHome, IndexEnd - IndexHome);
+            //here is a func that checks if password is right
+            string[] result = { name, surname, passowrd };
+            return result;
+
+        }
         #endregion
     }
 }

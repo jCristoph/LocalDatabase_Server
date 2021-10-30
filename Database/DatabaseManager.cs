@@ -22,9 +22,9 @@ namespace LocalDatabase_Server.Database
         #region Database getters
         //method that adds new user into db by two parameters - name and surname. The rest of parameters are created here by random character string or string buliding.
         //N in query means that we can use polish characters
-        public void AddUser(string surname, string name)
+        public void AddUser(string surname, string name, string password)
         {
-            AddUserUseCase.invoke(surname, name, connectionString);
+            AddUserUseCase.invoke(surname, name, password, connectionString);
         }
 
 

@@ -53,8 +53,8 @@ namespace LocalDatabase_Server
         //shows registration panel -> lets go to Panels/Registration/Registration.xaml.cs
         private void registrationButton_Click(object sender, RoutedEventArgs e)
         {
-            Registration.Registration r = new Registration.Registration();
-            r.Show();
+            //Registration.Registration r = new Registration.Registration();
+            //r.Show();
         }
 
         //shows users panel and hides main window -> lets go to Panels/Users/Users.xaml.cs

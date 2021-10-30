@@ -150,14 +150,14 @@ namespace LocalDatabase_Server
                     return temp[0];
 
                 case "Registration":
-                    string[] temp = ServerCom.RegistrationRecognizer(data);
+                    temp = ServerCom.RegistrationRecognizer(data);
+                    string name = temp[0], surname = temp[1], password = temp[2];
                     u = new User(temp[0]); //temp[0] - token
                     if (surname.Length > 2 && name.Length > 2)
                     {
-                        Database.DatabaseManager dm = new Database.DatabaseManager();
-                        dm.AddUser(surname, name);
+                        var cs = new ConnectionString();
+                        AddUserUseCase.invoke(surname, name, password, cs.GetConnectionString());
                         sendMessage(ServerCom.responseMessage("Registration success"), sslStream);
-                        this.Close();
                     }
                     else
                     {
@@ -181,6 +181,8 @@ namespace LocalDatabase_Server
                         sendMessage("<Task=CheckLogin><isLogged>ERROR1</isLogged><Limit></Limit><Login>", sslStream);
                     }
                     return temp[0];
+
+
                 case "ChngPass":
                     u = new User(token);
                     if (activeUsers.Contains(u)) //if user isnt in active users container he has to log in one more time - session is limited
