@@ -1,4 +1,5 @@
-﻿using LocalDatabase_Server.Database;
+﻿using LocalDatabase_Server.Data;
+using LocalDatabase_Server.Database;
 using LocalDatabase_Server.Directory;
 using LocalDatabase_Server.Server;
 using System;
@@ -81,8 +82,10 @@ namespace LocalDatabase_Server
                             }
                             catch (Exception e)
                             {
+                                ExceptionCatcher.addExceptionToFile(e.ToString());
                                 User u = new User(token);                   
                                 Application.Current.Dispatcher.Invoke(new Action(() => { ActiveUsers.Remove(u); }));
+                                isConnected = false;
                             }
                         }
                     }); //when new client wants to connect, the new thread is created
@@ -91,6 +94,7 @@ namespace LocalDatabase_Server
             }
             catch (SocketException e)
             {
+                ExceptionCatcher.addExceptionToFile(e.ToString());
                 Stop();
             }
         }

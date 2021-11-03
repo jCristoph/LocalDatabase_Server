@@ -1,4 +1,6 @@
-﻿using LocalDatabase_Server.Database;
+﻿using LocalDatabase_Server.Data;
+using LocalDatabase_Server.Database;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
@@ -121,8 +123,9 @@ namespace LocalDatabase_Server
                 DatabaseManager.Instance.ChangePassword(newPassword, token);
                 return "OK";
             }
-            catch
+            catch (Exception e)
             {
+                ExceptionCatcher.addExceptionToFile(e.ToString());
                 return "ERROR";
             }
 
