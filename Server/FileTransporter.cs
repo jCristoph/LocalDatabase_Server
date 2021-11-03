@@ -19,17 +19,21 @@ namespace LocalDatabase_Server.Server
         static int BUFFER_SIZE = 4096;
         Socket socket;
         string token;
+        int serverPortNumber;
+        int clientPortNumber;
 
         public FileTransporter(string ip, string fileName)
         {
             this.ip = ip;
             file = new FileInfo(fileName);
             this.fileName = fileName;
+            this.serverPortNumber = ServerStarter.GetServerPortNumber();
+            this.clientPortNumber = serverPortNumber + 1;
         }
 
         public void connectAsServer()
         {
-            IPEndPoint ipe = new IPEndPoint(IPAddress.Parse(ip), 25001);
+            IPEndPoint ipe = new IPEndPoint(IPAddress.Parse(ip), this.clientPortNumber);
             socket = new Socket(ipe.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             socket.Bind(ipe);
             socket.Listen(10);
@@ -38,7 +42,7 @@ namespace LocalDatabase_Server.Server
 
         public void connectAsClient()
         {
-            IPEndPoint ipe = new IPEndPoint(IPAddress.Parse(ip), 25001);
+            IPEndPoint ipe = new IPEndPoint(IPAddress.Parse(ip), this.clientPortNumber);
             socket = new Socket(ipe.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             socket.Connect(ipe);
         }

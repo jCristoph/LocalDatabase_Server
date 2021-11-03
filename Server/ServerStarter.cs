@@ -2,7 +2,6 @@
 using LocalDatabase_Server.Directory;
 using LocalDatabase_Server.Server;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Net;
@@ -26,14 +25,21 @@ namespace LocalDatabase_Server
         private static bool isConnected;
         private static SslStream sslStream;
         private static SslCertificate sslCertificate;
+        private static int portNumber;
 
         public static void Init(ObservableCollection<User> activeUsers, string ip = "127.0.0.1", int port = 25000)
         {
             ActiveUsers = activeUsers;
+            portNumber = port;
             IPAddress localAddr = IPAddress.Parse(ip);
             server = new TcpListener(localAddr, port);
             server.Start();
             StartListener();
+        }
+
+        public static int GetServerPortNumber()
+        {
+            return portNumber;
         }
 
         public static void Stop()
