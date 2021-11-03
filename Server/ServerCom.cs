@@ -105,9 +105,7 @@ namespace LocalDatabase_Server
             IndexHome = s.IndexOf("<Pass>") + "<Pass>".Length;
             IndexEnd = s.LastIndexOf("</Pass>");
             string passowrd = s.Substring(IndexHome, IndexEnd - IndexHome);
-            //here is a func that checks if password is right
-            Database.DatabaseManager dm = new Database.DatabaseManager();
-            return dm.CheckLogin(login, passowrd);
+            return DatabaseManager.Instance.CheckLogin(login, passowrd);
         }
 
         public static string ChangePasswordRecognizer(string s)
@@ -120,8 +118,7 @@ namespace LocalDatabase_Server
                 IndexHome = s.IndexOf("<Token>") + "<Token>".Length;
                 IndexEnd = s.LastIndexOf("</Token>");
                 string token = s.Substring(IndexHome, IndexEnd - IndexHome);
-                Database.DatabaseManager dm = new Database.DatabaseManager();
-                dm.ChangePassword(newPassword, token);
+                DatabaseManager.Instance.ChangePassword(newPassword, token);
                 return "OK";
             }
             catch

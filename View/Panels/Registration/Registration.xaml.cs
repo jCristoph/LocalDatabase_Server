@@ -35,8 +35,7 @@ namespace LocalDatabase_Server.Registration
             MessagePanel.MessagePanel mp;
             if (surnameTextBox.Text.Length > 2 && nameTextBox.Text.Length > 2)
             {
-                Database.DatabaseManager dm = new Database.DatabaseManager();
-                dm.AddUser(surnameTextBox.Text, nameTextBox.Text);
+                Database.DatabaseManager.Instance.AddUser(surnameTextBox.Text, nameTextBox.Text);
 
                 mp = new MessagePanel.MessagePanel("Registration success", false);
                 mp.ShowDialog();

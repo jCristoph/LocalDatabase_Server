@@ -20,20 +20,20 @@ namespace LocalDatabase_Server
     {
         //list of active users and transmissions has to be here because gui use them
         //Observable Collection is a special container where things in gui and things in container are allways the same - automatic refresh
-        ObservableCollection<Database.User> activeUsers;
-        ObservableCollection<Database.Transmission> transmissions;
+        ObservableCollection<User> activeUsers;
+        ObservableCollection<Transmission> transmissions;
 
         private List<Category> Categories { get; set; }
 
         public MainWindow()
         {
-            WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen; //app is always in center of screen
+            WindowStartupLocation = WindowStartupLocation.CenterScreen; //app is always in center of screen
             InitializeComponent(); //runs gui
             pieChart(); //creates pie chart
 
 
-            activeUsers = new ObservableCollection<Database.User>();
-            transmissions = new ObservableCollection<Database.Transmission>();
+            activeUsers = new ObservableCollection<User>();
+            transmissions = DatabaseManager.Instance.GetTransmissions();
             transmissionsList.ItemsSource = transmissions;
             activeUsersList.ItemsSource = activeUsers;
             CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(transmissionsList.ItemsSource);
@@ -47,7 +47,7 @@ namespace LocalDatabase_Server
         //method that starts server - it has to be in other thread because meanwhile the gui has to run
         private void newThread()
         {
-           ServerStarter.Init(activeUsers: activeUsers, transmissions: transmissions);
+           ServerStarter.Init(activeUsers: activeUsers);
         }
         #region button events
 
