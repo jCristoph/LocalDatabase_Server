@@ -8,7 +8,6 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace LocalDatabase_Server.Server
@@ -20,21 +19,22 @@ namespace LocalDatabase_Server.Server
         private FileInfo file;
         static int BUFFER_SIZE = 4096;
         Socket socket;
-
-        DatabaseManager databaseManager;
-        ObservableCollection<Transmission> transmissions;
         string token;
+        int serverPortNumber;
+        int clientPortNumber;
 
         public FileTransporter(string ip, string fileName)
         {
             this.ip = ip;
             file = new FileInfo(fileName);
             this.fileName = fileName;
+            this.serverPortNumber = ServerStarter.GetServerPortNumber();
+            this.clientPortNumber = serverPortNumber + 1;
         }
 
         public void connectAsServer()
         {
-            IPEndPoint ipe = new IPEndPoint(IPAddress.Parse(ip), 25001);
+            IPEndPoint ipe = new IPEndPoint(IPAddress.Parse(ip), this.clientPortNumber);
             socket = new Socket(ipe.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             socket.Bind(ipe);
             socket.Listen(10);
@@ -43,7 +43,7 @@ namespace LocalDatabase_Server.Server
 
         public void connectAsClient()
         {
-            IPEndPoint ipe = new IPEndPoint(IPAddress.Parse(ip), 25001);
+            IPEndPoint ipe = new IPEndPoint(IPAddress.Parse(ip), this.clientPortNumber);
             socket = new Socket(ipe.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             socket.Connect(ipe);
         }
@@ -96,8 +96,7 @@ namespace LocalDatabase_Server.Server
         }
         private void recieveFile_bg_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            databaseManager.AddToTransmission(token, DateTime.Now, new FileInfo(fileName).Length, TransmissionType.Upload);
-            Application.Current.Dispatcher.Invoke(new Action(() => { databaseManager.LoadTransmissions(transmissions); }));
+            DatabaseManager.Instance.AddToTransmission(token, DateTime.Now, new FileInfo(fileName).Length, TransmissionType.Upload);
             socket.Close();
         }
         #endregion
@@ -162,10 +161,8 @@ namespace LocalDatabase_Server.Server
             }
         }
 
-        internal void setContainers(DatabaseManager databaseManager, ObservableCollection<Transmission> transmissions, string token)
+        internal void setContainers(string token)
         {
-            this.transmissions = transmissions;
-            this.databaseManager = databaseManager;
             this.token = token;
         }
         #endregion

@@ -339,5 +339,5 @@ ASALocalRun/
 # BeatPulse healthcheck temp database
 healthchecksdb
 
-#Database files
-Database/
+# Database file
+Data/Database/PZ_MD.mdf
