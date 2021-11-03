@@ -151,7 +151,7 @@ namespace LocalDatabase_Server
 
                 case "Registration":
                     temp = ServerCom.RegistrationRecognizer(data);
-                    string name = temp[0], surname = temp[1], password = temp[2];
+                    string surname = temp[0], name = temp[1], password = temp[2];
                     u = new User(temp[0]); //temp[0] - token
                     if (surname.Length > 2 && name.Length > 2)
                     {
