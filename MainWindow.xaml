@@ -33,7 +33,6 @@
                 <TextBlock Grid.Column="0" Grid.Row="0" Foreground="White" Text="Latest file trasmissions list" FontSize="16" HorizontalAlignment="Center"  FontFamily="Lucida Sans" />
                 <TextBlock Grid.Column="1" Grid.Row="0" Foreground="White" Text="Active users list" FontSize="16" HorizontalAlignment="Center"  FontFamily="Lucida Sans" />
                 <StackPanel Grid.Row="2" Grid.Column="1" VerticalAlignment="Center">
-                    <Button Content="Register" HorizontalAlignment="Center" VerticalAlignment="Center" Width="240" Height="30" Name="registrationButton" Click="registrationButton_Click"  Style="{StaticResource MenuButtonTheme}"/>
                     <Button Content="All users list" HorizontalAlignment="Center"  VerticalAlignment="Center" Width="240" Height="30" Name="allUsersButton" Click="allUsersButton_Click" Margin="0,40,0,0" Style="{StaticResource MenuButtonTheme}"/>
                     <Button Content="Shut down" HorizontalAlignment="Center" VerticalAlignment="Center" Width="240" Height="30" Name="exitButton" Click="exitButton_Click" Margin="0,40,0,0" Style="{StaticResource MenuButtonTheme}"/>
                 </StackPanel>
