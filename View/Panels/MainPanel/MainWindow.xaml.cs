@@ -12,6 +12,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Controls;
 using LocalDatabase_Server.Database;
+using LocalDatabase_Server.Directory;
 
 namespace LocalDatabase_Server
 {
@@ -19,20 +20,20 @@ namespace LocalDatabase_Server
     {
         //list of active users and transmissions has to be here because gui use them
         //Observable Collection is a special container where things in gui and things in container are allways the same - automatic refresh
-        ObservableCollection<Database.User> activeUsers;
-        ObservableCollection<Database.Transmission> transmissions;
+        ObservableCollection<User> activeUsers;
+        ObservableCollection<Transmission> transmissions;
 
         private List<Category> Categories { get; set; }
 
         public MainWindow()
         {
-            WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen; //app is always in center of screen
+            WindowStartupLocation = WindowStartupLocation.CenterScreen; //app is always in center of screen
             InitializeComponent(); //runs gui
             pieChart(); //creates pie chart
 
 
-            activeUsers = new ObservableCollection<Database.User>();
-            transmissions = new ObservableCollection<Database.Transmission>();
+            activeUsers = new ObservableCollection<User>();
+            transmissions = DatabaseManager.Instance.GetTransmissions();
             transmissionsList.ItemsSource = transmissions;
             activeUsersList.ItemsSource = activeUsers;
             CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(transmissionsList.ItemsSource);
@@ -46,7 +47,7 @@ namespace LocalDatabase_Server
         //method that starts server - it has to be in other thread because meanwhile the gui has to run
         private void newThread()
         {
-            new ServerStarter(activeUsers: activeUsers, transmissions: transmissions);
+           ServerStarter.Init(activeUsers: activeUsers);
         }
         #region button events
 
@@ -69,6 +70,16 @@ namespace LocalDatabase_Server
         //ends app
         private void exitButton_Click(object sender, RoutedEventArgs e)
         {
+            ServerStarter.Stop();
+            this.Owner.Close();
+            Environment.Exit(0);
+            Close();
+        }
+
+        private void stopButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.Owner.Show();
+            ServerStarter.Stop();
             this.Close();
         }
 
@@ -96,11 +107,13 @@ namespace LocalDatabase_Server
             canv.Height = pieHeight;
 
             ///data is loaded - free space on disk and size of app folder
-            DriveInfo dDrive = new DriveInfo("C");
-            var folderSize = (double)GetFileSizeSumFromDirectory(@"C:\Directory_test\");
-            var availableSpace = dDrive.AvailableFreeSpace;
-            double p1 = Math.Round((folderSize / availableSpace),2) * 100.0f;
-            double p2 = Math.Round(((float)(dDrive.AvailableFreeSpace - GetFileSizeSumFromDirectory(@"C:\Directory_test\")) / dDrive.AvailableFreeSpace),2) * 100.0f;
+            ///
+            var folderSize = (double)GetFileSizeSumFromDirectory(SettingsManager.Instance.GetSavePath());
+            long availableSpace = SettingsManager.Instance.GetAvailableSpace();
+
+
+            double p1 = Math.Round((folderSize / availableSpace), 2) * 100.0f;
+            double p2 = Math.Round(((float)(availableSpace - GetFileSizeSumFromDirectory(SettingsManager.Instance.GetSavePath())) / availableSpace),2) * 100.0f;
 
             Categories = new List<Category>() {
                 new Category
@@ -194,12 +207,12 @@ namespace LocalDatabase_Server
         //methods that counts a folder size - it has to sum every file in folder and subfolders
         public static long GetFileSizeSumFromDirectory(string searchDirectory)
         {
-            var files = Directory.EnumerateFiles(searchDirectory);
+            var files = System.IO.Directory.EnumerateFiles(searchDirectory);
 
             // get the sizeof all files in the current directory
             var currentSize = (from file in files let fileInfo = new FileInfo(file) select fileInfo.Length).Sum();
 
-            var directories = Directory.EnumerateDirectories(searchDirectory);
+            var directories = System.IO.Directory.EnumerateDirectories(searchDirectory);
 
             // get the size of all files in all subdirectories
             var subDirSize = (from directory in directories select GetFileSizeSumFromDirectory(directory)).Sum();

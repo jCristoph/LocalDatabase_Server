@@ -13,8 +13,8 @@ namespace LocalDatabase_Server.Database
 
         public ConnectionString()
         {
-            string _projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
-            string _dbFilePath = $"{_projectDirectory}\\Database\\PZ_BD.mdf";
+            string _projectDirectory = System.IO.Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
+            string _dbFilePath = $"{_projectDirectory}\\Data\\Database\\PZ_BD.mdf";
             _connectionString = new SqlConnection($@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename={_dbFilePath};Integrated Security=True;Connect Timeout=30");
         }
         

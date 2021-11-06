@@ -1,18 +1,8 @@
-﻿using System;
+﻿using LocalDatabase_Server.Directory;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace LocalDatabase_Server.Users
 {
@@ -22,12 +12,10 @@ namespace LocalDatabase_Server.Users
     public partial class Users : Window
     {
         private ObservableCollection<Database.User> users;
-        Database.DatabaseManager databaseManager;
-        //constructor. When user open this panel, system load all users and list them.
+        
         public Users()
         {
-            databaseManager = new Database.DatabaseManager();
-            users = databaseManager.LoadUsers();
+            users = Database.DatabaseManager.Instance.GetUsers();
             WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen; //app is always in center of screen
             InitializeComponent();
             listView.ItemsSource = users;
@@ -44,16 +32,16 @@ namespace LocalDatabase_Server.Users
         private void deleteUserButton(object sender, RoutedEventArgs e)
         {
             Database.User u = (Database.User)(((Button)sender).DataContext); //checking who was choosed.
-            databaseManager.DeleteUser(u.token); //deleted from db
-            string path = @"C:\Directory_test\" + u.token;
+            Database.DatabaseManager.Instance.DeleteUser(u.token); //deleted from db
+            string path = SettingsManager.Instance.GetSavePath() + u.token;
             for (int i = 0; i < users.Count; i++)
             {
                 if (users[i].token.Equals(u.token))
                 {
                     users.Remove(users[i]); //deleted from container
-                    if (Directory.Exists(path))
+                    if (System.IO.Directory.Exists(path))
                     {
-                        Directory.Delete(path, true); //deleted his data
+                        System.IO.Directory.Delete(path, true); //deleted his data
                     }
                 }
             }
@@ -65,7 +53,7 @@ namespace LocalDatabase_Server.Users
             Database.User u = (Database.User)(((Button)sender).DataContext); //checking who was choosed.
             ChangeLimitPanel.ChangeLimitPanel clp = new ChangeLimitPanel.ChangeLimitPanel(); //new panel opens. Look at Panels/ChangeLimitPanel
             clp.ShowDialog();
-            databaseManager.ChangeLimit(clp.newlimit, u.token); //limit is also saved in container
+            Database.DatabaseManager.Instance.ChangeLimit(clp.newlimit, u.token); //limit is also saved in container
         }
     }
 }

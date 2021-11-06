@@ -19,7 +19,7 @@ namespace LocalDatabase_Server
         {
             //full path
             this.path = path;
-            //path is splitted here to separated strings by subfolder names. That means  C:\Directory_test\Folder2\Folder6 -> C:,Directory_test,Folder2,Folder6,(empty)
+            //path is splitted here to separated strings by subfolder names. That means {DEFAULT_FOLDER_PATH}\Folder2\Folder6 -> C:,Directory_test,Folder2,Folder6,(empty)
             pathArray = path.Split('\\').ToList<String>();
             //name of file or folder put into variable name and delete it from path array
             this.name = pathArray[pathArray.Count - 1];
@@ -33,7 +33,7 @@ namespace LocalDatabase_Server
         public DirectoryElement(string pathWithoutName, string name, long size, string lwr, string isFolder)
         {
             //this.path = pathWithoutName.Replace(" ", "");
-            //path is splitted here to separated strings by subfolder names. That means  C:\Directory_test\Folder2\Folder6 -> C:,Directory_test,Folder2,Folder6,(empty)
+            //path is splitted here to separated strings by subfolder names. That means {DEFAULT_FOLDER_PATH}\Folder2\Folder6 -> C:,Directory_test,Folder2,Folder6,(empty)
             pathArray = path.Split('\\').ToList<String>();
             pathArray.RemoveAt(pathArray.Count - 1);
             this.name = name;

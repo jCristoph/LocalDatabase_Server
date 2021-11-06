@@ -1,4 +1,5 @@
-﻿using System.Data.SqlClient;
+﻿using LocalDatabase_Server.Directory;
+using System.Data.SqlClient;
 using System.IO;
 
 namespace LocalDatabase_Server.Database
@@ -9,8 +10,9 @@ namespace LocalDatabase_Server.Database
         {
 
             SqlCommand query = new SqlCommand();
-            string token = RandomStringGenerator.GenerateRandomString();
-            string login = TokenGenerator.GenerateLogin(surname, name);
+            string token = Generator.GenerateToken();
+            string login = Generator.GenerateLogin(surname, name);
+           
             query.CommandText = "INSERT INTO [User]([Name],[Surname],[Login],[Password],[Token])";
             query.CommandText += $"VALUES ('{surname}', '{name}', '{login}', '{password}', '{token}')";
             query.Connection = connectionString;
@@ -18,8 +20,8 @@ namespace LocalDatabase_Server.Database
             query.ExecuteNonQuery();
             connectionString.Close();
 
-            string pathString = Path.Combine(@"C:\Directory_test", token);
-            Directory.CreateDirectory(pathString);
+            string pathString = Path.Combine(SettingsManager.Instance.GetSavePath(), login);
+            System.IO.Directory.CreateDirectory(pathString);
         }
     }
 }
