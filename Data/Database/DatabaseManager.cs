@@ -40,7 +40,15 @@ namespace LocalDatabase_Server.Database
         //N in query means that we can use polish characters
         public void AddUser(string surname, string name)
         {
-            AddUserUseCase.invoke(surname, name, connectionString);
+            bool isAdded = AddUserUseCase.invoke(surname, name, password, connectionString);
+            if (isAdded)
+            {
+                // success 
+            }
+            else
+            {
+                // handle error
+            }
         }
 
         public void DeleteUser(string token)
@@ -66,17 +74,17 @@ namespace LocalDatabase_Server.Database
 
         #region Database setters
         /// <summary>
-        /// Checks if password is correct.
-        /// If incorrect then 
+        /// Checks if user exists in database.
         /// </summary>
         /// <param name="login"></param>
         /// <param name="password"></param>
-        /// <returns> If correct returns string[2] where [0] is token and [1] is space to use.
+        /// <returns> If correct returns string[2] where [0] is token and [1] is limit.
         /// If incorrect returns error message</returns>
-        public string[] CheckLogin(string login, string password)
+        public string[] Login(string login, string password)
         {
-            string [] result = CheckLoginUseCase.invoke(login, password, connectionString);
-            return result;
+            User user = LoginUseCase.invoke(login, password, connectionString);
+            if (user == null) return new string[] { "ERROR", "0" };
+            return new string[] { user.token, user.limit.ToString() };
         }
 
         public User FindUserByToken(string token)

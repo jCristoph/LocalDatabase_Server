@@ -78,10 +78,12 @@
     <Compile Include="Data\Database\UseCases\AddToTransmissionUseCase.cs" />
     <Compile Include="Data\Database\UseCases\ChangePasswordUseCase.cs" />
     <Compile Include="Data\Database\UseCases\ChangeLimitUseCase.cs" />
-    <Compile Include="Data\Database\UseCases\CheckLoginUseCase.cs" />
+    <Compile Include="Data\Database\UseCases\GetUserByLoginAndPasswordUseCase.cs" />
+    <Compile Include="Data\Database\UseCases\LoginUseCase.cs" />
     <Compile Include="Data\Database\UseCases\DeleteUserUseCase.cs" />
     <Compile Include="Data\Database\UseCases\AddUserUseCase.cs" />
     <Compile Include="Data\Database\ConnectionString.cs" />
+    <Compile Include="Data\Database\UseCases\DoesUserExistInDatabase.cs" />
     <Compile Include="Data\ExceptionCatcher.cs" />
     <Compile Include="Data\Database\UseCases\GetTransmissionsUseCase.cs" />
     <Compile Include="Data\Database\UseCases\GetUsersUseCase.cs" />
