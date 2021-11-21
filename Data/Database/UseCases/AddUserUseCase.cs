@@ -7,12 +7,14 @@ namespace LocalDatabase_Server.Database
 {
     public static class AddUserUseCase
     {
-        public static bool invoke(string surname, string name, string password, SqlConnection connectionString)
+        public static bool invoke(string surname, string name, SqlConnection connectionString)
         {
 
             SqlCommand query = new SqlCommand();
             string token = Generator.GenerateToken();
             string login = Generator.GenerateLogin(surname, name);
+            // TODO: for now it's random, method is moved to client side
+            string password = Generator.GenerateRandomString();
 
             bool doesUserExist = DoesUserExistInDatabase.invoke(login, password, connectionString);
             if (doesUserExist) return false;

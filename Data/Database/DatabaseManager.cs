@@ -40,7 +40,7 @@ namespace LocalDatabase_Server.Database
         //N in query means that we can use polish characters
         public void AddUser(string surname, string name)
         {
-            bool isAdded = AddUserUseCase.invoke(surname, name, password, connectionString);
+            bool isAdded = AddUserUseCase.invoke(surname, name, connectionString);
             if (isAdded)
             {
                 // success 
