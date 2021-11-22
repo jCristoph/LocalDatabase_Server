@@ -238,9 +238,8 @@ namespace LocalDatabase_Server
             string surname = s.Substring(IndexHome, IndexEnd - IndexHome);
             IndexHome = s.IndexOf("<Pass>") + "<Pass>".Length;
             IndexEnd = s.LastIndexOf("</Pass>");
-            string passowrd = s.Substring(IndexHome, IndexEnd - IndexHome);
-            //here is a func that checks if password is right
-            string[] result = { name, surname, passowrd };
+            string password = s.Substring(IndexHome, IndexEnd - IndexHome);
+            string[] result = { name, surname, password };
             return result;
 
         }
