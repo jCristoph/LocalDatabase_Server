@@ -6,13 +6,13 @@ namespace LocalDatabase_Server.Database
 {
     public static class AddUserUseCase
     {
-        public static void invoke(string surname, string name, SqlConnection connectionString)
+        public static void invoke(string surname, string name, string password, SqlConnection connectionString)
         {
 
             SqlCommand query = new SqlCommand();
             string token = Generator.GenerateToken();
             string login = Generator.GenerateLogin(surname, name);
-            string password = Generator.GenerateRandomString();
+           
             query.CommandText = "INSERT INTO [User]([Name],[Surname],[Login],[Password],[Token])";
             query.CommandText += $"VALUES ('{surname}', '{name}', '{login}', '{password}', '{token}')";
             query.Connection = connectionString;
@@ -20,7 +20,7 @@ namespace LocalDatabase_Server.Database
             query.ExecuteNonQuery();
             connectionString.Close();
 
-            string pathString = Path.Combine(SettingsManager.Instance.GetSavePath(), login);
+            string pathString = Path.Combine(SettingsManager.Instance.GetSavePath(), token);
             System.IO.Directory.CreateDirectory(pathString);
         }
     }

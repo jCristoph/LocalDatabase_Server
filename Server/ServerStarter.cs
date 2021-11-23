@@ -137,6 +137,41 @@ namespace LocalDatabase_Server
                         sendMessage("<Task=CheckLogin><isLogged>ERROR1</isLogged><Limit></Limit><Login>", sslStream);
                     }
                     return temp[0];
+
+                case "Registration":
+                    temp = ServerCom.RegistrationRecognizer(data);
+                    string surname = temp[0], name = temp[1], password = temp[2];
+                    u = new User(temp[0]); //temp[0] - token
+                    if (surname.Length > 2 && name.Length > 2)
+                    {
+                        var cs = new ConnectionString();
+                        AddUserUseCase.invoke(surname, name, password, cs.GetConnectionString());
+                        sendMessage(ServerCom.responseMessage("Registration success"), sslStream);
+                    }
+                    else
+                    {
+                        sendMessage(ServerCom.responseMessage("Data is not valid"), sslStream);
+                    }
+
+
+
+                    if (!ActiveUsers.Contains(u)) //user can be logged in only on one device in the same time. It could be a problem if device or program stopped running unexpectedly
+                    {
+                        User loggedUser = DatabaseManager.Instance.FindUserByToken(temp[0]);
+                        if (loggedUser != null)
+                            Application.Current.Dispatcher.Invoke(new Action(() =>
+                            {
+                                ActiveUsers.Add(loggedUser);
+                            }));
+                        sendMessage(ServerCom.CheckLoginMessage(temp), sslStream);
+                    }
+                    else
+                    {
+                        sendMessage("<Task=CheckLogin><isLogged>ERROR1</isLogged><Limit></Limit><Login>", sslStream);
+                    }
+                    return temp[0];
+
+
                 case "ChngPass":
                     u = new User(token);
                     if (ActiveUsers.Contains(u)) //if user isnt in active users container he has to log in one more time - session is limited

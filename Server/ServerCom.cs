@@ -110,6 +110,7 @@ namespace LocalDatabase_Server
             return DatabaseManager.Instance.CheckLogin(login, passowrd);
         }
 
+
         public static string ChangePasswordRecognizer(string s)
         {
             try
@@ -226,6 +227,21 @@ namespace LocalDatabase_Server
             int IndexHome = s.IndexOf("<Content>") + "<Content>".Length;
             int IndexEnd = s.LastIndexOf("</Content>");
             return s.Substring(IndexHome, IndexEnd - IndexHome); ;
+        }
+        public static string[] RegistrationRecognizer(string s)
+        {
+            int IndexHome = s.IndexOf("<Name>") + "<Name>".Length;
+            int IndexEnd = s.LastIndexOf("</Name>");
+            string name = s.Substring(IndexHome, IndexEnd - IndexHome);
+            IndexHome = s.IndexOf("<Surname>") + "<Surname>".Length;
+            IndexEnd = s.LastIndexOf("</Surname>");
+            string surname = s.Substring(IndexHome, IndexEnd - IndexHome);
+            IndexHome = s.IndexOf("<Pass>") + "<Pass>".Length;
+            IndexEnd = s.LastIndexOf("</Pass>");
+            string password = s.Substring(IndexHome, IndexEnd - IndexHome);
+            string[] result = { name, surname, password };
+            return result;
+
         }
         #endregion
     }
