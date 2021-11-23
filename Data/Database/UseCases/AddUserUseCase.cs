@@ -20,7 +20,7 @@ namespace LocalDatabase_Server.Database
             query.ExecuteNonQuery();
             connectionString.Close();
 
-            string pathString = Path.Combine(SettingsManager.Instance.GetSavePath(), login);
+            string pathString = Path.Combine(SettingsManager.Instance.GetSavePath(), token);
             System.IO.Directory.CreateDirectory(pathString);
         }
     }
