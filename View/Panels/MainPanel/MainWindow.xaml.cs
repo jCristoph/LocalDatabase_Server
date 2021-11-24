@@ -1,18 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
-using System.Windows.Media;
-using System.Windows.Shapes;
-using System.Diagnostics;
-using System.IO;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Controls;
 using LocalDatabase_Server.Database;
 using LocalDatabase_Server.Directory;
+using LocalDatabase_Server.View.Panels.MainPanel.PieChartDrawer;
+using System.Windows.Media;
+using LocalDatabase_Server.Data.Utils;
 
 namespace LocalDatabase_Server
 {
@@ -23,14 +20,15 @@ namespace LocalDatabase_Server
         ObservableCollection<User> activeUsers;
         ObservableCollection<Transmission> transmissions;
 
-        private List<Category> Categories { get; set; }
-
         public MainWindow()
         {
+            long folderSizeInBytes = GetFileSumFromDirectory.count(SettingsManager.Instance.GetSavePath());
+            double folderSizeInGb = UnitsConverter.ConvertBytesToGigabytes(folderSizeInBytes);
+           
             WindowStartupLocation = WindowStartupLocation.CenterScreen; //app is always in center of screen
             InitializeComponent(); //runs gui
-            pieChart(); //creates pie chart
-
+            PieChartDrawer pieChartDrawer = new PieChartDrawer(canvas: canv, itemsControl: detailsItemsControl, folderSize: folderSizeInGb);
+            pieChartDrawer.DrawPieChart();
 
             activeUsers = new ObservableCollection<User>();
             transmissions = DatabaseManager.Instance.GetTransmissions();
@@ -47,7 +45,7 @@ namespace LocalDatabase_Server
         //method that starts server - it has to be in other thread because meanwhile the gui has to run
         private void newThread()
         {
-           ServerStarter.Init(activeUsers: activeUsers);
+            ServerStarter.Init(activeUsers: activeUsers, ip: SettingsManager.Instance.GetServerIp());
         }
         #region button events
 
@@ -90,141 +88,9 @@ namespace LocalDatabase_Server
             activeUsers.Remove(temp);
         }
         #endregion
-
-
-        /// <summary>
-        /// method that creates a pie chart from paths
-        /// </summary>
-        private void pieChart()
-        {
-            ///parameters for pie chart
-            float pieWidth = 200;
-            float pieHeight = 200;
-            float centerX = pieWidth / 2;
-            float centerY = pieHeight / 2;
-            float radius = pieWidth / 2;
-            canv.Width = pieWidth;
-            canv.Height = pieHeight;
-
-            ///data is loaded - free space on disk and size of app folder
-            ///
-            var folderSize = (double)GetFileSizeSumFromDirectory(SettingsManager.Instance.GetSavePath());
-            long availableSpace = SettingsManager.Instance.GetAvailableSpace();
-
-
-            double p1 = Math.Round((folderSize / availableSpace), 2) * 100.0f;
-            double p2 = Math.Round(((float)(availableSpace - GetFileSizeSumFromDirectory(SettingsManager.Instance.GetSavePath())) / availableSpace),2) * 100.0f;
-
-            Categories = new List<Category>() {
-                new Category
-                {
-                    Title = "Allocated",
-                    Percentage = p1,
-                    ColorBrush = Brushes.Red,
-                },
-                new Category
-                {
-                    Title = "Free",
-                    Percentage = p2,
-                    ColorBrush = Brushes.Aqua,
-                },
-            };
-
-            detailsItemsControl.ItemsSource = Categories;
-
-            // draw pie
-            double angle = 0, prevAngle = 0;
-            foreach (var category in Categories)
-            {
-                double line1X = (radius * Math.Cos(angle * Math.PI / 180)) + centerX;
-                double line1Y = (radius * Math.Sin(angle * Math.PI / 180)) + centerY;
-
-                angle = category.Percentage * (float)360 / 100 + prevAngle;
-                Debug.WriteLine(angle);
-
-                double arcX = (radius * Math.Cos(angle * Math.PI / 180)) + centerX;
-                double arcY = (radius * Math.Sin(angle * Math.PI / 180)) + centerY;
-
-                var line1Segment = new LineSegment(new Point(line1X, line1Y), false);
-                double arcWidth = radius, arcHeight = radius;
-                bool isLargeArc = category.Percentage > 50;
-                var arcSegment = new ArcSegment()
-                {
-                    Size = new Size(arcWidth, arcHeight),
-                    Point = new Point(arcX, arcY),
-                    SweepDirection = SweepDirection.Clockwise,
-                    IsLargeArc = isLargeArc,
-                };
-                var line2Segment = new LineSegment(new Point(centerX, centerY), false);
-
-                var pathFigure = new PathFigure(
-                    new Point(centerX, centerY),
-                    new List<PathSegment>()
-                    {
-                        line1Segment,
-                        arcSegment,
-                        line2Segment,
-                    },
-                    true);
-
-                var pathFigures = new List<PathFigure>() { pathFigure, };
-                var pathGeometry = new PathGeometry(pathFigures);
-                var path = new System.Windows.Shapes.Path()
-                {
-                    Fill = category.ColorBrush,
-                    Data = pathGeometry,
-                };
-                canv.Children.Add(path);
-
-                prevAngle = angle;
-
-
-                // draw outlines
-                var outline1 = new Line()
-                {
-                    X1 = centerX,
-                    Y1 = centerY,
-                    X2 = line1Segment.Point.X,
-                    Y2 = line1Segment.Point.Y,
-                    Stroke = Brushes.Transparent,
-                    StrokeThickness = 5,
-                };
-                var outline2 = new Line()
-                {
-                    X1 = centerX,
-                    Y1 = centerY,
-                    X2 = arcSegment.Point.X,
-                    Y2 = arcSegment.Point.Y,
-                    Stroke = Brushes.Transparent,
-                    StrokeThickness = 5,
-                };
-
-                canv.Children.Add(outline1);
-                canv.Children.Add(outline2);
-            }
-        }
-
-        //methods that counts a folder size - it has to sum every file in folder and subfolders
-        public static long GetFileSizeSumFromDirectory(string searchDirectory)
-        {
-            var files = System.IO.Directory.EnumerateFiles(searchDirectory);
-
-            // get the sizeof all files in the current directory
-            var currentSize = (from file in files let fileInfo = new FileInfo(file) select fileInfo.Length).Sum();
-
-            var directories = System.IO.Directory.EnumerateDirectories(searchDirectory);
-
-            // get the size of all files in all subdirectories
-            var subDirSize = (from directory in directories select GetFileSizeSumFromDirectory(directory)).Sum();
-
-            return currentSize + subDirSize;
-        }
     }
-    /// <summary>
-    /// a class which is needed for pie chart
-    /// these parameters set a pie chart
-    /// </summary>
-    public class Category
+
+    class PieCategory
     {
         public double Percentage { get; set; }
         public string Title { get; set; }

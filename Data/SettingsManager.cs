@@ -39,6 +39,10 @@ namespace LocalDatabase_Server.Directory
             return int.Parse(GetSetting(IdleTimeKey));
         }
 
+        /// <summary>
+        /// Sets default save path
+        /// </summary>
+        /// <param name="SavePath"></param>
         public void SetSavePath(string SavePath)
         {
             SetSetting(SavePathKey, SavePath);
@@ -49,9 +53,24 @@ namespace LocalDatabase_Server.Directory
             return GetSetting(SavePathKey);
         }
 
+        /// <summary>
+        /// Sets server Ip. Default is 127.0.0.1
+        /// </summary>
+        /// <param name="serverIp"></param>
+        public void SetServerIp(string serverIp)
+        {
+            SetSetting(ServerIp, serverIp);
+        }
+
+        public string GetServerIp()
+        {
+            return GetSetting(ServerIp);
+        }
+
         private const string IdleTimeKey = "IdleTimeKey";
         private const string AvailableSpaceKey = "AvailableSpaceKey";
         private const string SavePathKey = "SavePathKey";
+        private const string ServerIp = "ServerIp";
 
         private static string GetSetting(string key)
         {

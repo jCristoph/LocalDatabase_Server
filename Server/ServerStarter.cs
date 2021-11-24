@@ -27,11 +27,13 @@ namespace LocalDatabase_Server
         private static SslStream sslStream;
         private static SslCertificate sslCertificate;
         private static int portNumber;
-
+        private static string serverIp;
+       
         public static void Init(ObservableCollection<User> activeUsers, string ip = "127.0.0.1", int port = 25000)
         {
             ActiveUsers = activeUsers;
             portNumber = port;
+            serverIp = ip;
             IPAddress localAddr = IPAddress.Parse(ip);
             server = new TcpListener(localAddr, port);
             server.Start();
@@ -195,7 +197,7 @@ namespace LocalDatabase_Server
                             sendMessage(ServerCom.responseMessage("It's ok"), sslStream);
                             string[] arr = ServerCom.DownloadRecognizer(data);
                             Thread.Sleep(1000);
-                            FileTransporter fileTransporter = new FileTransporter("127.0.0.1", (arr[0] + "\\" + arr[1]).Replace("Main_Folder", SettingsManager.Instance.GetSavePath()));
+                            FileTransporter fileTransporter = new FileTransporter(serverIp, (arr[0] + "\\" + arr[1]).Replace("Main_Folder", SettingsManager.Instance.GetSavePath()));
                             fileTransporter.connectAsServer();
                             fileTransporter.recieveFile();
                             fileTransporter.setContainers(token);
@@ -219,7 +221,7 @@ namespace LocalDatabase_Server
                         path = ServerCom.SendRecognizer(data);
                         Thread.Sleep(10);
 
-                        FileTransporter fileTransporter = new FileTransporter("127.0.0.1", path);
+                        FileTransporter fileTransporter = new FileTransporter(serverIp, path);
                         fileTransporter.connectAsServer();
                         fileTransporter.sendFile();
 
