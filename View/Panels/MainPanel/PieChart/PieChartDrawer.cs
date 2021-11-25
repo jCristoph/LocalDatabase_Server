@@ -46,24 +46,34 @@ namespace LocalDatabase_Server.View.Panels.MainPanel.PieChartDrawer
             double p2 = Math.Round((double)(availableSpace - folderSize) / availableSpace, 2) * 100.0;
 
             Categories = new List<PieCategory>() {
-                new PieCategory
-                {
-                    Title = "Allocated",
-                    Percentage = p1,
-                    ColorBrush = Brushes.Red,
-                },
-                new PieCategory
-                {
-                    Title = "Free",
-                    Percentage = p2,
-                    ColorBrush = Brushes.Aqua,
-                },
-            };
-
+                    new PieCategory
+                    {
+                        Title = "Allocated",
+                        Percentage = p1,
+                        ColorBrush = Brushes.Red,
+                    },
+                    new PieCategory
+                    {
+                        Title = "Free",
+                        Percentage = p2,
+                        ColorBrush = Brushes.Aqua,
+                    },
+                };
             itemsControl.ItemsSource = Categories;
-            DrawPie();
+            if (p1 == 0 || p2 == 0)
+                DrawCircle();
+            else
+                DrawPie();
         }
 
+        private void DrawCircle()
+        {
+            var circle = new Ellipse();
+            circle.Width = pieWidth;
+            circle.Height = pieHeight;
+            circle.Fill = Categories.Find(e => (e.Percentage == 100)).ColorBrush;
+            canvas.Children.Add(circle);
+        }
         private void DrawPie()
         {
             double angle = 0, prevAngle = 0;
