@@ -93,7 +93,6 @@ namespace LocalDatabase_Server.Panels.SettingsPanel
             {
                 ShowMessagePanel("Ip address is not in correct format");
                 return;
-
             }
 
             SettingsManager.Instance.SetServerIp(serverIp);
