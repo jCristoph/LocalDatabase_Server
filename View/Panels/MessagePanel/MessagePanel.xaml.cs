@@ -1,31 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+﻿using System.Windows;
 
 namespace LocalDatabase_Server.MessagePanel
 {
     public partial class MessagePanel : Window
     {
-        public bool answear = false;
-
-        //this panel is used for two application. It could be message box with decision (two buttons - yes or not) or just informative (one button - ok)
-        //it is controlled by parameter yesNoOK
-        public MessagePanel(string content, bool yesNoOK)
+        /// <summary>
+        /// It could be message box with decision (two buttons - yes or not) or just informative
+        /// </summary>
+        /// <param name="content"></param>
+        /// <param name="isPanelDecisive">If true, shows yes and no buttons. If false, shows OK button</param>
+        public MessagePanel(string content, bool isPanelDecisive)
         {
-            WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen; //app is always in center of screen
+            WindowStartupLocation = WindowStartupLocation.CenterScreen;
             InitializeComponent();
-            //if yesNoOK is false then a panel will be just informative. Then one button has to be hidden and other has to have other text
-            if (!yesNoOK)
+           
+            if (!isPanelDecisive)
             {
                 yesButton.Visibility = Visibility.Hidden;
                 yesButton.Visibility = Visibility.Collapsed;
@@ -35,15 +24,7 @@ namespace LocalDatabase_Server.MessagePanel
             message.Text = content;
         }
 
-        //if user clicks yes button then the answear is send to decision part of program and next panel close.
-        private void yesButton_Click(object sender, RoutedEventArgs e)
-        {
-            answear = true;
-            this.Close();
-        }
-
-        //if user clicks no or ok button then panel just close.
-        private void okNoButton_Click(object sender, RoutedEventArgs e)
+        private void onCloseButton_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
         }
