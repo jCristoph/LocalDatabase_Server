@@ -1,4 +1,5 @@
 ﻿using LocalDatabase_Server.Directory;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Forms;
 
@@ -88,8 +89,23 @@ namespace LocalDatabase_Server.Panels.SettingsPanel
                 return;
             }
 
+            if (!IsValidateIP(serverIp))
+            {
+                ShowMessagePanel("Ip address is not in correct format");
+                return;
+
+            }
+
             SettingsManager.Instance.SetServerIp(serverIp);
             ShowMessagePanel();
+        }
+
+        private bool IsValidateIP(string Address)
+        {
+            string Pattern = @"^([1-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(\.([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])){3}$";
+            Regex check = new Regex(Pattern);
+
+            return check.IsMatch(Address, 0);
         }
     }
 }

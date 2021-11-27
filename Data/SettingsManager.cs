@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Configuration;
+using System.Text.RegularExpressions;
 
 namespace LocalDatabase_Server.Directory
 {
