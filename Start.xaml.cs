@@ -36,5 +36,15 @@ namespace LocalDatabase_Server
             mainPanel.Show();
             this.Hide();
         }
+
+        private void setIp_Click(object sender, RoutedEventArgs e)
+        {
+            Panels.SettingsPanel.SettingsPanelOverview settingsOverview = new Panels.SettingsPanel.SettingsPanelOverview
+            {
+                Owner = this
+            };
+            settingsOverview.Show();
+            this.Hide();
+        }
     }
 }

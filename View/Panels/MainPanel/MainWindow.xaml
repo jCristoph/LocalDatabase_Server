@@ -80,7 +80,7 @@
                             HorizontalScrollBarVisibility="Hidden">
                             <ItemsControl x:Name="detailsItemsControl">
                                 <ItemsControl.ItemTemplate>
-                                    <DataTemplate DataType="{x:Type local:Category}">
+                                    <DataTemplate DataType="{x:Type local:PieCategory}">
                                         <StackPanel Orientation="Horizontal"
                                     Margin="10">
                                             <Rectangle Width="20"

@@ -3,9 +3,7 @@ using System.Windows;
 
 namespace LocalDatabase_Server.Panels.SettingsPanel
 {
-    /// <summary>
-    /// Interaction logic for SettingsPanelOverview.xaml
-    /// </summary>
+
     public partial class SettingsPanelOverview : Window
     {
         public SettingsPanelOverview()
@@ -18,15 +16,15 @@ namespace LocalDatabase_Server.Panels.SettingsPanel
         private void Init()
         {
             idleSessionTimeText.Text = Directory.SettingsManager.Instance.GetIdleTime().ToString();
-            systemfolderSizeText.Text = (Directory.SettingsManager.Instance.GetAvailableSpace() / 1000000000.0).ToString();
+            systemfolderSizeText.Text = (Directory.SettingsManager.Instance.GetAvailableSpace()).ToString();
             mainFolderPathText.Text = Directory.SettingsManager.Instance.GetSavePath();
+            serverIpText.Text = Directory.SettingsManager.Instance.GetServerIp();
         }
 
         private void exitButton_Click(object sender, RoutedEventArgs e)
         {
             Start start = new Start();
             start.Show();
-            
             this.Close();
         }
 

@@ -1,12 +1,10 @@
 ﻿using LocalDatabase_Server.Directory;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Forms;
 
 namespace LocalDatabase_Server.Panels.SettingsPanel
 {
-    /// <summary>
-    /// Interaction logic for SettingsPanel.xaml
-    /// </summary>
     public partial class SettingsPanel : Window
     {
         public SettingsPanel()
@@ -27,6 +25,7 @@ namespace LocalDatabase_Server.Panels.SettingsPanel
             string idleTimeText = iddleSessionTime.Text;
             if (string.IsNullOrEmpty(idleTimeText))
             {
+                ShowMessagePanel("Value can not be empty");
                 return;
             }
 
@@ -37,7 +36,7 @@ namespace LocalDatabase_Server.Panels.SettingsPanel
             }
             else
             {
-                ShowMessagePanel("Values are not numbers");
+                ShowMessagePanel("Value is not a number");
             }
         }
 
@@ -46,6 +45,7 @@ namespace LocalDatabase_Server.Panels.SettingsPanel
             string systemFolderSizeText = systemFolderSize.Text;
             if (string.IsNullOrEmpty(systemFolderSizeText))
             {
+                ShowMessagePanel("Value can not be empty");
                 return;
             }
 
@@ -56,7 +56,7 @@ namespace LocalDatabase_Server.Panels.SettingsPanel
             }
             else
             {
-                ShowMessagePanel("Values are not numbers");
+                ShowMessagePanel("Value is not a number");
             }
         }
 
@@ -78,6 +78,33 @@ namespace LocalDatabase_Server.Panels.SettingsPanel
                     ShowMessagePanel("Changed default path to: " + folderBrowserDialog.SelectedPath);
                 }
             }
+        }
+
+        private void changeServerIpButton_Click(object sender, RoutedEventArgs e)
+        {
+            string serverIp = serverIpText.Text;
+            if (string.IsNullOrEmpty(serverIp))
+            {
+                ShowMessagePanel("Value can not be empty");
+                return;
+            }
+
+            if (!IsValidateIP(serverIp))
+            {
+                ShowMessagePanel("Ip address is not in correct format");
+                return;
+            }
+
+            SettingsManager.Instance.SetServerIp(serverIp);
+            ShowMessagePanel();
+        }
+
+        private bool IsValidateIP(string Address)
+        {
+            string Pattern = @"^([1-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(\.([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])){3}$";
+            Regex check = new Regex(Pattern);
+
+            return check.IsMatch(Address, 0);
         }
     }
 }
