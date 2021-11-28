@@ -15,6 +15,7 @@ namespace LocalDatabase_Server.Server
     public class FileTransporter
     {
         private string ip;
+        private int port;
         private string fileName;
         private FileInfo file;
         static int BUFFER_SIZE = 4096;
@@ -23,9 +24,10 @@ namespace LocalDatabase_Server.Server
         int serverPortNumber;
         int clientPortNumber;
 
-        public FileTransporter(string ip, string fileName)
+        public FileTransporter(string ip, string fileName, int port)
         {
             this.ip = ip;
+            this.port = port;
             file = new FileInfo(fileName);
             this.fileName = fileName;
             this.serverPortNumber = ServerStarter.GetServerPortNumber();
@@ -34,7 +36,7 @@ namespace LocalDatabase_Server.Server
 
         public void connectAsServer()
         {
-            IPEndPoint ipe = new IPEndPoint(IPAddress.Parse(ip), this.clientPortNumber);
+            IPEndPoint ipe = new IPEndPoint(IPAddress.Parse(ip), port);
             socket = new Socket(ipe.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             socket.Bind(ipe);
             socket.Listen(10);
@@ -43,7 +45,7 @@ namespace LocalDatabase_Server.Server
 
         public void connectAsClient()
         {
-            IPEndPoint ipe = new IPEndPoint(IPAddress.Parse(ip), this.clientPortNumber);
+            IPEndPoint ipe = new IPEndPoint(IPAddress.Parse(ip), port);
             socket = new Socket(ipe.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             socket.Connect(ipe);
         }
@@ -92,12 +94,14 @@ namespace LocalDatabase_Server.Server
         }
         private void recieveFile_bg_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            Console.WriteLine(e.ProgressPercentage.ToString());
+            //Console.WriteLine(e.ProgressPercentage.ToString());
         }
         private void recieveFile_bg_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             DatabaseManager.Instance.AddToTransmission(token, DateTime.Now, new FileInfo(fileName).Length, TransmissionType.Upload);
+            socket.Shutdown(SocketShutdown.Both);
             socket.Close();
+            Thread.Sleep(1000);
         }
         #endregion
 
@@ -150,15 +154,13 @@ namespace LocalDatabase_Server.Server
         }
         private void sendFile_bg_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            Console.WriteLine(e.ProgressPercentage.ToString());
+            //Console.WriteLine(e.ProgressPercentage.ToString());
         }
         private void sendFile_bg_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+            socket.Shutdown(SocketShutdown.Both);
             socket.Close();
-            if (e.Error != null)
-            {
-                Console.WriteLine(e.Error.ToString());
-            }
+            Thread.Sleep(1000);
         }
 
         internal void setContainers(string token)

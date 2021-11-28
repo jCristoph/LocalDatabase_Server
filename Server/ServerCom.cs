@@ -75,6 +75,11 @@ namespace LocalDatabase_Server
             return "<Task=SessionExpired></SessionExpired><EOM>";
         }
 
+        public static string acceptTransferMessage(int port)
+        {
+            return "<Task=AcceptTransfer><Port>" + port.ToString() + "</Port></Task><EOM>";
+        }
+
         /// <summary>
         /// For client and server usage. If something goes wrong or needs only confirmations then this method
         /// send what to show in other side MessageBox.
