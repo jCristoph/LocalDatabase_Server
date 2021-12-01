@@ -6,20 +6,19 @@ using System.Threading.Tasks;
 
 namespace LocalDatabase_Server.Server
 {
-    public class Incrementer
+    public class PortAssigner
     {
         private int portNumber = 25100;
 
-        public void incrementPort()
+        public void AssignPort()
         {
             if (portNumber < 25200)
                 portNumber++;
             else
                 portNumber = 25100;
         }
-        public int getPort()
+        public int GetPort()
         {
-            Console.WriteLine(portNumber);
             return portNumber;
         }
     }

@@ -88,7 +88,7 @@
     <Compile Include="Data\SettingsManager.cs" />
     <Compile Include="Data\Utils\GetFileSumFromDirectory.cs" />
     <Compile Include="Data\Utils\UnitsConverter.cs" />
-    <Compile Include="Server\Incrementer.cs" />
+    <Compile Include="Server\PortAssigner.cs" />
     <Compile Include="Server\SslCertificate.cs" />
     <Compile Include="View\Panels\ChangeLimitPanel\ChangeLimitPanel.xaml.cs">
       <DependentUpon>ChangeLimitPanel.xaml</DependentUpon>

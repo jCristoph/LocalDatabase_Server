@@ -28,7 +28,7 @@ namespace LocalDatabase_Server
         private static SslCertificate sslCertificate;
         private static int portNumber;
         private static string serverIp;
-        static private Incrementer incrementer;
+        static private PortAssigner portAssigner;
        
         public static void Init(ObservableCollection<User> activeUsers, string ip = "127.0.0.1", int port = 25000)
         {
@@ -38,7 +38,7 @@ namespace LocalDatabase_Server
             IPAddress localAddr = IPAddress.Parse(ip);
             server = new TcpListener(localAddr, port);
             server.Start();
-            incrementer = new Incrementer();
+            portAssigner = new PortAssigner();
             StartListener();
         }
 
@@ -196,10 +196,10 @@ namespace LocalDatabase_Server
 
                         if((dm.usedSpace() * 1000000000) < u.limit) //dm.usedspace returns space in gigabytes and u.limit in bytes so we have to convert it
                         {
-                            sendMessage(ServerCom.acceptTransferMessage(incrementer.getPort()), sslStream);
+                            sendMessage(ServerCom.acceptTransferMessage(portAssigner.GetPort()), sslStream);
                             string[] arr = ServerCom.DownloadRecognizer(data);
                             Thread.Sleep(1000);
-                            FileTransporter fileTransporter = new FileTransporter(serverIp, (arr[0] + "\\" + arr[1]).Replace("Main_Folder", SettingsManager.Instance.GetSavePath()), incrementer.getPort());
+                            FileTransporter fileTransporter = new FileTransporter(serverIp, (arr[0] + "\\" + arr[1]).Replace("Main_Folder", SettingsManager.Instance.GetSavePath()), portAssigner.GetPort());
                             fileTransporter.connectAsServer();
                             fileTransporter.recieveFile();
                             fileTransporter.setContainers(token);
@@ -208,7 +208,7 @@ namespace LocalDatabase_Server
                         {
                             sendMessage(ServerCom.responseMessage("Oooppsss! You don't have enough space. Contact your admin."), sslStream);
                         }
-                        incrementer.incrementPort();
+                        portAssigner.AssignPort();
                     }
                     else
                     {
@@ -218,13 +218,13 @@ namespace LocalDatabase_Server
                 case "Send": //when client sends upload file request
                     u = new User(token);
                     // TODO: Client and server has to be prepared to wait for message 
-                    sendMessage(ServerCom.acceptTransferMessage(incrementer.getPort()), sslStream);
+                    sendMessage(ServerCom.acceptTransferMessage(portAssigner.GetPort()), sslStream);
                     if (ActiveUsers.Contains(u)) //if user isnt in active users container he has to log in one more time - session is limited
                     {
                         path = ServerCom.SendRecognizer(data);
                         Thread.Sleep(10);
 
-                        FileTransporter fileTransporter = new FileTransporter(serverIp, path, incrementer.getPort());
+                        FileTransporter fileTransporter = new FileTransporter(serverIp, path, portAssigner.GetPort());
                         fileTransporter.connectAsServer();
                         fileTransporter.sendFile();
 
@@ -234,7 +234,7 @@ namespace LocalDatabase_Server
                     {
                         sendMessage(ServerCom.sessionExpired(), sslStream);
                     }
-                    incrementer.incrementPort();
+                    portAssigner.AssignPort();
                     break;
                 case "SendDir": //when client sends send my directory request
                     u = new User(token);

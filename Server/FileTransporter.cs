@@ -56,7 +56,6 @@ namespace LocalDatabase_Server.Server
             var recieveFile_bg = new BackgroundWorker();
             recieveFile_bg.DoWork += new DoWorkEventHandler(recieveFile_bg_DoWork);
             recieveFile_bg.RunWorkerCompleted += new RunWorkerCompletedEventHandler(recieveFile_bg_RunWorkerCompleted);
-            recieveFile_bg.ProgressChanged += recieveFile_bg_ProgressChanged;
             recieveFile_bg.WorkerSupportsCancellation = true;
             recieveFile_bg.WorkerReportsProgress = true;
             recieveFile_bg.RunWorkerAsync();
@@ -92,16 +91,11 @@ namespace LocalDatabase_Server.Server
                 networkStream.Close();
             }
         }
-        private void recieveFile_bg_ProgressChanged(object sender, ProgressChangedEventArgs e)
-        {
-            //Console.WriteLine(e.ProgressPercentage.ToString());
-        }
         private void recieveFile_bg_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             DatabaseManager.Instance.AddToTransmission(token, DateTime.Now, new FileInfo(fileName).Length, TransmissionType.Upload);
             socket.Shutdown(SocketShutdown.Both);
             socket.Close();
-            Thread.Sleep(1000);
         }
         #endregion
 
@@ -160,7 +154,6 @@ namespace LocalDatabase_Server.Server
         {
             socket.Shutdown(SocketShutdown.Both);
             socket.Close();
-            Thread.Sleep(1000);
         }
 
         internal void setContainers(string token)
