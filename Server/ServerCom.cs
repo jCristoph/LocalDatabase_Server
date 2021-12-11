@@ -107,10 +107,10 @@ namespace LocalDatabase_Server
             string login = s.Substring(IndexHome, IndexEnd - IndexHome);
             IndexHome = s.IndexOf("<Pass>") + "<Pass>".Length;
             IndexEnd = s.LastIndexOf("</Pass>");
-            string passowrd = s.Substring(IndexHome, IndexEnd - IndexHome);
-            return DatabaseManager.Instance.CheckLogin(login, passowrd);
+            string password = s.Substring(IndexHome, IndexEnd - IndexHome);
+            string[] result = DatabaseManager.Instance.Login(login, password);
+            return result;
         }
-
 
         public static string ChangePasswordRecognizer(string s)
         {

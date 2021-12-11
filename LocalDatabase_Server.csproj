@@ -74,11 +74,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Data\Database\Encryption.cs" />
     <Compile Include="Data\Database\Generators\Generator.cs" />
     <Compile Include="Data\Database\UseCases\AddToTransmissionUseCase.cs" />
     <Compile Include="Data\Database\UseCases\ChangePasswordUseCase.cs" />
     <Compile Include="Data\Database\UseCases\ChangeLimitUseCase.cs" />
-    <Compile Include="Data\Database\UseCases\CheckLoginUseCase.cs" />
+    <Compile Include="Data\Database\UseCases\GetUserByLoginAndPasswordUseCase.cs" />
+    <Compile Include="Data\Database\UseCases\LoginUseCase.cs" />
     <Compile Include="Data\Database\UseCases\DeleteUserUseCase.cs" />
     <Compile Include="Data\Database\UseCases\AddUserUseCase.cs" />
     <Compile Include="Data\Database\ConnectionString.cs" />

@@ -38,9 +38,9 @@ namespace LocalDatabase_Server.Database
         #region Database getters
         //method that adds new user into db by two parameters - name and surname. The rest of parameters are created here by random character string or string buliding.
         //N in query means that we can use polish characters
-        public void AddUser(string surname, string name, string password)
+        public void AddUser(string name, string surname, string password)
         {
-            AddUserUseCase.invoke(surname, name, password, connectionString);
+            AddUserUseCase.invoke(name, surname, password, connectionString);
         }
 
         public void DeleteUser(string token)
@@ -65,18 +65,17 @@ namespace LocalDatabase_Server.Database
         #endregion
 
         #region Database setters
-        /// <summary>
-        /// Checks if password is correct.
-        /// If incorrect then 
+        /// Checks if user exists in database.
         /// </summary>
         /// <param name="login"></param>
         /// <param name="password"></param>
-        /// <returns> If correct returns string[2] where [0] is token and [1] is space to use.
+        /// <returns> If correct returns string[2] where [0] is token and [1] is space limit.
         /// If incorrect returns error message</returns>
-        public string[] CheckLogin(string login, string password)
+        public string[] Login(string login, string password)
         {
-            string [] result = CheckLoginUseCase.invoke(login, password, connectionString);
-            return result;
+            User user = LoginUseCase.invoke(login, password, connectionString);
+            if (user == null) return new string[] { "ERROR", "0" };
+            return new string[] { user.token, user.limit.ToString() };
         }
 
         public User FindUserByToken(string token)

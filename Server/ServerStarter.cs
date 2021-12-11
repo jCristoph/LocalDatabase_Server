@@ -149,15 +149,20 @@ namespace LocalDatabase_Server
                     if (surname.Length > 2 && name.Length > 2)
                     {
                         var cs = new ConnectionString();
-                        AddUserUseCase.invoke(surname, name, password, cs.GetConnectionString());
-                        sendMessage(ServerCom.responseMessage("Registration success"), sslStream);
+                        bool doesUserExist = AddUserUseCase.invoke(name, surname, password, cs.GetConnectionString());
+                        if (doesUserExist)
+                        {
+                            sendMessage(ServerCom.responseMessage("User already exists"), sslStream);
+                        }
+                        else
+                        {
+                            sendMessage(ServerCom.responseMessage("Registration success"), sslStream);
+                        }
                     }
                     else
                     {
                         sendMessage(ServerCom.responseMessage("Data is not valid"), sslStream);
                     }
-
-
 
                     if (!ActiveUsers.Contains(u)) //user can be logged in only on one device in the same time. It could be a problem if device or program stopped running unexpectedly
                     {
@@ -174,7 +179,6 @@ namespace LocalDatabase_Server
                         sendMessage("<Task=CheckLogin><isLogged>ERROR1</isLogged><Limit></Limit><Login>", sslStream);
                     }
                     return temp[0];
-
 
                 case "ChngPass":
                     u = new User(token);
