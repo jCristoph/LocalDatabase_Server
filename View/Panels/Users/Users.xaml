@@ -6,8 +6,8 @@
         xmlns:local="clr-namespace:LocalDatabase_Server.Users"
         mc:Ignorable="d"
         Title="Users"
-        Height="600"
-        Width="1000"
+        Height="800"
+        Width="1400"
         WindowStyle="None"
         Background="Transparent"
         AllowsTransparency="True">
@@ -24,12 +24,11 @@
                 <ListView.View>
                     <GridView ColumnHeaderContainerStyle="{StaticResource ListViewHeaderTheme}">
                         <GridViewColumn DisplayMemberBinding="{Binding Path=id}" Header="ID"/>
-                        <GridViewColumn DisplayMemberBinding="{Binding Path=surname}" Header="First name"/>
-                        <GridViewColumn DisplayMemberBinding="{Binding Path=name}" Header="Last name"  />
-                        <GridViewColumn DisplayMemberBinding="{Binding Path=login}" Header="Login"  />
-                        <GridViewColumn DisplayMemberBinding="{Binding Path=password}" Header="Password"  />
-                        <GridViewColumn DisplayMemberBinding="{Binding Path=token}" Header="Token" />
-                        <GridViewColumn DisplayMemberBinding="{Binding Path=limit}" Header="Limit"/>
+                        <GridViewColumn DisplayMemberBinding="{Binding Path=surname}" Header="First name" Width="150"/>
+                        <GridViewColumn DisplayMemberBinding="{Binding Path=name}" Header="Last name" Width="150" />
+                        <GridViewColumn DisplayMemberBinding="{Binding Path=login}" Header="Login"   Width="150"/>
+                        <GridViewColumn DisplayMemberBinding="{Binding Path=token}" Header="Token"  Width="150"/>
+                        <GridViewColumn DisplayMemberBinding="{Binding Path=limit}" Header="Limit [GB]" Width="100" />
                         <GridViewColumn Header="Action" Width="350">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>

@@ -1,8 +1,8 @@
 ﻿using LocalDatabase_Server.Directory;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
+using LocalDatabase_Server.Data.Utils;
 
 namespace LocalDatabase_Server.Users
 {
@@ -16,6 +16,10 @@ namespace LocalDatabase_Server.Users
         public Users()
         {
             users = Database.DatabaseManager.Instance.GetUsers();
+            foreach(var u in users)
+            {
+                u.limit = UnitsConverter.ConvertBytesToGigabytes(u.limit);
+            }
             WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen; //app is always in center of screen
             InitializeComponent();
             listView.ItemsSource = users;
@@ -54,6 +58,9 @@ namespace LocalDatabase_Server.Users
             ChangeLimitPanel.ChangeLimitPanel clp = new ChangeLimitPanel.ChangeLimitPanel(); //new panel opens. Look at Panels/ChangeLimitPanel
             clp.ShowDialog();
             Database.DatabaseManager.Instance.ChangeLimit(clp.newlimit, u.token); //limit is also saved in container
+            users.Remove(u);
+            u.limit = UnitsConverter.ConvertBytesToGigabytes(clp.newlimit);
+            users.Add(u);
         }
     }
 }
