@@ -45,7 +45,7 @@ namespace LocalDatabase_Server
         //method that starts server - it has to be in other thread because meanwhile the gui has to run
         private void newThread()
         {
-            ServerStarter.Init(activeUsers: activeUsers, ip: SettingsManager.Instance.GetServerIp());
+            ServerStarter.Init(activeUsers: activeUsers);
         }
         #region button events
 

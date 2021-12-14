@@ -30,12 +30,12 @@ namespace LocalDatabase_Server
         private static string serverIp;
         static private PortAssigner portAssigner;
        
-        public static void Init(ObservableCollection<User> activeUsers, string ip = "127.0.0.1", int port = 25000)
+        public static void Init(ObservableCollection<User> activeUsers, int port = 25000)
         {
             ActiveUsers = activeUsers;
             portNumber = port;
-            serverIp = ip;
-            IPAddress localAddr = IPAddress.Parse(ip);
+            serverIp = SettingsManager.Instance.GetServerIp();
+            IPAddress localAddr = IPAddress.Parse(serverIp);
             server = new TcpListener(localAddr, port);
             server.Start();
             portAssigner = new PortAssigner();
