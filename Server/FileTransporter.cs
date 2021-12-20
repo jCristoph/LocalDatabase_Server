@@ -2,13 +2,10 @@
 using LocalDatabase_Server.Database;
 using LocalDatabase_Server.Directory;
 using System;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
-using System.Threading;
-using System.Windows;
 
 namespace LocalDatabase_Server.Server
 {
@@ -18,11 +15,10 @@ namespace LocalDatabase_Server.Server
         private int port;
         private string fileName;
         private FileInfo file;
-        static int BUFFER_SIZE = 4096;
+        const int BUFFER_SIZE = 4096;
         Socket socket;
         string token;
-        int serverPortNumber;
-        int clientPortNumber;
+
 
         public FileTransporter(string ip, string fileName, int port)
         {
@@ -30,8 +26,6 @@ namespace LocalDatabase_Server.Server
             this.port = port;
             file = new FileInfo(fileName);
             this.fileName = fileName;
-            this.serverPortNumber = ServerStarter.GetServerPortNumber();
-            this.clientPortNumber = serverPortNumber + 1;
         }
 
         public void connectAsServer()
@@ -41,13 +35,6 @@ namespace LocalDatabase_Server.Server
             socket.Bind(ipe);
             socket.Listen(10);
             socket = socket.Accept();
-        }
-
-        public void connectAsClient()
-        {
-            IPEndPoint ipe = new IPEndPoint(IPAddress.Parse(ip), port);
-            socket = new Socket(ipe.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-            socket.Connect(ipe);
         }
 
         #region recieve File Asynchronous
@@ -65,7 +52,7 @@ namespace LocalDatabase_Server.Server
         {
             BackgroundWorker helperBW = sender as BackgroundWorker;
             helperBW.ReportProgress(0);
-            var readed = -1;
+            var read = -1;
             var buffer = new Byte[BUFFER_SIZE];
             int i = 0;
             using (var fileStream = file.OpenWrite())
@@ -76,18 +63,16 @@ namespace LocalDatabase_Server.Server
                 {
                     try
                     {
-                        readed = networkStream.Read(buffer, 0, buffer.Length);
-                        fileStream.Write(buffer, 0, readed);
+                        read = networkStream.Read(buffer, 0, buffer.Length);
+                        fileStream.Write(buffer, 0, read);
                         helperBW.ReportProgress(i++);
                     }
                     catch (Exception ex)
                     {
                         ExceptionCatcher.addExceptionToFile(ex.ToString());
-                        readed = 0;
+                        read = 0;
                     }
-                    //If you test it on loopback better uncomment line below. Buffer is slower than loopback transfer
-                    Thread.Sleep(1);
-                } while (readed > (BUFFER_SIZE - 1));
+                } while (read != 0);
                 networkStream.Close();
             }
         }
@@ -105,7 +90,6 @@ namespace LocalDatabase_Server.Server
             var sendFile_bg = new BackgroundWorker();
             sendFile_bg.DoWork += new DoWorkEventHandler(sendFile_bg_DoWork);
             sendFile_bg.RunWorkerCompleted += new RunWorkerCompletedEventHandler(sendFile_bg_RunWorkerCompleted);
-            sendFile_bg.ProgressChanged += sendFile_bg_ProgressChanged;
             sendFile_bg.WorkerSupportsCancellation = true;
             sendFile_bg.WorkerReportsProgress = true;
             sendFile_bg.RunWorkerAsync();
@@ -117,38 +101,32 @@ namespace LocalDatabase_Server.Server
             file = new FileInfo(path);
             BackgroundWorker helperBW = sender as BackgroundWorker;
             helperBW.ReportProgress(0);
-            var readed = -1;
+            var read = -1;
             int i = 0;
             var buffer = new Byte[BUFFER_SIZE];
             using (var networkStream = new BufferedStream(new NetworkStream(socket, false)))
             using (var fileStream = file.OpenRead())
             {
-                while (readed != 0)
+                while (read != 0)
                 {
-                    readed = fileStream.Read(buffer, 0, buffer.Length);
-                    if (readed != 0)
+                    read = fileStream.Read(buffer, 0, buffer.Length);
+                    if (read != 0)
                     {
                         try
                         {
-                            networkStream.Write(buffer, 0, readed);
+                            networkStream.Write(buffer, 0, read);
                             helperBW.ReportProgress(i++);
-                            //If you test it on loopback better uncomment line below. Buffer is slower than loopback transfer
-                            Thread.Sleep(1);
                         }
                         catch (Exception ex)
                         {
                             ExceptionCatcher.addExceptionToFile(ex.ToString());
-                            readed = 0;
+                            read = 0;
                         }
                     }
                 }
                 buffer = new byte[BUFFER_SIZE];
                 networkStream.Close();
             }
-        }
-        private void sendFile_bg_ProgressChanged(object sender, ProgressChangedEventArgs e)
-        {
-            //Console.WriteLine(e.ProgressPercentage.ToString());
         }
         private void sendFile_bg_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
