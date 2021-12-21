@@ -145,18 +145,19 @@ namespace LocalDatabase_Server
                 case "Registration":
                     temp = ServerCom.RegistrationRecognizer(data);
                     string surname = temp[0], name = temp[1], password = temp[2];
-                    u = new User(temp[0]); //temp[0] - token
+                    token = Generator.GenerateToken();
+                    u = new User(token);
                     if (surname.Length > 2 && name.Length > 2)
                     {
                         var cs = new ConnectionString();
-                        bool doesUserExist = AddUserUseCase.invoke(name, surname, password, cs.GetConnectionString());
+                        bool doesUserExist = AddUserUseCase.invoke(name, surname, password, token, cs.GetConnectionString());
                         if (doesUserExist)
                         {
                             sendMessage(ServerCom.responseMessage("User already exists"), sslStream);
                         }
                         else
                         {
-                            sendMessage(ServerCom.responseMessage("Registration success"), sslStream);
+                            sendMessage(ServerCom.responseMessage("New token " + token.ToString()), sslStream);
                         }
                     }
                     else

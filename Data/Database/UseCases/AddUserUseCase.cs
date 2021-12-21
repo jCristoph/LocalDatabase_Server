@@ -7,10 +7,9 @@ namespace LocalDatabase_Server.Database
 {
     public static class AddUserUseCase
     {
-        public static bool invoke(string name, string surname, string password, SqlConnection connectionString)
+        public static bool invoke(string name, string surname, string password, string token, SqlConnection connectionString)
         {
             SqlCommand query = new SqlCommand();
-            string token = Generator.GenerateToken();
             string login = Generator.GenerateLogin(surname, name);
 
             User user = GetUserByLoginAndPasswordUseCase.invoke(login , password, connectionString);
