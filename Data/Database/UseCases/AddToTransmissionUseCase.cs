@@ -17,5 +17,16 @@ namespace LocalDatabase_Server.Database
             query.ExecuteNonQuery();
             connectionString.Close();
         }
+        public static void invoke(Transmission t, SqlConnection connectionString)
+        {
+            SqlCommand query = new SqlCommand
+            {
+                Connection = connectionString,
+                CommandText = $@"INSERT INTO [Transaction]([transactionDate],[fileSize],[userToken],[transactionType]) VALUES ('{t.date.ToString("MM/dd/yyyy HH:mm:ss")}', '{t.fileSize}', '{t.userToken}' ,'{(int)t.transmissionType}')"
+            };
+            connectionString.Open();
+            query.ExecuteNonQuery();
+            connectionString.Close();
+        }
     }
 }

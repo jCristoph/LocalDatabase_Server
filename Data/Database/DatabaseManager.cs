@@ -58,9 +58,10 @@ namespace LocalDatabase_Server.Database
             ChangePasswordUseCase.invoke(token, newPassword, connectionString);
         }
         
-        public void AddToTransmission(string userToken, DateTime transmissionDate, long fileSize, TransmissionType transmissionType)
+
+        public void AddToTransmission(Transmission t)
         {
-            AddToTransmissionUseCase.invoke(token: userToken, transmissionDate, fileSize, transmissionType, connectionString);
+            AddToTransmissionUseCase.invoke(t, connectionString);
         }
         #endregion
 

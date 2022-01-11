@@ -23,8 +23,7 @@ namespace LocalDatabase_Server.Panels.SettingsPanel
 
         private void exitButton_Click(object sender, RoutedEventArgs e)
         {
-            Start start = new Start();
-            start.Show();
+            Owner.Show();
             this.Close();
         }
 

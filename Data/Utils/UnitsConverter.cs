@@ -4,9 +4,9 @@ namespace LocalDatabase_Server.Data.Utils
     public static class UnitsConverter
     {
 
-       public static long ConvertBytesToGigabytes(long bytes)
+       public static double ConvertBytesToGigabytes(long bytes)
         {
-            long resultGigabytes = bytes / 1024 / 1024 / 1024;
+            double resultGigabytes = bytes / 1024.0 / 1024.0 / 1024.0;
             return resultGigabytes;
         }
 

@@ -19,15 +19,13 @@ namespace LocalDatabase_Server
         //Observable Collection is a special container where things in gui and things in container are allways the same - automatic refresh
         ObservableCollection<User> activeUsers;
         ObservableCollection<Transmission> transmissions;
+        PieChartDrawer pieChartDrawer;
 
         public MainWindow()
         {
-            long folderSizeInBytes = GetFileSumFromDirectory.count(SettingsManager.Instance.GetSavePath());
-            double folderSizeInGb = UnitsConverter.ConvertBytesToGigabytes(folderSizeInBytes);
-           
             WindowStartupLocation = WindowStartupLocation.CenterScreen; //app is always in center of screen
             InitializeComponent(); //runs gui
-            PieChartDrawer pieChartDrawer = new PieChartDrawer(canvas: canv, itemsControl: detailsItemsControl, folderSize: folderSizeInGb);
+            pieChartDrawer = new PieChartDrawer(canvas: canv, itemsControl: detailsItemsControl);
             pieChartDrawer.DrawPieChart();
 
             activeUsers = new ObservableCollection<User>();
@@ -45,7 +43,7 @@ namespace LocalDatabase_Server
         //method that starts server - it has to be in other thread because meanwhile the gui has to run
         private void newThread()
         {
-            ServerStarter.Init(activeUsers: activeUsers);
+            ServerStarter.Init(activeUsers: activeUsers, transmissions: transmissions, pieChartDrawer: pieChartDrawer);
         }
         #region button events
 

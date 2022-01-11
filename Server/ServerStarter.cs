@@ -2,6 +2,7 @@
 using LocalDatabase_Server.Database;
 using LocalDatabase_Server.Directory;
 using LocalDatabase_Server.Server;
+using LocalDatabase_Server.View.Panels.MainPanel.PieChartDrawer;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -23,16 +24,20 @@ namespace LocalDatabase_Server
         private static TcpListener server = null;
         private static DirectoryManager dm = null;
         private static ObservableCollection<User> ActiveUsers;
+        private static ObservableCollection<Transmission> Transmissions;
         private static bool isConnected;
         private static SslStream sslStream;
         private static SslCertificate sslCertificate;
         private static int portNumber;
         private static string serverIp;
+        private static PieChartDrawer pieChart;
         static private PortAssigner portAssigner;
        
-        public static void Init(ObservableCollection<User> activeUsers, int port = 25000)
+        public static void Init(ObservableCollection<User> activeUsers, ObservableCollection<Transmission> transmissions, PieChartDrawer pieChartDrawer, int port = 25000)
         {
             ActiveUsers = activeUsers;
+            Transmissions = transmissions;
+            pieChart = pieChartDrawer;
             portNumber = port;
             serverIp = SettingsManager.Instance.GetServerIp();
             IPAddress localAddr = IPAddress.Parse(serverIp);
@@ -204,10 +209,11 @@ namespace LocalDatabase_Server
                             sendMessage(ServerCom.acceptTransferMessage(portAssigner.GetPort()), sslStream);
                             string[] arr = ServerCom.DownloadRecognizer(data);
                             Thread.Sleep(1000);
-                            FileTransporter fileTransporter = new FileTransporter(serverIp, (arr[0] + "\\" + arr[1]).Replace("Main_Folder", SettingsManager.Instance.GetSavePath()), portAssigner.GetPort());
+                            var fileName = (arr[0] + "\\" + arr[1]).Replace("Main_Folder", SettingsManager.Instance.GetSavePath());
+                            FileTransporter fileTransporter = new FileTransporter(serverIp, fileName, portAssigner.GetPort());
                             fileTransporter.connectAsServer();
                             fileTransporter.recieveFile();
-                            fileTransporter.setContainers(token);
+                            fileTransporter.setContainers(token, AddTransmission);
                         }
                         else
                         {
@@ -233,7 +239,8 @@ namespace LocalDatabase_Server
                         fileTransporter.connectAsServer();
                         fileTransporter.sendFile();
 
-                        DatabaseManager.Instance.AddToTransmission(token, DateTime.Now, new FileInfo(path.Replace("Main_Folder", SettingsManager.Instance.GetSavePath())).Length, 0);
+                        var fileSize = new FileInfo(path.Replace("Main_Folder", SettingsManager.Instance.GetSavePath())).Length;
+                        AddTransmission(fileSize, token, TransmissionType.Download);
                     }
                     else
                     {
@@ -281,7 +288,8 @@ namespace LocalDatabase_Server
                         else
                             deletedFileSize = 0;
                         sendMessage(ServerCom.responseMessage(dm.DeleteElement(path, isFolder)), sslStream);
-                        DatabaseManager.Instance.AddToTransmission(token, DateTime.Now, deletedFileSize, TransmissionType.Delete);
+
+                        AddTransmission(deletedFileSize, token, TransmissionType.Delete);
                     }
                     else
                     {
@@ -335,5 +343,16 @@ namespace LocalDatabase_Server
             return outputMessage;
         }
 
+        private static void AddTransmission(long fileSize, string token, TransmissionType transmissionType)
+        {
+            Transmission t = new Transmission(0, DateTime.Now, fileSize, token, transmissionType);
+            DatabaseManager.Instance.AddToTransmission(t);
+            Application.Current.Dispatcher.Invoke(new Action(() =>
+            {
+                Transmissions.Add(t);
+                pieChart.DrawPieChart();
+            }));
+            
+        }
     }
 }

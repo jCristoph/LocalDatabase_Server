@@ -2,10 +2,12 @@
 using LocalDatabase_Server.Database;
 using LocalDatabase_Server.Directory;
 using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Windows;
 
 namespace LocalDatabase_Server.Server
 {
@@ -16,6 +18,8 @@ namespace LocalDatabase_Server.Server
         private string fileName;
         private FileInfo file;
         const int BUFFER_SIZE = 4096;
+
+        Action<long, string, TransmissionType> AddTransmission;
         Socket socket;
         string token;
 
@@ -78,7 +82,7 @@ namespace LocalDatabase_Server.Server
         }
         private void recieveFile_bg_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            DatabaseManager.Instance.AddToTransmission(token, DateTime.Now, new FileInfo(fileName).Length, TransmissionType.Upload);
+            AddTransmission(new FileInfo(fileName).Length, token, TransmissionType.Upload);
             socket.Shutdown(SocketShutdown.Both);
             socket.Close();
         }
@@ -134,9 +138,10 @@ namespace LocalDatabase_Server.Server
             socket.Close();
         }
 
-        internal void setContainers(string token)
+        internal void setContainers(string token, Action<long,string,TransmissionType> AddTransmission)
         {
             this.token = token;
+            this.AddTransmission = AddTransmission;
         }
         #endregion
 

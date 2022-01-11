@@ -6,6 +6,7 @@ using LocalDatabase_Server.Directory;
 using System.Windows.Media;
 using System.Windows;
 using System.Windows.Controls;
+using LocalDatabase_Server.Data.Utils;
 
 namespace LocalDatabase_Server.View.Panels.MainPanel.PieChartDrawer
 {
@@ -20,9 +21,8 @@ namespace LocalDatabase_Server.View.Panels.MainPanel.PieChartDrawer
         float radius = 0;
         Canvas canvas;
         ItemsControl itemsControl;
-        double folderSize;
 
-        public PieChartDrawer(Canvas canvas, ItemsControl itemsControl, double folderSize) {
+        public PieChartDrawer(Canvas canvas, ItemsControl itemsControl) {
             pieWidth = 200;
             pieHeight = 200;
             centerX = pieWidth / 2;
@@ -30,7 +30,8 @@ namespace LocalDatabase_Server.View.Panels.MainPanel.PieChartDrawer
             radius = pieWidth / 2;
             this.canvas = canvas;
             this.itemsControl = itemsControl;
-            this.folderSize = folderSize;
+
+
         }
 
         /// <summary>
@@ -38,9 +39,12 @@ namespace LocalDatabase_Server.View.Panels.MainPanel.PieChartDrawer
         /// </summary>
         public void DrawPieChart()
         {
+            canvas.Children.Clear();
             canvas.Width = pieWidth;
             canvas.Height = pieHeight;
 
+            long folderSizeInBytes = GetFileSumFromDirectory.count(SettingsManager.Instance.GetSavePath());
+            double folderSize = UnitsConverter.ConvertBytesToGigabytes(folderSizeInBytes); ;
             long availableSpace = SettingsManager.Instance.GetAvailableSpace();
             double p1 = Math.Round((double)(folderSize / availableSpace), 2) * 100.0;
             double p2 = Math.Round((double)(availableSpace - folderSize) / availableSpace, 2) * 100.0;
@@ -144,4 +148,5 @@ namespace LocalDatabase_Server.View.Panels.MainPanel.PieChartDrawer
             return outline;
         }
     }
+
 }

@@ -16,29 +16,9 @@ namespace LocalDatabase_Server
         public static string CheckLoginMessage(string[] isLogged)
         {
             if (!isLogged.Equals("ERROR"))
-                return "<Task=CheckLogin><isLogged>" + isLogged[0] +"</isLogged><Limit>" + isLogged[1] + "</Limit><Login><EOM>";
+                return "<Task=CheckLogin><isLogged>" + isLogged[0] +"</isLogged><Limit>" + isLogged[1] + "</Limit></Task><EOM>";
             else
-                return "<Task=CheckLogin><isLogged>ERROR</isLogged><Limit></Limit><Login><EOM>";
-        }
-
-        /// <summary>
-        /// For both. Send to other order that he has to listen for file
-        /// </summary>
-        /// <param name="path"></param>
-        /// <returns></returns>
-        public static string DownloadMessage()
-        {
-            return "<Task=Download></Task><EOM>";
-        }
-
-        /// <summary>
-        /// For both. Send to other order to send file of this path.
-        /// </summary>
-        /// <param name="path"></param>
-        /// <returns></returns>
-        public static string SendMessge(string path)
-        {
-            return "<Task=Send><Path>" + path + "</Path></Task><EOM>";
+                return "<Task=CheckLogin><isLogged>ERROR</isLogged><Limit></Limit></Task><EOM>";
         }
 
         /// <summary>

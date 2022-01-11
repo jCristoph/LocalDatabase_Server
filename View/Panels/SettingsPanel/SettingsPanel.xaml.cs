@@ -15,9 +15,8 @@ namespace LocalDatabase_Server.Panels.SettingsPanel
 
         private void exitButton_Click(object sender, RoutedEventArgs e)
         {
-            Start start = new Start();
-            start.Show();
-            Close();
+            Owner.Show();
+            this.Close();
         }
 
         private void changeSessionTimeButton_Click(object sender, RoutedEventArgs e)

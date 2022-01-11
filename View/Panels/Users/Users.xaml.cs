@@ -18,7 +18,7 @@ namespace LocalDatabase_Server.Users
             users = Database.DatabaseManager.Instance.GetUsers();
             foreach(var u in users)
             {
-                u.limit = UnitsConverter.ConvertBytesToGigabytes(u.limit);
+                u.limit = (long)UnitsConverter.ConvertBytesToGigabytes(u.limit);
             }
             WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen; //app is always in center of screen
             InitializeComponent();
@@ -59,7 +59,7 @@ namespace LocalDatabase_Server.Users
             clp.ShowDialog();
             Database.DatabaseManager.Instance.ChangeLimit(clp.newlimit, u.token); //limit is also saved in container
             users.Remove(u);
-            u.limit = UnitsConverter.ConvertBytesToGigabytes(clp.newlimit);
+            u.limit = (long)UnitsConverter.ConvertBytesToGigabytes(clp.newlimit);
             users.Add(u);
         }
     }

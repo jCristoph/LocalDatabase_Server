@@ -78,7 +78,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Data\Database\Encryption.cs" />
     <Compile Include="Data\Database\Generators\Generator.cs" />
     <Compile Include="Data\Database\UseCases\AddToTransmissionUseCase.cs" />
     <Compile Include="Data\Database\UseCases\ChangePasswordUseCase.cs" />
@@ -102,9 +101,6 @@
     <Compile Include="Data\Database\DatabaseManager.cs" />
     <Compile Include="Data\Models\Transmission.cs" />
     <Compile Include="Data\Models\User.cs" />
-    <Compile Include="View\Panels\LoginPanel\LoginPanel.xaml.cs">
-      <DependentUpon>LoginPanel.xaml</DependentUpon>
-    </Compile>
     <Compile Include="View\Panels\MainPanel\PieChart\PieChartDrawer.cs" />
     <Compile Include="View\Panels\MessagePanel\MessagePanel.xaml.cs">
       <DependentUpon>MessagePanel.xaml</DependentUpon>
@@ -122,10 +118,6 @@
       <DependentUpon>Start.xaml</DependentUpon>
     </Compile>
     <Page Include="View\Panels\ChangeLimitPanel\ChangeLimitPanel.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\Panels\LoginPanel\LoginPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
