@@ -30,8 +30,9 @@ namespace LocalDatabase_Server.Panels.SettingsPanel
         private void changeSettingsButton_Click(object sender, RoutedEventArgs e)
         {
             SettingsPanel settingsPanel = new SettingsPanel();
+            settingsPanel.Owner = this;
             settingsPanel.Show();
-            this.Close();
+            this.Hide();
         }
     }
 }

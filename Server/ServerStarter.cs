@@ -77,8 +77,8 @@ namespace LocalDatabase_Server
                     {
                         sslCertificate = new SslCertificate();
                         X509Certificate serverCertificate = sslCertificate.GetCertificate();
-                        sslStream = new SslStream(client.GetStream(), false, sslCertificate.IsCertificateValid);
-                        sslStream.AuthenticateAsServer(serverCertificate, true, SslProtocols.Tls12, false);
+                        sslStream = new SslStream(client.GetStream(), false);
+                        sslStream.AuthenticateAsServer(serverCertificate, clientCertificateRequired: false, checkCertificateRevocation: true);
                         sslStream.ReadTimeout = SettingsManager.Instance.GetIdleTime() * 60000;
                         isConnected = true;
                         string token = readMessage(sslStream);
@@ -143,7 +143,8 @@ namespace LocalDatabase_Server
                     }
                     else
                     {
-                        sendMessage("<Task=CheckLogin><isLogged>ERROR1</isLogged><Limit></Limit><Login>", sslStream);
+                        Thread.Sleep(100);
+                        sendMessage("<Task=CheckLogin><isLogged>ERROR1</isLogged><Limit></Limit><Login><EOM>", sslStream);
                     }
                     return temp[0];
 

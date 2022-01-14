@@ -73,7 +73,7 @@ namespace LocalDatabase_Server.Panels.SettingsPanel
 
                 if (result == System.Windows.Forms.DialogResult.OK && !string.IsNullOrWhiteSpace(folderBrowserDialog.SelectedPath))
                 {
-                    SettingsManager.Instance.SetSavePath(folderBrowserDialog.SelectedPath);
+                    SettingsManager.Instance.SetSavePath(folderBrowserDialog.SelectedPath + "\\");
                     ShowMessagePanel("Changed default path to: " + folderBrowserDialog.SelectedPath);
                 }
             }

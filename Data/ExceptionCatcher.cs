@@ -13,10 +13,15 @@ namespace LocalDatabase_Server.Data
 
         public static void addExceptionToFile(string e)
         {
-            using (StreamWriter sw = File.AppendText(path))
+            try
             {
-                sw.WriteLine(DateTime.Now + " " + e);
+                using (StreamWriter sw = File.AppendText(path))
+                {
+                    sw.WriteLine(DateTime.Now + " " + e);
+                }
             }
+            catch { }
+
         }
     }
 }

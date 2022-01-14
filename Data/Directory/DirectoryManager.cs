@@ -2,7 +2,6 @@
 using LocalDatabase_Server.Directory;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 
 namespace LocalDatabase_Server
@@ -29,20 +28,28 @@ namespace LocalDatabase_Server
         //method that finds every element in folder. It look for in every subfolder so this method is recurrent.
         public void ProcessDirectory(string targetDirectory)
         {
-            string[] fileEntries = System.IO.Directory.GetFiles(targetDirectory);
-            foreach (string path in fileEntries)
+            if(System.IO.Directory.Exists(targetDirectory))
             {
-                DirectoryElement de = new DirectoryElement(path.Replace(tokenDirectory, "Main_Folder"), new FileInfo(path).Length, File.GetLastWriteTime(path).ToString(), false);
-                directoryElements.Add(de);
+                string[] fileEntries = System.IO.Directory.GetFiles(targetDirectory);
+                foreach (string path in fileEntries)
+                {
+                    DirectoryElement de = new DirectoryElement(path.Replace(tokenDirectory, "Main_Folder"), new FileInfo(path).Length, File.GetLastWriteTime(path).ToString(), false);
+                    directoryElements.Add(de);
+                }
+
+                string[] subdirectoryEntries = System.IO.Directory.GetDirectories(targetDirectory);
+                foreach (string subdirectory in subdirectoryEntries)
+                {
+                    DirectoryElement de = new DirectoryElement(subdirectory.Replace(tokenDirectory, "Main_Folder"), 0, System.IO.Directory.GetCreationTime(subdirectory).ToString(), true);
+                    directoryElements.Add(de);
+                    ProcessDirectory(subdirectory);
+                }
+            }
+            else
+            {
+                System.IO.Directory.CreateDirectory(targetDirectory);
             }
 
-            string[] subdirectoryEntries = System.IO.Directory.GetDirectories(targetDirectory);
-            foreach (string subdirectory in subdirectoryEntries)
-            {
-                DirectoryElement de = new DirectoryElement(subdirectory.Replace(tokenDirectory, "Main_Folder"), 0, "None", true);
-                directoryElements.Add(de);
-                ProcessDirectory(subdirectory);
-            }
         }
 
         /*If client sends message with path, it has to be translate. The message is in kind of xml message.
