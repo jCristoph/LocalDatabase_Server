@@ -40,10 +40,10 @@
                 <ListView Margin="20,0,10,0" Name="transmissionsList"  Grid.Column="0" Grid.Row="1"  Background="Aquamarine" Style="{StaticResource ListViewTheme}" ItemContainerStyle="{StaticResource ContainerStyle}">
                     <ListView.View>
                         <GridView  ColumnHeaderContainerStyle="{StaticResource ListViewHeaderTheme}">
-                            <GridViewColumn Header="Token" DisplayMemberBinding="{Binding Path=userToken}" Width="90"/>
-                            <GridViewColumn Header="Transmission type" DisplayMemberBinding="{Binding Path=transmissionType}" Width="110"/>
-                            <GridViewColumn Header="Date" DisplayMemberBinding="{Binding Path=date}"/>
-                            <GridViewColumn Header="File size" DisplayMemberBinding="{Binding Path=fileSize}" />
+                            <GridViewColumn Header="Token" DisplayMemberBinding="{Binding Path=userToken}" Width="100"/>
+                            <GridViewColumn Header="Transmission type" DisplayMemberBinding="{Binding Path=transmissionType}" Width="180"/>
+                            <GridViewColumn Header="Date" DisplayMemberBinding="{Binding Path=date}" Width="180"/>
+                            <GridViewColumn Header="File size" DisplayMemberBinding="{Binding Path=fileSize}" Width="150" />
                         </GridView>
                     </ListView.View>
                 </ListView>

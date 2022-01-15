@@ -143,7 +143,6 @@ namespace LocalDatabase_Server
                     }
                     else
                     {
-                        Thread.Sleep(100);
                         sendMessage("<Task=CheckLogin><isLogged>ERROR1</isLogged><Limit></Limit><Login><EOM>", sslStream);
                     }
                     return temp[0];
@@ -209,7 +208,7 @@ namespace LocalDatabase_Server
                         {
                             sendMessage(ServerCom.acceptTransferMessage(portAssigner.GetPort()), sslStream);
                             string[] arr = ServerCom.DownloadRecognizer(data);
-                            Thread.Sleep(1000);
+                            Thread.Sleep(500);
                             var fileName = (arr[0] + "\\" + arr[1]).Replace("Main_Folder", SettingsManager.Instance.GetSavePath());
                             FileTransporter fileTransporter = new FileTransporter(serverIp, fileName, portAssigner.GetPort());
                             fileTransporter.connectAsServer();
@@ -234,7 +233,7 @@ namespace LocalDatabase_Server
                     if (ActiveUsers.Contains(u)) //if user isnt in active users container he has to log in one more time - session is limited
                     {
                         path = ServerCom.SendRecognizer(data);
-                        Thread.Sleep(10);
+                        Thread.Sleep(100);
 
                         FileTransporter fileTransporter = new FileTransporter(serverIp, path, portAssigner.GetPort());
                         fileTransporter.connectAsServer();
