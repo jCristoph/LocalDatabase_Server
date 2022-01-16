@@ -24,8 +24,8 @@
                 <ListView.View>
                     <GridView ColumnHeaderContainerStyle="{StaticResource ListViewHeaderTheme}">
                         <GridViewColumn DisplayMemberBinding="{Binding Path=id}" Header="ID"/>
-                        <GridViewColumn DisplayMemberBinding="{Binding Path=surname}" Header="First name" Width="150"/>
-                        <GridViewColumn DisplayMemberBinding="{Binding Path=name}" Header="Last name" Width="150" />
+                        <GridViewColumn DisplayMemberBinding="{Binding Path=surname}" Header="Last name" Width="150"/>
+                        <GridViewColumn DisplayMemberBinding="{Binding Path=name}" Header="First name" Width="150" />
                         <GridViewColumn DisplayMemberBinding="{Binding Path=login}" Header="Login"   Width="150"/>
                         <GridViewColumn DisplayMemberBinding="{Binding Path=token}" Header="Token"  Width="150"/>
                         <GridViewColumn DisplayMemberBinding="{Binding Path=limit}" Header="Limit [GB]" Width="100" />
