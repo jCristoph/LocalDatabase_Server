@@ -18,7 +18,7 @@ namespace LocalDatabase_Server.ChangeLimitPanel
         {
             string input = textBox.Text; //protection if user uses dot insted of comma
             Regex rx = new Regex(@"\D+"); //protection if user type something different than numbers
-            if(!rx.IsMatch(input))
+            if(!rx.IsMatch(input) && !input.Equals(""))
             {
                 newlimit = UnitsConverter.ConvertGigabytesToBytes(Convert.ToInt64(input)); //user enter value in GB but in system uses just Bytes
                 this.Close();

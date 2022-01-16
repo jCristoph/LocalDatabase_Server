@@ -33,7 +33,7 @@ namespace LocalDatabase_Server
         private static PieChartDrawer pieChart;
         static private PortAssigner portAssigner;
        
-        public static void Init(ObservableCollection<User> activeUsers, ObservableCollection<Transmission> transmissions, PieChartDrawer pieChartDrawer, int port = 25000)
+        public static void Init(ObservableCollection<User> activeUsers, ObservableCollection<Transmission> transmissions, PieChartDrawer pieChartDrawer, int port = 25010)
         {
             ActiveUsers = activeUsers;
             Transmissions = transmissions;
