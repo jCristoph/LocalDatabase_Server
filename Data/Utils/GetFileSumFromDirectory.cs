@@ -1,6 +1,5 @@
 ﻿using System.IO;
 using System.Linq;
-
 namespace LocalDatabase_Server.Data.Utils
 {
     public static class GetFileSumFromDirectory
@@ -12,6 +11,12 @@ namespace LocalDatabase_Server.Data.Utils
             /// <returns></returns>
             public static long count(string searchDirectory)
             {
+                if (!System.IO.Directory.Exists(searchDirectory))
+                {
+                    searchDirectory = searchDirectory.Replace("Main_Folder", Directory.SettingsManager.Instance.GetSavePath());
+                    System.IO.Directory.CreateDirectory(searchDirectory);
+                }
+
                 var files = System.IO.Directory.EnumerateFiles(searchDirectory);
 
                 // get the sizeof all files in the current directory
